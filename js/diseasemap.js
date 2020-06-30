@@ -3,9 +3,12 @@ let DiseaseMap = function() {
 
   /** @private */
   this.mapboxMap_;
+
+  /** @private @type {Object} */
+  this.popup_;
 };
 
-DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrOGl1NGNldTAyYXYzZnBqcnBmN3RjanAifQ.H377pe4LPPcymeZkUBiBtg';
+DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrYmNndWlzajAxOGMzMG9jeXdna3Vkb3UifQ.9cb47tJBUSP3K6jhlMUExw';
 
 DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG = 0.4;
 
@@ -82,7 +85,7 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
 };
 
 
-DiseaseMap.prototype.init = function(callback) {
+DiseaseMap.prototype.init = function() {
   mapboxgl.accessToken = DiseaseMap.MAPBOX_TOKEN;
   this.mapboxMap_ = new mapboxgl.Map({
     'container': 'map',
@@ -90,7 +93,7 @@ DiseaseMap.prototype.init = function(callback) {
     'center': [10, 0],
     'zoom': 1,
   }).addControl(new mapboxgl.NavigationControl());
-  popup = new mapboxgl.Popup({
+  this.popup_ = new mapboxgl.Popup({
     'closeButton': false,
     'closeOnClick': true,
     'maxWidth': 'none',
@@ -129,7 +132,7 @@ DiseaseMap.prototype.init = function(callback) {
       this.getCanvas().style.cursor = 'pointer';
     });
 
-    self.mapboxMap_.on('click', 'totals', showPopupForEvent);
+    self.mapboxMap_.on('click', 'totals', self.showPopupForEvent.bind(self));
 
     self.mapboxMap_.on('mouseleave', 'totals', function () {
       this.getCanvas().style.cursor = '';
@@ -139,11 +142,6 @@ DiseaseMap.prototype.init = function(callback) {
     }
   });
   showLegend();
-};
-
-
-DiseaseMap.prototype.addPopup = function(popup) {
-  popup.addTo(this.mapboxMap_);
 };
 
 
@@ -185,3 +183,77 @@ DiseaseMap.prototype.flyToCountry = function(code) {
   const dest = country.getMainBoundingBox();
   this.mapboxMap_.fitBounds([[dest[0], dest[1]], [dest[2], dest[3]]]);
 };
+
+
+DiseaseMap.prototype.showPopupForEvent = function(e) {
+  if (!e['features'].length) {
+    // We can't do much without a feature.
+    return;
+  }
+
+  let f = e['features'][0];
+  let props = f['properties'];
+  let geo_id = props['geoid'];
+  let coordinatesString = geo_id.split('|');
+  let lat = parseFloat(coordinatesString[0]);
+  let lng = parseFloat(coordinatesString[1]);
+
+  let totalCaseCount = 0;
+  // Country, province, city
+  let location = locationInfo[geo_id].split('|');
+  // Replace country code with name if necessary
+  if (location[2].length == 2) {
+    location[2] = countries[location[2]].getName();
+  }
+  const countryName = location[2];
+  const country = countriesByName[countryName];
+
+  // Remove empty strings
+  location = location.filter(function (el) { return el != ''; });
+  let locationSpan = [];
+  for (let i = 0; i < location.length; i++) {
+    if (i == location.length - 1 && !!country) {
+      locationSpan.push('<a target="_blank" href="/c/' +
+                        country.getCode() + '/">' + location[i] + '</a>');
+    } else {
+      locationSpan.push(location[i]);
+    }
+  }
+  totalCaseCount = props['total'];
+
+  let content = document.createElement('div');
+  content.innerHTML = '<h3 class="popup-header"><span>' +
+        locationSpan.join(', ') + '</span></h3>';
+
+  let relevantFeaturesByDay = {};
+  for (let i = 0; i < dates.length; i++) {
+    const date = dates[i];
+    relevantFeaturesByDay[date] = [];
+    for (let j = 0; j < atomicFeaturesByDay[date].length; j++) {
+      const feature = atomicFeaturesByDay[date][j];
+      if (feature['properties']['geoid'] == geo_id) {
+        relevantFeaturesByDay[date].push(feature);
+      }
+    }
+  }
+
+  let container = document.createElement('div');
+  container.classList.add('chart');
+  Graphing.makeCasesGraph(
+      DataProvider.convertGeoJsonFeaturesToGraphData(
+          relevantFeaturesByDay, 'total'), false /* average */, container);
+  content.appendChild(container);
+
+  // Ensure that if the map is zoomed out such that multiple
+  // copies of the feature are visible, the popup appears
+  // over the copy being pointed to.
+  while (Math.abs(e['lngLat']['lng'] - lng) > 180) {
+    lng += e['lngLat']['lng'] > lng ? 360 : -360;
+  }
+  this.popup_.setLngLat([lng, lat]).setDOMContent(content);
+  this.popup_.addTo(this.mapboxMap_);
+  let self = this;
+  this.popup_.getElement().onmouseleave = function() {
+    self.popup_.remove();
+  };
+}
