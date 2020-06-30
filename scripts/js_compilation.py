@@ -19,6 +19,8 @@ def compile_js(quiet=False):
         "--js js/graphing.js "
         "--js js/timeanimation.js "
         "--js js/healthmap.js "
+        "--js js/sidebar.js "
+        "--js js/countrydashboard.js "
         "--js js/rank.js "
         "--js js/sync.js "
         "--externs js/externs_chart.js "

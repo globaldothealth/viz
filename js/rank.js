@@ -1,5 +1,5 @@
 
-const RANK_COLORS = {
+const CONTINENT_COLORS = {
   'O': '#b600ff',  // purple
   'S': '#0c1fb4',  // dark blue
   'N': '#0060ff',  // blue
@@ -40,14 +40,15 @@ function showRankPage() {
     let el = document.createElement('div');
     el.setAttribute('id', code);
     el.classList.add('bar');
-    el.style.backgroundColor = RANK_COLORS[c.getContinent()];
+    const color = CONTINENT_COLORS[c.getContinent()];
+    el.style.backgroundColor = color;
     el.style.color = '#fff';
     let startSpan = document.createElement('span');
     startSpan.classList.add('start');
     let endSpan = document.createElement('span');
     endSpan.classList.add('end');
     startSpan.textContent = c.getName();
-    startSpan.style.backgroundColor = RANK_COLORS[i % RANK_COLORS.length];
+    startSpan.style.backgroundColor = color;
     el.appendChild(endSpan);
     el.appendChild(startSpan);
     container.appendChild(el);
