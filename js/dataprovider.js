@@ -206,7 +206,7 @@ DataProvider.prototype.fetchCountryNames = function() {
             let bbox = bboxParts[j].split(',');
             bboxes.push(bbox);
         }
-        let c = new Country(code, name, population, bboxes);
+        let c = new Country(code, name, continent, population, bboxes);
         countries[code] = c;
         countriesByName[name] = c;
       }

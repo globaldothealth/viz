@@ -11,16 +11,6 @@ const COLOR_MAP = [
   ['#edf91c', '> 2000'],
   ['cornflowerblue', 'New'],
 ];
-const RANK_COLORS = [
-  '#b600ff',  // purple
-  '#0c1fb4',  // dark blue
-  '#0060ff',  // blue
-  '#00dd8e',  // teal
-  '#00b31a',  // green
-  '#bb9900',  // yellow
-  '#e37300',  // orange
-  '#e90000',  // red
-];
 
 // Globals
 let dataProvider;

@@ -1,5 +1,5 @@
 /** @constructor */
-let Country = function(code, name, population, boundingBoxes) {
+let Country = function(code, name, continent, population, boundingBoxes) {
 
   /**
    * This country's two-letter iso code.
@@ -16,6 +16,16 @@ let Country = function(code, name, population, boundingBoxes) {
    * @private
    */
   this.name_ = name;
+
+  /**
+   * A single letter representing the continent where this country is located.
+   * A = Africa, E = Europe, Z = Asia, N = North America, S = South America,
+   * O = Oceania, P = Antarctica.
+   * @type {string}
+   * @const
+   * @private
+   */
+  this.continent_ = continent;
 
   /**
    * This country's population, or zero is it isn't known.
@@ -41,6 +51,11 @@ Country.prototype.getName = function() {
 /** @return {string} */
 Country.prototype.getCode = function() {
   return this.code_;
+};
+
+/** @return {string} */
+Country.prototype.getContinent = function() {
+  return this.continent_;
 };
 
 /** @return {number} */
