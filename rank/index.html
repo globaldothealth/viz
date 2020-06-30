@@ -45,6 +45,16 @@
       right: 5px;
     }
 
+    #minimap {
+      background:
+      url('https://raw.githubusercontent.com/ghdsi/common/master/worldmap.png');
+      bottom: 0;
+      height: 130px;
+      position: absolute;
+      right: 0;
+      width: 198px;
+    }
+
   </style>
 </head>
 <body class="sidebar-hidden">
@@ -54,6 +64,7 @@
 <div style="color: #777; text-align: center">Scroll to advance. Logarithmic scale.</div>
 
 <div id="data">Loading...</div>
+<div id="minimap"></div>
 
 <!-- js -->
 <script src="/js/country.js"></script>

@@ -1,3 +1,14 @@
+
+const RANK_COLORS = {
+  'O': '#b600ff',  // purple
+  'S': '#0c1fb4',  // dark blue
+  'N': '#0060ff',  // blue
+  'E': '#00b31a',  // green
+  'A': '#bb9900',  // yellow
+  'P': '#e37300',  // orange
+  'Z': '#e90000',  // red
+};
+
 function rankInit() {
   dataProvider = new DataProvider(
       'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
@@ -29,7 +40,7 @@ function showRankPage() {
     let el = document.createElement('div');
     el.setAttribute('id', code);
     el.classList.add('bar');
-    el.style.backgroundColor = RANK_COLORS[i % RANK_COLORS.length];
+    el.style.backgroundColor = RANK_COLORS[c.getContinent()];
     el.style.color = '#fff';
     let startSpan = document.createElement('span');
     startSpan.classList.add('start');
