@@ -437,6 +437,7 @@ div.mapboxgl-popup-content {
   bottom: .7rem;
   font-size: .8rem;
   color: #cccc;
+  cursor: pointer;
   left: $sidebar-width + $sidebar-margin-end;
   position: absolute;
   text-align: center;
@@ -593,7 +594,7 @@ body.lighttheme {
 
 #modal-wrapper {
   display: none;
-  position: relative;
+  position: absolute;
   opacity: 0;
   transition: opacity 400ms ease;
   z-index: 15;
@@ -613,7 +614,7 @@ body.lighttheme {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 95%;
   bottom: 0;
   background-color: #fff;
   overflow: hidden;
