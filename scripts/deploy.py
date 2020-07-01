@@ -16,7 +16,6 @@ import js_compilation
 
 # Files and directories that should be deployed. Everything else will be ignored.
 INCLUDE_LIST = [
-    "about.html",
     "index.html",
     "c",
     "js/bundle.js",
