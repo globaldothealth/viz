@@ -49,7 +49,7 @@ function onAllDailySlicesFetched() {
 
 
 function fetchAboutPage() {
-  fetch('about.html')
+  fetch('https://raw.githubusercontent.com/ghdsi/covid-19/master/about.html')
     .then(function(response) { return response.text(); })
     .then(function(html) { handleShowModal(html); });
 }
@@ -166,7 +166,7 @@ function setupTopBar() {
     ['Map', baseUrl],
     ['3D Map', baseUrl + '#3d'],
     ['Auto-drive', baseUrl + '#autodrive'],
-    ['Light Theme', baseUrl + '#lighttheme'],
+    ['Light Theme', baseUrl + '#light'],
     ['Rank', baseUrl + 'rank'],
     ['Sync', baseUrl + 'sync'],
     ['Completeness', baseUrl + 'completeness'],
