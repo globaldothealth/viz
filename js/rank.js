@@ -9,7 +9,7 @@ const CONTINENT_COLORS = {
   'Z': '#e90000',  // red
 };
 
-let maxValue = 0;
+let maxGraphedValue = 0;
 let maxWidth = 0;
 let showDeathCounts = false;
 
@@ -22,21 +22,39 @@ function rankInit() {
   setupTopBar();
 }
 
-function showRankPage() {
-  let container = document.getElementById('data');
-  container.innerHTML = '';
+function onToggleClicked(e) {
+  let toggle = document.getElementById('toggle');
+  if (toggle.firstChild == e.target) {
+    toggle.firstChild.classList.add('active');
+    toggle.lastChild.classList.remove('active');
+    showDeathCounts = false;
+  } else if (toggle.lastChild == e.target) {
+    toggle.firstChild.classList.remove('active');
+    toggle.lastChild.classList.add('active');
+    showDeathCounts = true;
+  }
+  onModeToggled();
+}
+
+function onModeToggled() {
   const aggregates = dataProvider.getAggregateData();
-  const latestDate = dataProvider.getLatestDateWithAggregateData();
-  maxWidth = Math.floor(container.clientWidth);
-  let maxCases = 0;
+  const key = showDeathCounts ? 'deaths' : 'cum_conf';
+  let maxValue = 0;
   dates = Object.keys(aggregates).sort();
 
   for (let date in aggregates) {
     for (let country in aggregates[date]) {
-      maxCases = Math.max(maxCases, aggregates[date][country]['cum_conf']);
+      maxValue = Math.max(maxValue, aggregates[date][country][key]);
     }
   }
-  maxValue = Math.log10(maxCases);
+  maxGraphedValue = Math.log10(maxValue);
+  showRankPageAtCurrentDate();
+}
+
+function showRankPage() {
+  let container = document.getElementById('data');
+  container.innerHTML = '';
+  maxWidth = Math.floor(container.clientWidth);
 
   let i = 0;
   for (let code in countries) {
@@ -59,7 +77,7 @@ function showRankPage() {
     i++;
   }
 
-  showRankPageAtCurrentDate();
+  onModeToggled();
   container.onwheel = function(e) {
     onRankWheel(e)
   };
@@ -78,8 +96,8 @@ function showRankPage() {
 
   let toggle = document.getElementById('toggle');
   // Assume only two modes here.
-  toggle.firstChild.onclick = onToggleMode;
-  toggle.lastChild.onclick = onToggleMode;
+  toggle.firstChild.onclick = onToggleClicked;
+  toggle.lastChild.onclick = onToggleClicked;
 }
 
 function onRankTouchMove(delta) {
@@ -100,30 +118,17 @@ function rankAdvance(forward, steps) {
   showRankPageAtCurrentDate();
 }
 
-function onToggleMode(e) {
-  let toggle = document.getElementById('toggle');
-  if (toggle.firstChild == e.target) {
-    toggle.firstChild.classList.add('active');
-    toggle.lastChild.classList.remove('active');
-    showDeathCounts = false;
-  } else if (toggle.lastChild == e.target) {
-    toggle.firstChild.classList.remove('active');
-    toggle.lastChild.classList.add('active');
-    showDeathCounts = true;
-  }
-
-}
-
 function showRankPageAtCurrentDate() {
   const date = dates[currentDateIndex];
   document.getElementById('title').textContent = date;
   const data = dataProvider.getAggregateData()[date];
   const y_step = 33;
   let container = document.getElementById('data');
+  const key = showDeathCounts ? 'deaths' : 'cum_conf';
   let o = {};
   for (let i = 0; i < data.length; i++) {
     const item = data[i];
-    o[item['code']] = item['cum_conf'];
+    o[item['code']] = item[key];
   }
   let bars = [...document.getElementsByClassName('bar')];
   bars = bars.sort(function(a, b) {
@@ -146,7 +151,7 @@ function showRankPageAtCurrentDate() {
     b.style.display = 'block';
     b.style.top = y + 'px';
     b.style.width = Math.floor(
-        maxWidth * Math.log10(case_count) / maxValue);
+        maxWidth * Math.log10(case_count) / maxGraphedValue);
     y += 37;
   }
   for (let i = 0; i < data.length; i++) {
