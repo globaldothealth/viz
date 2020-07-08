@@ -9,6 +9,7 @@ const CONTINENT_COLORS = {
   'Z': '#e90000',  // red
 };
 
+let maxValue = 0;
 let maxWidth = 0;
 let showDeathCounts = false;
 
@@ -35,7 +36,7 @@ function showRankPage() {
       maxCases = Math.max(maxCases, aggregates[date][country]['cum_conf']);
     }
   }
-  const maxValue = Math.log10(maxCases);
+  maxValue = Math.log10(maxCases);
 
   let i = 0;
   for (let code in countries) {
@@ -58,13 +59,13 @@ function showRankPage() {
     i++;
   }
 
-  showRankPageAtCurrentDate(maxValue);
+  showRankPageAtCurrentDate();
   container.onwheel = function(e) {
-    onRankWheel(e, maxValue)
+    onRankWheel(e)
   };
   container.ontouchmove = function(e) {
     e.preventDefault();
-    onRankTouchMove(e['touches'][0].clientY - currentTouchY, maxValue)
+    onRankTouchMove(e['touches'][0].clientY - currentTouchY)
   };
   container.ontouchstart = function(e) {
     e.preventDefault();
@@ -81,23 +82,22 @@ function showRankPage() {
   toggle.lastChild.onclick = onToggleMode;
 }
 
-function onRankTouchMove(delta, maxValue) {
+function onRankTouchMove(delta) {
   const points_per_step = 150;
-  rankAdvance(delta > 0, Math.floor(Math.abs(delta / points_per_step)),
-              maxValue);
+  rankAdvance(delta > 0, Math.floor(Math.abs(delta / points_per_step)));
 }
 
-function onRankWheel(e, maxValue) {
+function onRankWheel(e) {
   e.preventDefault();
-  rankAdvance(e.deltaY > 0, 1, maxValue);
+  rankAdvance(e.deltaY > 0, 1);
 }
 
-function rankAdvance(forward, steps, maxValue) {
+function rankAdvance(forward, steps) {
   let newDateIndex = currentDateIndex + (forward ? steps : -steps);
   newDateIndex = Math.max(newDateIndex, 0);
   newDateIndex = Math.min(newDateIndex, dates.length -1);
   currentDateIndex = newDateIndex;
-  showRankPageAtCurrentDate(maxValue);
+  showRankPageAtCurrentDate();
 }
 
 function onToggleMode(e) {
@@ -114,7 +114,7 @@ function onToggleMode(e) {
 
 }
 
-function showRankPageAtCurrentDate(maxValue) {
+function showRankPageAtCurrentDate() {
   const date = dates[currentDateIndex];
   document.getElementById('title').textContent = date;
   const data = dataProvider.getAggregateData()[date];
