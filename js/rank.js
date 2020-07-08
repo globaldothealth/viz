@@ -9,6 +9,9 @@ const CONTINENT_COLORS = {
   'Z': '#e90000',  // red
 };
 
+let maxWidth = 0;
+let showDeathCounts = false;
+
 function rankInit() {
   dataProvider = new DataProvider(
       'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
@@ -23,7 +26,7 @@ function showRankPage() {
   container.innerHTML = '';
   const aggregates = dataProvider.getAggregateData();
   const latestDate = dataProvider.getLatestDateWithAggregateData();
-  const maxWidth = Math.floor(container.clientWidth);
+  maxWidth = Math.floor(container.clientWidth);
   let maxCases = 0;
   dates = Object.keys(aggregates).sort();
 
@@ -55,13 +58,13 @@ function showRankPage() {
     i++;
   }
 
-  showRankPageAtCurrentDate(maxWidth, maxValue);
+  showRankPageAtCurrentDate(maxValue);
   container.onwheel = function(e) {
-    onRankWheel(e, maxWidth, maxValue)
+    onRankWheel(e, maxValue)
   };
   container.ontouchmove = function(e) {
     e.preventDefault();
-    onRankTouchMove(e['touches'][0].clientY - currentTouchY, maxWidth, maxValue)
+    onRankTouchMove(e['touches'][0].clientY - currentTouchY, maxValue)
   };
   container.ontouchstart = function(e) {
     e.preventDefault();
@@ -71,28 +74,47 @@ function showRankPage() {
     e.preventDefault();
     currentTouchY = -1;
   }
+
+  let toggle = document.getElementById('toggle');
+  // Assume only two modes here.
+  toggle.firstChild.onclick = onToggleMode;
+  toggle.lastChild.onclick = onToggleMode;
 }
 
-function onRankTouchMove(delta, maxWidth, maxValue) {
+function onRankTouchMove(delta, maxValue) {
   const points_per_step = 150;
   rankAdvance(delta > 0, Math.floor(Math.abs(delta / points_per_step)),
-              maxWidth, maxValue);
+              maxValue);
 }
 
-function onRankWheel(e, maxWidth, maxValue) {
+function onRankWheel(e, maxValue) {
   e.preventDefault();
-  rankAdvance(e.deltaY > 0, 1, maxWidth, maxValue);
+  rankAdvance(e.deltaY > 0, 1, maxValue);
 }
 
-function rankAdvance(forward, steps, maxWidth, maxValue) {
+function rankAdvance(forward, steps, maxValue) {
   let newDateIndex = currentDateIndex + (forward ? steps : -steps);
   newDateIndex = Math.max(newDateIndex, 0);
   newDateIndex = Math.min(newDateIndex, dates.length -1);
   currentDateIndex = newDateIndex;
-  showRankPageAtCurrentDate(maxWidth, maxValue);
+  showRankPageAtCurrentDate(maxValue);
 }
 
-function showRankPageAtCurrentDate(maxWidth, maxValue) {
+function onToggleMode(e) {
+  let toggle = document.getElementById('toggle');
+  if (toggle.firstChild == e.target) {
+    toggle.firstChild.classList.add('active');
+    toggle.lastChild.classList.remove('active');
+    showDeathCounts = false;
+  } else if (toggle.lastChild == e.target) {
+    toggle.firstChild.classList.remove('active');
+    toggle.lastChild.classList.add('active');
+    showDeathCounts = true;
+  }
+
+}
+
+function showRankPageAtCurrentDate(maxValue) {
   const date = dates[currentDateIndex];
   document.getElementById('title').textContent = date;
   const data = dataProvider.getAggregateData()[date];
