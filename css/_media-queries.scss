@@ -3,13 +3,9 @@
 @media screen and (min-width: $breakpoint-md-min) {
   #sidebar {
     position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
     margin-top: 0;
     background-color: $sidebar-bgcolor-dark;
     box-shadow: 2px 0 12px 0 rgba(0,0,0,0.10);
-    border-radius: 0;
     z-index: 3;
   }
   .sidebar-header {
