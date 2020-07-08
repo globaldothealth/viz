@@ -15,8 +15,8 @@ pids
 
 .sass-cache
 c/
-css/styles.css
-css/styles.css.map
+css/*.css
+css/*.css.map
 js/bundle.js
 
 # Python cached compilation artifacts

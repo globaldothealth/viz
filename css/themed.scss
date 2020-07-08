@@ -1,8 +1,10 @@
+@import './variables.scss';
+
 .lighttheme #topbar {
   background-color: $sidebar-bgcolor-light;
+  color: $text-color-dark;
 }
 
-/* Overrides for light theme mode: adjust colors */
 body.light {
   background-color: $body-bgcolor-light;
 }
