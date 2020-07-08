@@ -21,7 +21,7 @@ let dates = [];
 let map;
 let autoDriveMode = false;
 let threeDMode = false;
-let lightTheme = false;
+let darkTheme = false;
 let initialFlyTo;
 
 let currentIsoDate;
@@ -146,9 +146,8 @@ function processHash(url) {
         continue;
       }
 
-      if (hashBrown.toLowerCase() == 'light') {
-        lightTheme = true;
-        document.body.classList.add('lighttheme');
+      if (hashBrown.toLowerCase() == 'dark') {
+        darkTheme = true;
         continue;
       }
 
@@ -158,6 +157,7 @@ function processHash(url) {
       }
     }
   }
+  document.body.classList.add(darkTheme ? 'dark' : 'light');
 }
 
 function setupTopBar() {
@@ -166,7 +166,7 @@ function setupTopBar() {
     ['Map', baseUrl],
     ['3D Map', baseUrl + '#3d'],
     ['Auto-drive', baseUrl + '#autodrive'],
-    ['Light Theme', baseUrl + '#light'],
+    ['Dark Theme', baseUrl + '#dark'],
     ['Rank', baseUrl + 'rank'],
     ['Sync', baseUrl + 'sync'],
     ['Completeness', baseUrl + 'completeness'],

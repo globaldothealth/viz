@@ -89,7 +89,7 @@ DiseaseMap.prototype.init = function() {
   mapboxgl.accessToken = DiseaseMap.MAPBOX_TOKEN;
   this.mapboxMap_ = new mapboxgl.Map({
     'container': 'map',
-    'style': lightTheme ? DiseaseMap.LIGHT_THEME : DiseaseMap.DARK_THEME,
+    'style': darkTheme ? DiseaseMap.DARK_THEME : DiseaseMap.LIGHT_THEME,
     'center': [10, 0],
     'zoom': 1,
   }).addControl(new mapboxgl.NavigationControl());
