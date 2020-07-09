@@ -8,12 +8,22 @@ let DiseaseMap = function() {
   this.popup_;
 };
 
-DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrOGl1NGNldTAyYXYzZnBqcnBmN3RjanAifQ.H377pe4LPPcymeZkUBiBtg';
+DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrYmNndWlzajAxOGMzMG9jeXdna3Vkb3UifQ.9cb47tJBUSP3K6jhlMUExw';
 
 DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG = 0.4;
 
 DiseaseMap.LIGHT_THEME = 'mapbox://styles/healthmap/ckc1y3lbr1upr1jq6pwfcb96k';
 DiseaseMap.DARK_THEME = 'mapbox://styles/healthmap/ck7o47dgs1tmb1ilh5b1ro1vn';
+
+/** @const */
+DiseaseMap.COLOR_MAP = [
+  ['#67009e', '< 10', 10],
+  ['#921694', '11–100', 100],
+  ['#d34d60', '101–500', 500],
+  ['#fb9533', '501–2000', 2000],
+  ['#edf91c', '> 2000'],
+  ['cornflowerblue', 'New'],
+];
 
 /**
  * Takes an array of features, and bundles them in a way that the map API
@@ -112,8 +122,8 @@ DiseaseMap.prototype.init = function() {
 
     let circleColorForTotals = ['step', ['get', 'total']];
     // Don't use the last color here (for new cases).
-    for (let i = 0; i < COLOR_MAP.length - 1; i++) {
-      let color = COLOR_MAP[i];
+    for (let i = 0; i < DiseaseMap.COLOR_MAP.length - 1; i++) {
+      let color = DiseaseMap.COLOR_MAP[i];
       circleColorForTotals.push(color[0]);
       if (color.length > 2) {
         circleColorForTotals.push(color[2]);
@@ -140,7 +150,7 @@ DiseaseMap.prototype.init = function() {
       self.mapboxMap_.easeTo({pitch: 55});
     }
   });
-  showLegend();
+  this.showLegend();
 };
 
 
@@ -261,3 +271,20 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
     self.popup_.remove();
   };
 }
+
+DiseaseMap.prototype.showLegend = function() {
+  let list = document.getElementById('legend').getElementsByTagName('ul')[0];
+  for (let i = 0; i < DiseaseMap.COLOR_MAP.length; i++) {
+    let color = DiseaseMap.COLOR_MAP[i];
+    let item = document.createElement('li');
+    let circle = document.createElement('span');
+    circle.className = 'circle';
+    circle.style.backgroundColor = color[0];
+    let label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = color[1];
+    item.appendChild(circle);
+    item.appendChild(label);
+    list.appendChild(item);
+  }
+};

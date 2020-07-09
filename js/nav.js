@@ -1,3 +1,15 @@
+/** @constructor */
+let Nav = function() { };
+
+/** @const */
+Nav.TOGGLES = [
+  ['3D Map', '3d'],
+  ['Auto-drive', 'autodrive'],
+  ['Dark Theme', 'dark'],
+];
+
+
+
 function processHash(oldUrl, newUrl) {
   console.log('Process hash');
   let baseUrl = window.location.origin + window.location.pathname;
@@ -56,8 +68,8 @@ function makeToggle(toggleId, name, checked) {
 
 function onToggle(e) {
   let hashes = [];
-  for (let i = 0; i < TOGGLES.length; i++) {
-    const toggleId = TOGGLES[i][1];
+  for (let i = 0; i < Nav.TOGGLES.length; i++) {
+    const toggleId = Nav.TOGGLES[i][1];
     if (document.getElementById(toggleId).checked) {
       hashes.push(toggleId);
     }
@@ -79,9 +91,9 @@ function setupTopBar() {
   let topBar = document.getElementById('topbar');
   topBar.innerHTML = '<ul></ul>';
 
-  for (let i = 0; i < TOGGLES.length; i++) {
-    const toggleId = TOGGLES[i][1];
-    let item = makeToggle(toggleId, TOGGLES[i][0], false /* checked */);
+  for (let i = 0; i < Nav.TOGGLES.length; i++) {
+    const toggleId = Nav.TOGGLES[i][1];
+    let item = makeToggle(toggleId, Nav.TOGGLES[i][0], false /* checked */);
     topBar.firstElementChild.appendChild(item);
     document.getElementById(toggleId).onclick = onToggle;
   }

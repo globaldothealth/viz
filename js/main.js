@@ -1,19 +1,9 @@
-// Constants
-const ANIMATION_FRAME_DURATION_MS = 300;
-const LIVE_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
-const COLOR_MAP = [
-  ['#67009e', '< 10', 10],
-  ['#921694', '11–100', 100],
-  ['#d34d60', '101–500', 500],
-  ['#fb9533', '501–2000', 2000],
-  ['#edf91c', '> 2000'],
-  ['cornflowerblue', 'New'],
-];
-const TOGGLES = [
-  ['3D Map', '3d'],
-  ['Auto-drive', 'autodrive'],
-  ['Dark Theme', 'dark'],
-];
+
+/** @constructor */
+let Viz = function() { };
+
+/** @const */
+Viz.LIVE_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
 // Globals
 let dataProvider;
@@ -42,16 +32,6 @@ let timeControl;
 function setTimeControlLabel(date) {
   document.getElementById('date').innerText = dates[date];
 }
-
-/** Fills with leading zeros to the desired width. */
-function zfill(n, width) {
-  n = n + '';
-  return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
-}
-
-function onAllDailySlicesFetched() {
-}
-
 
 function fetchAboutPage() {
   fetch('https://raw.githubusercontent.com/ghdsi/covid-19/master/about.html')
@@ -88,23 +68,6 @@ function handleHideModal() {
     modalWrapper.classList.remove('is-block');
     modal.classList.add('is-flex');
   }, 400);
-}
-
-function showLegend() {
-  let list = document.getElementById('legend').getElementsByTagName('ul')[0];
-  for (let i = 0; i < COLOR_MAP.length; i++) {
-    let color = COLOR_MAP[i];
-    let item = document.createElement('li');
-    let circle = document.createElement('span');
-    circle.className = 'circle';
-    circle.style.backgroundColor = color[0];
-    let label = document.createElement('span');
-    label.className = 'label';
-    label.textContent = color[1];
-    item.appendChild(circle);
-    item.appendChild(label);
-    list.appendChild(item);
-  }
 }
 
 function flyToCountry(event) {
@@ -180,7 +143,7 @@ function init() {
   document.getElementById('spread').
       addEventListener('click', toggleMapAnimation);
   document.getElementById('playpause').setAttribute('src', 'img/play.svg');
-  window.setTimeout(updateData, LIVE_UPDATE_INTERVAL_MS);
+  window.setTimeout(updateData, Viz.LIVE_UPDATE_INTERVAL_MS);
 }
 
 function updateData() {
@@ -193,7 +156,7 @@ function updateData() {
   });
 
   // Update the data again after another time interval.
-  window.setTimeout(updateData, LIVE_UPDATE_INTERVAL_MS);
+  window.setTimeout(updateData, Viz.LIVE_UPDATE_INTERVAL_MS);
 }
 
 // Exports

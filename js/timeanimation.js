@@ -1,3 +1,8 @@
+/** @constructor */
+let TimeAnimation = function() { };
+
+/** @const */
+TimeAnimation.ANIMATION_FRAME_DURATION_MS = 300;
 
 function updateTimeControl() {
   // There's no point in showing the time control if we only have data for one
@@ -31,7 +36,7 @@ function toggleMapAnimation(animationEndedCallback) {
           animationEndedCallback();
         }
       }
-    }, ANIMATION_FRAME_DURATION_MS);
+    }, TimeAnimation.ANIMATION_FRAME_DURATION_MS);
   } else {
     clearInterval(animationIntervalId);
     animationIntervalId = 0;
