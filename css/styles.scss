@@ -108,6 +108,7 @@ h1 {
 }
 
 #topbar {
+  font-size: 85%;
   height: $topbar-height;
   left: 0;
   position: absolute;
@@ -133,7 +134,6 @@ h1 {
   cursor: pointer;
   display: inline-block;
   flex-grow: 1;
-  font-size: 85%;
   list-item-style: none;
   padding: 0 5px;
   text-align: center;
