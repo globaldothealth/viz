@@ -9,6 +9,11 @@ const COLOR_MAP = [
   ['#edf91c', '> 2000'],
   ['cornflowerblue', 'New'],
 ];
+const TOGGLES = [
+  ['3D Map', '3d'],
+  ['Auto-drive', 'autodrive'],
+  ['Dark Theme', 'dark'],
+];
 
 // Globals
 let dataProvider;
@@ -135,6 +140,7 @@ function onAllDataFetched() {
 }
 
 function processHash(oldUrl, newUrl) {
+  console.log('Process hash');
   const base = newUrl.split('#')[0];
   if (!base.endsWith('/')) {
     base += '/';
@@ -166,10 +172,6 @@ function processHash(oldUrl, newUrl) {
     }
   }
   onThemeChanged();
-  // TODO: avoid a full reload
-  if (!!oldUrl) {
-    window.location.reload();
-  }
 }
 
 function onThemeChanged() {
@@ -178,11 +180,13 @@ function onThemeChanged() {
   map.setStyle(darkTheme);
 }
 
-function makeToggle(toggleId, name) {
+function makeToggle(toggleId, name, checked) {
   let container = document.createElement('div');
+  container.classList.add('toggle');
   let labelEl = document.createElement('label');
   labelEl.classList.add('switch');
-  labelEl.innerHTML = '<input type="checkbox" checked><span class="slider"></span>'
+  labelEl.innerHTML = '<input type="checkbox" id="' + toggleId + '"' +
+        (checked ? ' checked' : '') + '><span class="slider"></span>'
   container.appendChild(labelEl);
   let nameEl = document.createElement('span');
   nameEl.classList.add('switch-name');
@@ -191,13 +195,22 @@ function makeToggle(toggleId, name) {
   return container;
 }
 
+function onToggle(e) {
+  let hashes = [];
+  for (let i = 0; i < TOGGLES.length; i++) {
+    const toggleId = TOGGLES[i][1];
+    if (document.getElementById(toggleId).checked) {
+      hashes.push(toggleId);
+    }
+  }
+  const baseUrl = window.location.origin + window.location.pathname;
+  const hashList = hashes.join('/');
+  console.log('Setting URL to '+ baseUrl + (!!hashList ? '#' + hashList : ''));
+  window.location.href = baseUrl + (!!hashList ? '#' + hashList : '');
+}
+
 function setupTopBar() {
   const baseUrl = window.location.origin + '/';
-  const TOGGLES = [
-    ['3D Map', baseUrl + '#3d'],
-    ['Auto-drive', baseUrl + '#autodrive'],
-    ['Dark Theme', baseUrl + '#dark'],
-  ];
   const LINKS = [
     ['Map', baseUrl],
     ['Rank', baseUrl + 'rank'],
@@ -208,8 +221,10 @@ function setupTopBar() {
   topBar.innerHTML = '<ul></ul>';
 
   for (let i = 0; i < TOGGLES.length; i++) {
-    let item = makeToggle('test', TOGGLES[i][0]);
+    const toggleId = TOGGLES[i][1];
+    let item = makeToggle(toggleId, TOGGLES[i][0], false /* checked */);
     topBar.firstElementChild.appendChild(item);
+    document.getElementById(toggleId).onclick = onToggle;
   }
 
   for (let i = 0; i < LINKS.length; i++) {
@@ -235,10 +250,11 @@ function init() {
   map.init();
 
   window.onhashchange = function(h) {
-    processHash(h.oldURL, h.newURL);
+    console.log('Hash change ' + h.newURL);
+    // processHash(h.oldURL, h.newURL);
   }
   setupTopBar();
-  processHash('', window.location.href);
+  //processHash('', window.location.href);
   document.getElementById('sidebar-tab').onclick = toggleSideBar;
   document.getElementById('percapita').addEventListener('change', function(e) {
     updateCountryListCounts();

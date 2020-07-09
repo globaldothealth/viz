@@ -25,11 +25,10 @@ function clearFilter() {
 }
 
 function toggleSideBar() {
-  let pageWrapper = document.getElementById('page-wrapper');
-  const previouslyHidden = pageWrapper.classList.contains('sidebar-hidden');
+  const previouslyHidden = document.body.classList.contains('sidebar-hidden');
   document.getElementById('sidebar-tab-icon').textContent =
         previouslyHidden ? '◀' : '▶';
-  pageWrapper.classList.toggle('sidebar-hidden');
+  document.body.classList.toggle('sidebar-hidden');
 }
 
 function renderCountryList() {

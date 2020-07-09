@@ -103,14 +103,11 @@ h1 {
   color: #ececec;
 }
 
-#page-wrapper {
-  width: 100vw;
-}
-
 #topbar {
-  font-size: 85%;
+  font-size: 90%;
   height: $topbar-height;
   left: 0;
+  padding: 1ex 0;
   position: absolute;
   right: 0;
   top: 0;
@@ -462,7 +459,7 @@ div.mapboxgl-popup-content {
   left: $sidebar-margin-end;
 }
 
-#page-wrapper .chart {
+.chart {
   height: 300px;
   width: 400px;
 }
