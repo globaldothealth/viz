@@ -33,7 +33,7 @@ class DeployTest(base_test.BaseTest):
             "The deployed index file should contain analytics code")
 
         self.check(
-            self.target_file_contains("index.html", "<body>"),
+            self.target_file_contains("index.html", "<body"),
             "The deployed index file should contain the basic HTML")
 
         self.check(
@@ -45,7 +45,7 @@ class DeployTest(base_test.BaseTest):
                    "Javascript should get compiled as part of deployment.")
         self.check(not self.target_file_contains(JAVASCRIPT_BUNDLE, "debugger"),
                    "Compiled JS should not contain 'debugger' statements.")
-        self.check(not self.target_file_exists("js/healthmap.js"),
+        self.check(not self.target_file_exists("js/main.js"),
                    "Original Javascript files shouldn't be copied to "
                    "the target.")
 

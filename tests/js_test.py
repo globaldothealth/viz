@@ -4,13 +4,13 @@ import re
 
 SRC_FILES = [
     "js/graphing.js",
-    "js/healthmap.js",
+    "js/main.js",
 ]
 
 TEST_FILES = [
     "tests/base_test.js",
     "js/graphing_test.js",
-    "js/healthmap_test.js",
+    "js/main_test.js",
 ]
 
 TEMP_TEST_CONCATENATION = "js_test_temp.js"
