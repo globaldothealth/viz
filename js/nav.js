@@ -1,6 +1,6 @@
 function processHash(oldUrl, newUrl) {
   console.log('Process hash');
-  const baseUrl = window.location.origin + window.location.pathname;
+  let baseUrl = window.location.origin + window.location.pathname;
   if (!baseUrl.endsWith('/')) {
     baseUrl += '/';
   }
