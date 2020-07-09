@@ -100,7 +100,6 @@ input[type=text] {
 h1 {
   margin: 0;
   font-weight: 200;
-  color: #ececec;
 }
 
 #topbar {
@@ -112,10 +111,6 @@ h1 {
   right: 0;
   top: 0;
   z-index: 4;
-}
-
-.sidebar-hidden #topbar {
-  left: 0;
 }
 
 #topbar ul {

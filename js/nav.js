@@ -1,11 +1,11 @@
 function processHash(oldUrl, newUrl) {
   console.log('Process hash');
-  const base = newUrl.split('#')[0];
-  if (!base.endsWith('/')) {
-    base += '/';
+  const baseUrl = window.location.origin + window.location.pathname;
+  if (!baseUrl.endsWith('/')) {
+    baseUrl += '/';
   }
-  const oldHashes = !!oldUrl ? oldUrl.substring(base.length).split('/') : [];
-  const newHashes = newUrl.substring(base.length).split('/');
+  const oldHashes = !!oldUrl ? oldUrl.substring(baseUrl.length).split('/') : [];
+  const newHashes = newUrl.substring(baseUrl.length).split('/');
   darkTheme = false;
   if (newHashes.length > 0 || oldHashes.length > 0) {
     for (let i = 0; i < newHashes.length; i++) {
