@@ -17,6 +17,9 @@ let Viz = function() {
 
   /** @const @private {Completeness} */
   this.completeness_ = new Completeness(this.dataProvider_);
+
+  /** @const @private {TimeAnimation} */
+  this.timeAnimation_ = new TimeAnimation(this.dataProvider_);
 };
 
 /** @const */
@@ -24,11 +27,8 @@ Viz.LIVE_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
 // Globals
 let locationInfo = {};
-// A map from 2-letter ISO country codes to country objects.
-let countries = {};
 // A map from country names to country objects.
 let countriesByName = {};
-let dates = [];
 let map;
 let autoDriveMode = false;
 let threeDMode = false;
@@ -41,13 +41,6 @@ let animationIntervalId = 0;
 let currentTouchY = -1;
 
 let atomicFeaturesByDay = {};
-
-let timeControl;
-
-
-function setTimeControlLabel(date) {
-  document.getElementById('date').innerText = dates[date];
-}
 
 function fetchAboutPage() {
   fetch('https://raw.githubusercontent.com/ghdsi/covid-19/master/about.html')
@@ -102,27 +95,28 @@ function showDataAtDate(iso_date) {
   map.showDataAtDate(iso_date);
 }
 
-function onMapAnimationEnded() {
+Viz.prototype.onMapAnimationEnded = function() {
+  let self = this;
   if (autoDriveMode) {
     // Let the last frame last for a few seconds before restarting.
     setTimeout(function() {
-      toggleMapAnimation(onMapAnimationEnded);
+      this.timeAnimation_.toggleMapAnimation(self.onMapAnimationEnded.bind(self));
     }, 2000);
   }
 }
 
-function onAllDataFetched() {
-  dates = dates.sort();
+Viz.prototype.onAllDataFetched = function() {
   if (autoDriveMode) {
-    toggleMapAnimation(onMapAnimationEnded);
+    this.timeAnimation_.toggleMapAnimation(this.onMapAnimationEnded.bind(this));
   }
 }
 
 Viz.prototype.init = function() {
-  timeControl = document.getElementById('slider');
-  map = new DiseaseMap();
+  map = new DiseaseMap(this.dataProvider_);
   map.init();
+  this.timeAnimation_.init();
 
+  let self = this;
   window.onhashchange = function(h) {
     console.log('Hash change ' + h.newURL);
     // processHash(h.oldURL, h.newURL);
@@ -131,11 +125,10 @@ Viz.prototype.init = function() {
   //processHash('', window.location.href);
   document.getElementById('sidebar-tab').onclick = toggleSideBar;
   document.getElementById('percapita').addEventListener('change', function(e) {
-    updateCountryListCounts();
+    self.sideBar_.updateCountryListCounts();
   });
   toggleSideBar();
 
-  let self = this;
   // Once the initial data is here, fetch the daily slices. Start with the
   // newest.
   this.dataProvider_.fetchInitialData().
@@ -147,16 +140,18 @@ Viz.prototype.init = function() {
         map.flyToCountry(initialFlyTo);
       }
       self.sideBar_.renderCountryList();
-      // At this point the 'dates' array only contains the latest date.
+      // At this point the dates only contain the latest date.
       // Show the latest data when we have that before fetching older data.
-      map.showDataAtDate(dates[0]);
-      self.dataProvider_.fetchDailySlices(onAllDataFetched);
+      map.showDataAtDate(self.dataProvider_.getLatestDate());
+      self.dataProvider_.fetchDailySlices(
+        // Update the time control UI after each daily slice.
+        self.timeAnimation_.updateTimeControl.bind(self));
     });
   // Get the basic data about locations before we can start getting daily
   // slices.
 
   document.getElementById('spread').
-      addEventListener('click', toggleMapAnimation);
+      addEventListener('click', this.timeAnimation_.toggleMapAnimation);
   document.getElementById('playpause').setAttribute('src', 'img/play.svg');
   document.getElementById('credit').onclick = fetchAboutPage;
   window.setTimeout(updateData, Viz.LIVE_UPDATE_INTERVAL_MS);

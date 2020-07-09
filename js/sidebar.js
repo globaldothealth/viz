@@ -55,7 +55,7 @@ SideBar.prototype.renderCountryList = function() {
       continue;
     }
     const code = location['code'];
-    const country = countries[code];
+    const country = this.dataProvider_.getCountry(code);
     if (!country) {
       continue;
     }
@@ -101,7 +101,7 @@ SideBar.prototype.updateCountryListCounts = function() {
   for (let i = 0; i < countSpans.length; i++) {
     let span = countSpans[i];
     const code = span.parentNode.getAttribute('country');
-    const country = countries[code];
+    const country = this.dataProvider_.getCountry(code);
     let countToShow = this.dataProvider_.getLatestDataPerCountry()[code][0];
     if (document.getElementById('percapita').checked) {
       const population = country.getPopulation();

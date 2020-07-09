@@ -1,14 +1,17 @@
 /** @constructor */
-let DiseaseMap = function() {
+let DiseaseMap = function(dataProvider) {
 
   /** @private */
   this.mapboxMap_;
 
   /** @private @type {Object} */
   this.popup_;
+
+  /** @private @const {DataProvider} */
+  this.dataProvider_ = dataProvider;
 };
 
-DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrOGl1NGNldTAyYXYzZnBqcnBmN3RjanAifQ.H377pe4LPPcymeZkUBiBtg';
+DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrYmNndWlzajAxOGMzMG9jeXdna3Vkb3UifQ.9cb47tJBUSP3K6jhlMUExw';
 
 DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG = 0.4;
 
@@ -73,11 +76,10 @@ DiseaseMap.formatFeature = function(feature) {
 
 
 DiseaseMap.prototype.showDataAtLatestDate = function() {
-  if (!dates.length) {
+  if (!this.dataProvider_.getDates().length) {
     return;
   }
-  const latestDate = dates[dates.length - 1];
-  this.showDataAtDate(latestDate);
+  this.showDataAtDate(this.dataProvider_.getLatestDate());
 }
 
 DiseaseMap.prototype.showDataAtDate = function(isodate) {
@@ -109,11 +111,6 @@ DiseaseMap.prototype.init = function() {
   });
 
   let self = this;
-  timeControl.addEventListener('input', function() {
-    setTimeControlLabel(timeControl.value);
-    self.showDataAtDate(dates[timeControl.value]);
-  });
-
   this.mapboxMap_.on('load', function () {
     self.mapboxMap_.addSource('counts', {
       'type': 'geojson',
@@ -193,7 +190,7 @@ DiseaseMap.prototype.addLayer = function(map, id, featureProperty, circleColor) 
  * @param {string} code The code of the country to fly to.
  */
 DiseaseMap.prototype.flyToCountry = function(code) {
-  const country = countries[code];
+  const country = this.dataProvider_.getCountry(code);
   const dest = country.getMainBoundingBox();
   this.mapboxMap_.fitBounds([[dest[0], dest[1]], [dest[2], dest[3]]]);
 };
@@ -240,6 +237,7 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
         locationSpan.join(', ') + '</span></h3>';
 
   let relevantFeaturesByDay = {};
+  const dates = this.dataProvider_.getDates();
   for (let i = 0; i < dates.length; i++) {
     const date = dates[i];
     relevantFeaturesByDay[date] = [];

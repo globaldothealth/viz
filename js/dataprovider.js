@@ -7,6 +7,9 @@ let DataProvider = function(baseUrl) {
   /** @private {Array.<string>} */
   this.dates_ = [];
 
+  // A map from 2-letter ISO country codes to country objects.
+  this.countries_ = {};
+
   // An object mapping dates to JSON objects with the corresponding data.
   // for that day, grouped by country, province, or ungrouped (smallest
   // granularity level).
@@ -52,9 +55,9 @@ DataProvider.convertGeoJsonFeaturesToGraphData = function(datesToFeatures, prop)
   let dates = new Set();
   let geoids = new Set();
   for (let date in datesToFeatures) {
-    dates_.add(date);
+    dates.add(date);
   }
-  o['dates'] = Array.from(dates_).sort();
+  o['dates'] = Array.from(dates).sort();
 
   for (let i = 0; i < o['dates'].length; i++) {
     const date = o['dates'][i];
@@ -137,8 +140,19 @@ DataProvider.prototype.getAggregateData = function() {
   return this.aggregateData_;
 }
 
+/** @return {Array.<string>} */
+DataProvider.prototype.getDates = function() {
+  return this.dates_;
+};
+
+/** @return {string} */
 DataProvider.prototype.getLatestDate = function() {
-  return this.dates_[0];
+  return this.dates_[0] || '';
+};
+
+/** @return {Country} */
+DataProvider.prototype.getCountry = function(code) {
+  return this.countries_[code];
 };
 
 DataProvider.prototype.fetchInitialData = function() {
@@ -153,13 +167,17 @@ DataProvider.prototype.fetchInitialData = function() {
 };
 
 
-DataProvider.prototype.fetchDailySlices = function(callback) {
+DataProvider.prototype.fetchDailySlices = function(eachSliceCallback) {
   let dailyFetches = [];
   for (let i = 0; i < this.dataSliceFileNames_.length; i++) {
     dailyFetches.push(this.fetchDailySlice(
-        this.dataSliceFileNames_[i], false /* isNewest */));
+        this.dataSliceFileNames_[i], false /* isNewest */).then(
+            eachSliceCallback));
   }
-  Promise.all(dailyFetches).then(callback);
+  let self = this;
+  Promise.all(dailyFetches).then(function() {
+    self.dates_ = self.dates_.sort();
+  });
 };
 
 
@@ -194,6 +212,7 @@ DataProvider.prototype.fetchDataIndex = function() {
 
 
 DataProvider.prototype.fetchCountryNames = function() {
+  let self = this;
   return fetch('https://raw.githubusercontent.com/ghdsi/common/master/countries.data')
     .then(function(response) { return response.text(); })
     .then(function(responseText) {
@@ -211,7 +230,7 @@ DataProvider.prototype.fetchCountryNames = function() {
             bboxes.push(bbox);
         }
         let c = new Country(code, name, continent, population, bboxes);
-        countries[code] = c;
+        self.countries_[code] = c;
         countriesByName[name] = c;
       }
     });
@@ -317,15 +336,11 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
     countryFeatures[countryCode]['new'] += feature['properties']['new'];
   }
 
-  console.log('Adding date ' + currentDate);
   this.dates_.unshift(currentDate);
 
   this.countryFeaturesByDay_[currentDate] = countryFeatures;
   this.provinceFeaturesByDay_[currentDate] = provinceFeatures;
   atomicFeaturesByDay[currentDate] = features;
-  if (!!timeControl) {
-    updateTimeControl();
-  }
 };
 
 
