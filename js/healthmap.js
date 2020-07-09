@@ -134,12 +134,20 @@ function onAllDataFetched() {
   }
 }
 
-function processHash(url) {
-  const hash = url.split('#')[1] || '';
-  if (!!hash) {
-    let hashBrowns = hash.split('/');
-    for (let i = 0; i < hashBrowns.length; i++) {
-      const hashBrown = hashBrowns[i];
+function processHash(oldUrl, newUrl) {
+  const base = newUrl.split('#')[0];
+  if (!base.endsWith('/')) {
+    base += '/';
+  }
+  const oldHashes = !!oldUrl ? oldUrl.substring(base.length).split('/') : [];
+  const newHashes = newUrl.substring(base.length).split('/');
+  darkTheme = false;
+  if (newHashes.length > 0 || oldHashes.length > 0) {
+    for (let i = 0; i < newHashes.length; i++) {
+      let hashBrown = newHashes[i];
+      if (hashBrown.startsWith('#')) {
+        hashBrown = hashBrown.substring(1);
+      }
       if (hashBrown.toLowerCase() == 'autodrive') {
         autoDriveMode = true;
         document.body.classList.add('autodrive');
@@ -157,22 +165,53 @@ function processHash(url) {
       }
     }
   }
+  onThemeChanged();
+  // TODO: avoid a full reload
+  if (!!oldUrl) {
+    window.location.reload();
+  }
+}
+
+function onThemeChanged() {
   document.body.classList.add(darkTheme ? 'dark' : 'light');
+  document.body.classList.remove(darkTheme ? 'light' : 'dark');
+  map.setStyle(darkTheme);
+}
+
+function makeToggle(toggleId, name) {
+  let container = document.createElement('div');
+  let labelEl = document.createElement('label');
+  labelEl.classList.add('switch');
+  labelEl.innerHTML = '<input type="checkbox" checked><span class="slider"></span>'
+  container.appendChild(labelEl);
+  let nameEl = document.createElement('span');
+  nameEl.classList.add('switch-name');
+  nameEl.textContent = name;
+  container.appendChild(nameEl);
+  return container;
 }
 
 function setupTopBar() {
   const baseUrl = window.location.origin + '/';
-  const LINKS = [
-    ['Map', baseUrl],
+  const TOGGLES = [
     ['3D Map', baseUrl + '#3d'],
     ['Auto-drive', baseUrl + '#autodrive'],
     ['Dark Theme', baseUrl + '#dark'],
+  ];
+  const LINKS = [
+    ['Map', baseUrl],
     ['Rank', baseUrl + 'rank'],
     ['Sync', baseUrl + 'sync'],
     ['Completeness', baseUrl + 'completeness'],
   ];
   let topBar = document.getElementById('topbar');
   topBar.innerHTML = '<ul></ul>';
+
+  for (let i = 0; i < TOGGLES.length; i++) {
+    let item = makeToggle('test', TOGGLES[i][0]);
+    topBar.firstElementChild.appendChild(item);
+  }
+
   for (let i = 0; i < LINKS.length; i++) {
     let item = document.createElement('li');
     const url = window.location.href;
@@ -191,22 +230,20 @@ function setupTopBar() {
 function init() {
   dataProvider = new DataProvider(
       'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
+  timeControl = document.getElementById('slider');
+  map = new DiseaseMap();
+  map.init();
 
-  processHash(window.location.href);
-  window.onhashchange = function() {
-    // TODO: Handle this more gracefully without a full reload.
-    window.location.reload();
+  window.onhashchange = function(h) {
+    processHash(h.oldURL, h.newURL);
   }
   setupTopBar();
-  timeControl = document.getElementById('slider');
+  processHash('', window.location.href);
   document.getElementById('sidebar-tab').onclick = toggleSideBar;
   document.getElementById('percapita').addEventListener('change', function(e) {
     updateCountryListCounts();
   });
   toggleSideBar();
-
-  map = new DiseaseMap();
-  map.init();
 
   // Once the initial data is here, fetch the daily slices. Start with the
   // newest.

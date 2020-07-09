@@ -31,8 +31,6 @@ html {
 body {
   font-family: arial;
   line-height: 1.4;
-  color: $text-color-light;
-  background-color: $body-bgcolor;
 }
 
 a, a:visited {
@@ -72,10 +70,8 @@ input[type=text] {
   width: 100%;
   padding: .5rem 1rem;
   font-size: .9rem;
-  color: #ccc;
-  background-color: $sidebar-bgcolor-dark;
-  border-radius: $box-corner;
   border: 1px solid #666;
+  border-radius: $box-corner;
   &::-ms-expand {
     background-color: transparent;
     border: 0;
@@ -150,7 +146,6 @@ h1 {
 
 #sidebar {
   backdrop-filter: blur(.5rem);
-  background-color: $sidebar-bgcolor-dark;
   box-shadow: 0 -10px 12px -9px rgba(0,0,0,0.10);
   border-radius: 1ex;
   color: #aaa;
@@ -180,7 +175,6 @@ h1 {
 
 #sidebar-tab {
   align-items: center;
-  background-color: $sidebar-bgcolor-dark;
   border-top-right-radius: 7px;
   border-bottom-right-radius: 7px;
   cursor: pointer;
@@ -760,4 +754,5 @@ input[type=range]::-ms-tooltip {
 }
 
 @import 'media-queries';
+@import 'toggle';
 @import 'themed';

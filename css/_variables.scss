@@ -1,23 +1,25 @@
-// variables
+/* Colors */
 
-$sidebar-bgcolor-dark: rgba(59,59,59,.85);
-$sidebar-bgcolor-light: rgba(255,255,255,.8);
+$sidebar-bgcolor-light: rgba(255, 255, 255, .95);
+$sidebar-bgcolor-dark: rgba(59, 59, 59, .95);
 
-$body-bgcolor: #242424;
-$body-bgcolor-light: #fff;
+$body-bgcolor-light: #ecf0f3;
+$body-bgcolor-dark: #242424;
 
-$text-color-light: #fff;
-$text-color-dark: #333;
-
-$box-corner: .2rem;
-
-$mobile-map-height: 70vh;
+$text-color-light: #333;
+$text-color-dark: #fff;
 
 $legend-group-10: #67009E;
 $legend-group-100: #921694;
 $legend-group-500: #D34d60;
 $legend-group-2000: #FB9533;
 $legend-group-default: #EDF91C;
+
+/* Dimensions */
+
+$box-corner: .2rem;
+
+$mobile-map-height: 70vh;
 
 $breakpoint-portrait-sm-max: 568px;
 $breakpoint-portrait-md-min: $breakpoint-portrait-sm-max + 1px;

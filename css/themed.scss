@@ -2,12 +2,18 @@
 
 .light #topbar {
   background-color: $sidebar-bgcolor-light;
-  color: $text-color-dark;
 }
 
 body.light {
   background-color: $body-bgcolor-light;
+  color: $text-color-light;
 }
+
+body.dark {
+  background-color: $body-bgcolor-dark;
+  color: $text-color-dark;
+}
+
 .light #legend {
   color: #333;
   background-color: rgba(255,255,255,.8);
@@ -16,18 +22,25 @@ body.light {
     color: #333;
   }
 }
+
 .light #range-slider {
   background-color: rgba(225,225,225,.8);
   label span {
     color: #333;
   }
 }
-.light #sidebar {
+
+.light #sidebar,
+.light #sidebar-tab {
   background-color: $sidebar-bgcolor-light;
 }
 
+.dark #sidebar,
+.dark #sidebar-tab {
+  background-color: $sidebar-bgcolor-dark;
+}
+
 .light #sidebar-tab {
-  background-color: #fff;
   border: 1px solid #f0f0f0;
   border-left: 0;
 }
@@ -51,9 +64,18 @@ body.light {
   }
 }
 
+.dark input[type=text] {
+  color: #ccc;
+  background-color: $sidebar-bgcolor-dark;
+  border: 1px solid #ececec;
+  &::placeholder {
+    color: #999;
+  }
+}
+
 .light input[type=text] {
   color: #333;
-  background-color: #fff;
+  background-color: $sidebar-bgcolor-light;
   border: 1px solid #ececec;
   &::placeholder {
     color: #999;

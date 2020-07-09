@@ -84,15 +84,14 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   }
 };
 
-
 DiseaseMap.prototype.init = function() {
   mapboxgl.accessToken = DiseaseMap.MAPBOX_TOKEN;
   this.mapboxMap_ = new mapboxgl.Map({
     'container': 'map',
-    'style': darkTheme ? DiseaseMap.DARK_THEME : DiseaseMap.LIGHT_THEME,
     'center': [10, 0],
     'zoom': 1,
   }).addControl(new mapboxgl.NavigationControl());
+  this.setStyle(darkTheme);
   this.popup_ = new mapboxgl.Popup({
     'closeButton': false,
     'closeOnClick': true,
@@ -144,6 +143,11 @@ DiseaseMap.prototype.init = function() {
   showLegend();
 };
 
+
+DiseaseMap.prototype.setStyle = function(isDark) {
+  this.mapboxMap_.setStyle(isDark ?
+                           DiseaseMap.DARK_THEME : DiseaseMap.LIGHT_THEME);
+}
 
 DiseaseMap.prototype.addLayer = function(map, id, featureProperty, circleColor) {
   const type = threeDMode ? 'fill-extrusion' : 'circle';
