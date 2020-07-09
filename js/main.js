@@ -1,3 +1,9 @@
+let viz = null;
+
+function bootstrap() {
+  viz = new Viz();
+  viz.init();
+}
 
 /** @constructor */
 let Viz = function() { };
@@ -102,7 +108,7 @@ function onAllDataFetched() {
   }
 }
 
-function init() {
+Viz.prototype.init = function() {
   dataProvider = new DataProvider(
       'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
   timeControl = document.getElementById('slider');
@@ -164,4 +170,4 @@ function updateData() {
 if (typeof(globalThis) === 'undefined' && typeof(global) !== "undefined") {
     globalThis = global;
 }
-globalThis['init'] = init;
+globalThis['bootstrap'] = bootstrap;
