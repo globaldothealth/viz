@@ -8,8 +8,15 @@ function bootstrap() {
 /** @constructor */
 let Viz = function() {
 
-  /** @const {DataProvider} */
-  this.dataProvider_;
+  /** @const @private {DataProvider} */
+  this.dataProvider_ = new DataProvider(
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
+
+  /** @const @private {SideBar} */
+  this.sideBar_ = new SideBar(this.dataProvider_);
+
+  /** @const @private {Completeness} */
+  this.completeness_ = new Completeness(this.dataProvider_);
 };
 
 /** @const */
@@ -112,8 +119,6 @@ function onAllDataFetched() {
 }
 
 Viz.prototype.init = function() {
-  this.dataProvider_ = new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
   timeControl = document.getElementById('slider');
   map = new DiseaseMap();
   map.init();
@@ -130,21 +135,22 @@ Viz.prototype.init = function() {
   });
   toggleSideBar();
 
+  let self = this;
   // Once the initial data is here, fetch the daily slices. Start with the
   // newest.
-  dataProvider.fetchInitialData().
-      then(dataProvider.fetchLatestDailySlice()).
+  this.dataProvider_.fetchInitialData().
+      then(self.dataProvider_.fetchLatestDailySlice()).
       then(function() {
       // The page is now interactive and showing the latest data. If we need to
       // focus on a given country, do that now.
       if (!!initialFlyTo) {
         map.flyToCountry(initialFlyTo);
       }
-      renderCountryList();
+      self.sideBar_.renderCountryList();
       // At this point the 'dates' array only contains the latest date.
       // Show the latest data when we have that before fetching older data.
       map.showDataAtDate(dates[0]);
-      dataProvider.fetchDailySlices(onAllDataFetched);
+      self.dataProvider_.fetchDailySlices(onAllDataFetched);
     });
   // Get the basic data about locations before we can start getting daily
   // slices.
@@ -158,10 +164,10 @@ Viz.prototype.init = function() {
 
 function updateData() {
   console.log('Updating data...');
-  dataProvider.fetchLatestCounts().then(function() {
+  this.dataProvider_.fetchLatestCounts().then(function() {
     console.log('Updated latest counts.');
   });
-  dataProvider.fetchDataIndex().then(function() {
+  this.dataProvider_.fetchDataIndex().then(function() {
     console.log('Updated data index.');
   });
 

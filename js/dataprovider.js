@@ -1,11 +1,11 @@
 
 /** @constructor */
 let DataProvider = function(baseUrl) {
-  /**
-   * @const
-   * @private
-   */
+  /** @const @private {string} */
   this.baseUrl_ = baseUrl;
+
+  /** @private {Array.<string>} */
+  this.dates_ = [];
 
   // An object mapping dates to JSON objects with the corresponding data.
   // for that day, grouped by country, province, or ungrouped (smallest
@@ -52,9 +52,9 @@ DataProvider.convertGeoJsonFeaturesToGraphData = function(datesToFeatures, prop)
   let dates = new Set();
   let geoids = new Set();
   for (let date in datesToFeatures) {
-    dates.add(date);
+    dates_.add(date);
   }
-  o['dates'] = Array.from(dates).sort();
+  o['dates'] = Array.from(dates_).sort();
 
   for (let i = 0; i < o['dates'].length; i++) {
     const date = o['dates'][i];
@@ -136,6 +136,10 @@ DataProvider.prototype.getLatestAggregateData = function() {
 DataProvider.prototype.getAggregateData = function() {
   return this.aggregateData_;
 }
+
+DataProvider.prototype.getLatestDate = function() {
+  return this.dates_[0];
+};
 
 DataProvider.prototype.fetchInitialData = function() {
   const self = this;
@@ -313,7 +317,8 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
     countryFeatures[countryCode]['new'] += feature['properties']['new'];
   }
 
-  dates.unshift(currentDate);
+  console.log('Adding date ' + currentDate);
+  this.dates_.unshift(currentDate);
 
   this.countryFeaturesByDay_[currentDate] = countryFeatures;
   this.provinceFeaturesByDay_[currentDate] = provinceFeatures;

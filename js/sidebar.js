@@ -1,3 +1,8 @@
+let SideBar = function(dataProvider) {
+  /** @private @const {DataProvider} */
+  this.dataProvider_ = dataProvider;
+};
+
 // Filter list of locations
 function filterList() {
   let filter = document.getElementById('location-filter').value.toUpperCase();
@@ -31,9 +36,9 @@ function toggleSideBar() {
   document.body.classList.toggle('sidebar-hidden');
 }
 
-function renderCountryList() {
+SideBar.prototype.renderCountryList = function() {
   let countryList = document.getElementById('location-list');
-  const latestAggregateData = dataProvider.getLatestAggregateData();
+  const latestAggregateData = this.dataProvider_.getLatestAggregateData();
   if (!latestAggregateData) {
     console.log('No data for rendering country list');
     return;
@@ -86,18 +91,18 @@ function renderCountryList() {
     }
   }
   if (!!countryList) {
-    updateCountryListCounts();
+    this.updateCountryListCounts();
   }
 }
 
-function updateCountryListCounts() {
+SideBar.prototype.updateCountryListCounts = function() {
   const list = document.getElementById('location-list');
   let countSpans = list.getElementsByClassName('num');
   for (let i = 0; i < countSpans.length; i++) {
     let span = countSpans[i];
     const code = span.parentNode.getAttribute('country');
     const country = countries[code];
-    let countToShow = dataProvider.getLatestDataPerCountry()[code][0];
+    let countToShow = this.dataProvider_.getLatestDataPerCountry()[code][0];
     if (document.getElementById('percapita').checked) {
       const population = country.getPopulation();
       if (!!population) {
@@ -111,10 +116,10 @@ function updateCountryListCounts() {
     }
     span.textContent = countToShow;
   }
-  sortCountryList();
+  this.sortCountryList();
 };
 
-function sortCountryList() {
+SideBar.prototype.sortCountryList = function() {
   const list = document.getElementById('location-list');
   let items = list.children;
   let itemsArray = [];
