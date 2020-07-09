@@ -143,6 +143,7 @@ function init() {
   document.getElementById('spread').
       addEventListener('click', toggleMapAnimation);
   document.getElementById('playpause').setAttribute('src', 'img/play.svg');
+  document.getElementById('credit').onclick = fetchAboutPage;
   window.setTimeout(updateData, Viz.LIVE_UPDATE_INTERVAL_MS);
 }
 
@@ -163,5 +164,4 @@ function updateData() {
 if (typeof(globalThis) === 'undefined' && typeof(global) !== "undefined") {
     globalThis = global;
 }
-globalThis['fetchAboutPage'] = fetchAboutPage;
 globalThis['init'] = init;
