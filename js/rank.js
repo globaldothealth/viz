@@ -1,5 +1,10 @@
+/** @constructor */
+let Rank = function(dataProvider) {
+  /** @private @const {DataProvider} */
+  this.dataProvider_ = dataProvider;
+};
 
-const CONTINENT_COLORS = {
+Rank.CONTINENT_COLORS = {
   'O': '#b600ff',  // purple
   'S': '#0c1fb4',  // dark blue
   'N': '#0060ff',  // blue
@@ -13,14 +18,21 @@ let maxGraphedValue = 0;
 let maxWidth = 0;
 let showDeathCounts = false;
 
+let rank;
 function rankInit() {
-  dataProvider = new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
-  dataProvider.fetchCountryNames().
-      then(dataProvider.fetchJhuData.bind(dataProvider)).
-      then(showRankPage);
-  setupTopBar();
+  rank = new Rank(new DataProvider(
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
+  rank.init();
 }
+
+Rank.prototype.init = function() {
+  const dp = this.dataProvider_;
+  let self = this;
+  dp.fetchCountryNames().
+      then(dp.fetchJhuData.bind(dp)).
+      then(self.showRankPage);
+  setupTopBar();
+};
 
 function onToggleClicked(e) {
   let toggle = document.getElementById('toggle');
@@ -51,18 +63,19 @@ function onModeToggled() {
   showRankPageAtCurrentDate();
 }
 
-function showRankPage() {
+Rank.prototype.showRankPage = function() {
   let container = document.getElementById('data');
   container.innerHTML = '';
   maxWidth = Math.floor(container.clientWidth);
 
   let i = 0;
+  let countries = this.dataProvider_.getCountries();
   for (let code in countries) {
     const c = countries[code];
     let el = document.createElement('div');
     el.setAttribute('id', code);
     el.classList.add('bar');
-    const color = CONTINENT_COLORS[c.getContinent()];
+    const color = Rank.CONTINENT_COLORS[c.getContinent()];
     el.style.backgroundColor = color;
     el.style.color = '#fff';
     let startSpan = document.createElement('span');

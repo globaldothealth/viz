@@ -155,6 +155,11 @@ DataProvider.prototype.getCountry = function(code) {
   return this.countries_[code];
 };
 
+/** @return {Object} */
+DataProvider.prototype.getCountries = function() {
+  return this.countries_;
+};
+
 DataProvider.prototype.fetchInitialData = function() {
   const self = this;
   return Promise.all([

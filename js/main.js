@@ -18,6 +18,9 @@ let Viz = function() {
   /** @const @private {Completeness} */
   this.completeness_ = new Completeness(this.dataProvider_);
 
+  /** @const @private {Rank} */
+  this.rank_ = new Rank(this.dataProvider_);
+
   /** @const @private {TimeAnimation} */
   this.timeAnimation_ = new TimeAnimation(this.dataProvider_);
 };
