@@ -6,13 +6,16 @@ function bootstrap() {
 }
 
 /** @constructor */
-let Viz = function() { };
+let Viz = function() {
+
+  /** @const {DataProvider} */
+  this.dataProvider_;
+};
 
 /** @const */
 Viz.LIVE_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
 // Globals
-let dataProvider;
 let locationInfo = {};
 // A map from 2-letter ISO country codes to country objects.
 let countries = {};
@@ -109,7 +112,7 @@ function onAllDataFetched() {
 }
 
 Viz.prototype.init = function() {
-  dataProvider = new DataProvider(
+  this.dataProvider_ = new DataProvider(
       'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
   timeControl = document.getElementById('slider');
   map = new DiseaseMap();
