@@ -217,7 +217,7 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
     location[2] = this.dataProvider_.getCountry(location[2]).getName();
   }
   const countryName = location[2];
-  const country = countriesByName[countryName];
+  const country = this.dataProvider_.getCountryByName(countryName);
 
   // Remove empty strings
   location = location.filter(function (el) { return el != ''; });

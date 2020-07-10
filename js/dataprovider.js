@@ -7,8 +7,17 @@ let DataProvider = function(baseUrl) {
   /** @private {!Set.<string>} */
   this.dates_ = new Set();
 
-  // A map from 2-letter ISO country codes to country objects.
+  /**
+   * A map from 2-letter ISO country codes to country objects.
+   * @private {Object}
+   */
   this.countries_ = {};
+
+  /**
+   * A map from country names to country objects.
+   * @private {Object}
+   */
+  this.countriesByName_ = {};
 
   // An object mapping dates to JSON objects with the corresponding data.
   // for that day, grouped by country, province, or ungrouped (smallest
@@ -160,6 +169,11 @@ DataProvider.prototype.getCountry = function(code) {
   return this.countries_[code];
 };
 
+/** @return {Country} */
+DataProvider.prototype.getCountryByName = function(name) {
+  return this.countriesByName_[name];
+};
+
 /** @return {Object} */
 DataProvider.prototype.getCountries = function() {
   return this.countries_;
@@ -239,7 +253,7 @@ DataProvider.prototype.fetchCountryNames = function() {
         }
         let c = new Country(code, name, continent, population, bboxes);
         self.countries_[code] = c;
-        countriesByName[name] = c;
+        self.countriesByName_[name] = c;
       }
     });
 };

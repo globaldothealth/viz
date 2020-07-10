@@ -33,8 +33,6 @@ Viz.LIVE_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
 // Globals
 let locationInfo = {};
-// A map from country names to country objects.
-let countriesByName = {};
 let autoDriveMode = false;
 let twoDMode = false;
 let darkTheme = false;
