@@ -13,6 +13,7 @@ def compile_js(quiet=False):
         "--compilation_level ADVANCED_OPTIMIZATIONS "
         "" + ("--formatting=pretty_print " if DEBUG else "") + ""
         "--js js/util.js "
+        "--js js/view.js "
         "--js js/completeness.js "
         "--js js/country.js "
         "--js js/dataprovider.js "

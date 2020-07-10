@@ -1,6 +1,6 @@
 let completeness;
 
-/** @constructor */
+/** @constructor @implements {View} */
 let Completeness = function(dataProvider, nav) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
