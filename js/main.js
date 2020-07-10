@@ -123,7 +123,7 @@ Viz.prototype.init = function() {
   let self = this;
   window.onhashchange = function(h) {
     console.log('Hash change ' + h.newURL);
-    // processHash(h.oldURL, h.newURL);
+    processHash(h.oldURL, h.newURL);
   }
   setupTopBar();
   //processHash('', window.location.href);

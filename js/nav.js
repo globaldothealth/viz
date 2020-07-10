@@ -81,6 +81,7 @@ function onToggle(e) {
 }
 
 function setupTopBar() {
+  processHash('', window.location.href);
   const baseUrl = window.location.origin + '/';
   const LINKS = [
     ['Map', baseUrl],
