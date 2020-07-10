@@ -18,8 +18,8 @@ let Viz = function() {
   /** @const @private {Nav} */
   this.nav_ = new Nav();
 
-  /** @const @private {Completeness} */
-  this.completeness_ = new Completeness(this.dataProvider_, this.nav_);
+  /** @const @private {CompletenessView} */
+  this.completeness_ = new CompletenessView(this.dataProvider_, this.nav_);
 
   /** @const @private {RankView} */
   this.rank_ = new RankView(this.dataProvider_, this.nav_);

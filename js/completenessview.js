@@ -1,7 +1,7 @@
 let completeness;
 
 /** @constructor @implements {View} */
-let Completeness = function(dataProvider, nav) {
+let CompletenessView = function(dataProvider, nav) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
 
@@ -9,7 +9,7 @@ let Completeness = function(dataProvider, nav) {
   this.nav_ = new Nav();
 };
 
-Completeness.prototype.init = function() {
+CompletenessView.prototype.init = function() {
   let self = this;
   this.dataProvider_.fetchInitialData().then(function() {
     // We only need the latest daily slice for the data completeness page.
@@ -19,7 +19,7 @@ Completeness.prototype.init = function() {
   this.nav_.setupTopBar();
 };
 
-Completeness.prototype.renderCompletenessPage = function() {
+CompletenessView.prototype.renderCompletenessPage = function() {
   const latestCountryFeatures = this.dataProvider_.getCountryFeaturesForDay(
       this.dataProvider_.getLatestDate());
   console.log(latestCountryFeatures);
@@ -82,7 +82,7 @@ Completeness.prototype.renderCompletenessPage = function() {
 };
 
 function completenessInit() {
-  completeness = new Completeness(new DataProvider(
+  completeness = new CompletenessView(new DataProvider(
       'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), new Nav());
   completeness.init();
 }
