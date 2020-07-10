@@ -128,8 +128,8 @@ DiseaseMap.prototype.init = function() {
       }
     }
 
-    self.addLayer(map, 'totals', 'total', circleColorForTotals);
-    //self.addLayer(map, 'daily', 'new', 'cornflowerblue');
+    self.addLayer('totals', 'total', circleColorForTotals);
+    //self.addLayer('daily', 'new', 'cornflowerblue');
 
     // If we're not showing any data yet, let's fix that.
     self.showDataAtLatestDate();
@@ -157,7 +157,7 @@ DiseaseMap.prototype.setStyle = function(isDark) {
                            DiseaseMap.DARK_THEME : DiseaseMap.LIGHT_THEME);
 }
 
-DiseaseMap.prototype.addLayer = function(map, id, featureProperty, circleColor) {
+DiseaseMap.prototype.addLayer = function(id, featureProperty, circleColor) {
   const type = twoDMode ? 'circle ' : 'fill-extrusion';
   // const type = threeDMode ? 'fill' : 'circle';
   let paint = {
@@ -195,7 +195,6 @@ DiseaseMap.prototype.flyToCountry = function(code) {
   const dest = country.getMainBoundingBox();
   this.mapboxMap_.fitBounds([[dest[0], dest[1]], [dest[2], dest[3]]]);
 };
-
 
 DiseaseMap.prototype.showPopupForEvent = function(e) {
   if (!e['features'].length) {

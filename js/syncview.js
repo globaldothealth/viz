@@ -1,17 +1,13 @@
 /** @constructor */
-let SyncView = function(dataProvider, nav) {
+let SyncView = function(dataProvider) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
-
-  /** @const @private {Nav} */
-  this.nav_ = new Nav();
 };
 
 const STARTING_CASE_COUNT = 10000;
 
 SyncView.prototype.init = function() {
   this.fetchData();
-  this.nav_.setupTopBar();
 };
 
 SyncView.prototype.fetchData = function() {
@@ -101,7 +97,7 @@ SyncView.prototype.onThemeChanged = function(darkTheme) { };
 let sync;
 function syncInit() {
   sync = new SyncView(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), new Nav());
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
   sync.init();
 }
 

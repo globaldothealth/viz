@@ -1,10 +1,7 @@
 /** @constructor @implements {View} */
-let RankView = function(dataProvider, nav) {
+let RankView = function(dataProvider) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
-
-  /** @const @private {Nav} */
-  this.nav_ = new Nav();
 };
 
 RankView.CONTINENT_COLORS = {
@@ -24,13 +21,12 @@ let showDeathCounts = false;
 let rank;
 function rankInit() {
   rank = new RankView(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), new Nav());
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
   rank.init();
 }
 
 RankView.prototype.init = function() {
   this.fetchData();
-  this.nav_.setupTopBar();
 };
 
 RankView.prototype.fetchData = function() {

@@ -7,10 +7,10 @@ let CaseMapView = function(dataProvider) {
   this.map_ = new DiseaseMap(this.dataProvider_);
 
   /** @const @private {TimeAnimation} */
-  this.timeAnimation_ = new TimeAnimation(this.dataProvider_);
+  this.timeAnimation_ = new TimeAnimation(this.dataProvider_, this);
 
   /** @const @private {SideBar} */
-  this.sideBar_ = new SideBar(this.dataProvider_);
+  this.sideBar_ = new SideBar(this.dataProvider_, this);
 };
 
 CaseMapView.prototype.init = function() {
@@ -21,6 +21,7 @@ CaseMapView.prototype.init = function() {
 
   this.map_.init();
   this.fetchData();
+  let self = this;
   document.getElementById('sidebar-tab').onclick = toggleSideBar;
   document.getElementById('percapita').addEventListener('change', function(e) {
     self.sideBar_.updateCountryListCounts();
@@ -39,7 +40,7 @@ CaseMapView.prototype.fetchData = function() {
       // The page is now interactive and showing the latest data. If we need to
       // focus on a given country, do that now.
       if (!!initialFlyTo) {
-        map.flyToCountry(initialFlyTo);
+        self.flyToCountry(initialFlyTo);
       }
       self.sideBar_.renderCountryList();
       // At this point the dates only contain the latest date.
@@ -55,9 +56,29 @@ CaseMapView.prototype.fetchData = function() {
 
 };
 
+/** @param {string} date */
+CaseMapView.prototype.onTimeChanged = function(date) {
+  this.map_.showDataAtDate(date);
+};
+
 CaseMapView.prototype.render = function() {
 };
 
+
+CaseMapView.prototype.flyToCountry = function(code) {
+  this.map_.flyToCountry(initialFlyTo);
+};
+
+CaseMapView.prototype.onMapAnimationEnded = function() {
+  let self = this;
+  let ta = this.timeAnimation_;
+  if (autoDriveMode) {
+    // Let the last frame last for a few seconds before restarting.
+    setTimeout(function() {
+      ta.toggleMapAnimation(self.onMapAnimationEnded.bind(self));
+    }, 2000);
+  }
+}
 
 CaseMapView.prototype.onThemeChanged = function(darkTheme) {
   this.map_.setStyle(darkTheme);

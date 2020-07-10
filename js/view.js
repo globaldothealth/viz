@@ -1,5 +1,5 @@
 /** @interface */
-let View = function(dataProvider, nav) {};
+let View = function(dataProvider) {};
 
 View.prototype.fetchData = function() { };
 

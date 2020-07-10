@@ -16,16 +16,16 @@ let Viz = function() {
   this.nav_ = new Nav(this);
 
   /** @const @private {CaseMapView} */
-  this.caseMapView_ = new CaseMapView(this.dataProvider_, this.nav_);
+  this.caseMapView_ = new CaseMapView(this.dataProvider_);
 
   /** @const @private {CompletenessView} */
-  this.completeness_ = new CompletenessView(this.dataProvider_, this.nav_);
+  this.completeness_ = new CompletenessView(this.dataProvider_);
 
   /** @const @private {RankView} */
-  this.rank_ = new RankView(this.dataProvider_, this.nav_);
+  this.rank_ = new RankView(this.dataProvider_);
 
   /** @const @private {SyncView} */
-  this.sync_ = new SyncView(this.dataProvider_, this.nav_);
+  this.sync_ = new SyncView(this.dataProvider_);
 };
 
 /** @const */
@@ -84,38 +84,15 @@ function handleHideModal() {
   }, 400);
 }
 
-function flyToCountry(event) {
-  let target = event.target;
-  while (!target.getAttribute('country')) {
-    target = target.parentNode;
-  }
-  const code = target.getAttribute('country');
-  if (!code) {
-    return;
-  }
-  map.flyToCountry(code);
-}
+// function showDataAtDate(iso_date) {
+  // map.showDataAtDate(iso_date);
+// }
 
-function showDataAtDate(iso_date) {
-  map.showDataAtDate(iso_date);
-}
-
-Viz.prototype.onMapAnimationEnded = function() {
-  let self = this;
-  let ta = this.timeAnimation_;
-  if (autoDriveMode) {
-    // Let the last frame last for a few seconds before restarting.
-    setTimeout(function() {
-      ta.toggleMapAnimation(self.onMapAnimationEnded.bind(self));
-    }, 2000);
-  }
-}
-
-Viz.prototype.onAllDataFetched = function() {
-  if (autoDriveMode) {
-    this.timeAnimation_.toggleMapAnimation(this.onMapAnimationEnded.bind(this));
-  }
-}
+// Viz.prototype.onAllDataFetched = function() {
+  // if (autoDriveMode) {
+    // this.timeAnimation_.toggleMapAnimation(this.onMapAnimationEnded.bind(this));
+  // }
+// }
 
 Viz.prototype.init = function() {
 
