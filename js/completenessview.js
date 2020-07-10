@@ -1,25 +1,25 @@
 let completeness;
 
-/** @constructor */
-let Completeness = function(dataProvider, nav) {
+/** @constructor @implements {View} */
+let CompletenessView = function(dataProvider) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
-
-  /** @const @private {Nav} */
-  this.nav_ = new Nav();
 };
 
-Completeness.prototype.init = function() {
+CompletenessView.prototype.init = function() {
+  this.fetchData();
+};
+
+CompletenessView.prototype.fetchData = function() {
   let self = this;
   this.dataProvider_.fetchInitialData().then(function() {
     // We only need the latest daily slice for the data completeness page.
     self.dataProvider_.fetchLatestDailySlice().then(
-        self.renderCompletenessPage.bind(self));
+        self.render.bind(self));
   });
-  this.nav_.setupTopBar();
 };
 
-Completeness.prototype.renderCompletenessPage = function() {
+CompletenessView.prototype.render = function() {
   const latestCountryFeatures = this.dataProvider_.getCountryFeaturesForDay(
       this.dataProvider_.getLatestDate());
   console.log(latestCountryFeatures);
@@ -82,9 +82,11 @@ Completeness.prototype.renderCompletenessPage = function() {
 };
 
 function completenessInit() {
-  completeness = new Completeness(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), new Nav());
+  completeness = new CompletenessView(new DataProvider(
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
   completeness.init();
 }
+
+CompletenessView.prototype.onThemeChanged = function(darkTheme) { };
 
 globalThis['completenessInit'] = completenessInit;

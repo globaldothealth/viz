@@ -1,24 +1,24 @@
 /** @constructor */
-let Sync = function(dataProvider, nav) {
+let SyncView = function(dataProvider) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
-
-  /** @const @private {Nav} */
-  this.nav_ = new Nav();
 };
 
 const STARTING_CASE_COUNT = 10000;
 
-Sync.prototype.init = function() {
+SyncView.prototype.init = function() {
+  this.fetchData();
+};
+
+SyncView.prototype.fetchData = function() {
   let self = this;
   const dp = this.dataProvider_;
   dp.fetchCountryNames().
       then(dp.fetchJhuData.bind(dp)).
-      then(self.showSyncPage.bind(self));
-  this.nav_.setupTopBar();
+      then(self.render.bind(self));
 };
 
-Sync.prototype.showSyncPage = function() {
+SyncView.prototype.render = function() {
   const aggregates = this.dataProvider_.getAggregateData();
   let dates = Object.keys(aggregates);
   // Sort in chronological order.
@@ -92,10 +92,12 @@ Sync.prototype.showSyncPage = function() {
   new Chart(ctx, cfg);
 }
 
+SyncView.prototype.onThemeChanged = function(darkTheme) { };
+
 let sync;
 function syncInit() {
-  sync = new Sync(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), new Nav());
+  sync = new SyncView(new DataProvider(
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
   sync.init();
 }
 

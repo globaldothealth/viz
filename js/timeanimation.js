@@ -1,7 +1,10 @@
 /** @constructor */
-let TimeAnimation = function(dataProvider) {
+let TimeAnimation = function(dataProvider, caseMapView) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
+
+  /** @private @const {CaseMapView} */
+  this.caseMapView_ = caseMapView;
 
   /** @private {Element} */
   this.timeControl_ = null;
@@ -12,10 +15,13 @@ TimeAnimation.ANIMATION_FRAME_DURATION_MS = 300;
 
 TimeAnimation.prototype.init = function() {
   this.timeControl_ = document.getElementById('slider');
+  let playEl = document.getElementById('playpause');
+  playEl.setAttribute('src', 'img/play.svg');
+  playEl.onclick = this.toggleMapAnimation.bind(this);
   let self = this;
   this.timeControl_.addEventListener('input', function() {
     self.setTimeControlLabel(self.timeControl_.value);
-    map.showDataAtDate(self.dataProvider_.getDates()[self.timeControl_.value]);
+    self.caseMapView_.onTimeChanged(self.dataProvider_.getDates()[self.timeControl_.value]);
   });
 };
 
@@ -48,7 +54,7 @@ TimeAnimation.prototype.toggleMapAnimation = function(animationEndedCallback) {
     let i = 0;
     animationIntervalId = setInterval(function() {
       self.timeControl_.value = i;
-      showDataAtDate(dates[i]);
+      self.caseMapView_.onTimeChanged(dates[i]);
       self.setTimeControlLabel(i);
       i++;
       if (i === dates.length) {

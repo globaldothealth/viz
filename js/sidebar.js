@@ -1,7 +1,10 @@
 /** @constructor */
-let SideBar = function(dataProvider) {
+let SideBar = function(dataProvider, caseMapView) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
+
+  /** @const @private {CaseMapView} */
+  this.caseMapView_ = caseMapView;
 };
 
 // Filter list of locations
@@ -35,6 +38,18 @@ function toggleSideBar() {
   document.getElementById('sidebar-tab-icon').textContent =
         previouslyHidden ? '◀' : '▶';
   document.body.classList.toggle('sidebar-hidden');
+}
+
+SideBar.prototype.flyToCountry = function(event) {
+  let target = event.target;
+  while (!target.getAttribute('country')) {
+    target = target.parentNode;
+  }
+  const code = target.getAttribute('country');
+  if (!code) {
+    return;
+  }
+  this.caseMapView_.flyToCountry(code);
 }
 
 SideBar.prototype.renderCountryList = function() {
@@ -83,7 +98,7 @@ SideBar.prototype.renderCountryList = function() {
       let item = document.createElement('li');
       let button = document.createElement('button');
       button.setAttribute('country', code);
-      button.onclick = flyToCountry;
+      button.onclick = this.flyToCountry.bind(this);
       button.innerHTML = '<span class="label">' + name + '</span>' +
           '<span class="num legend-group-' + legendGroup +
           '"></span>';

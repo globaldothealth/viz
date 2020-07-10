@@ -1,13 +1,10 @@
-/** @constructor */
-let Rank = function(dataProvider, nav) {
+/** @constructor @implements {View} */
+let RankView = function(dataProvider) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
-
-  /** @const @private {Nav} */
-  this.nav_ = new Nav();
 };
 
-Rank.CONTINENT_COLORS = {
+RankView.CONTINENT_COLORS = {
   'O': '#b600ff',  // purple
   'S': '#0c1fb4',  // dark blue
   'N': '#0060ff',  // blue
@@ -23,21 +20,24 @@ let showDeathCounts = false;
 
 let rank;
 function rankInit() {
-  rank = new Rank(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), new Nav());
+  rank = new RankView(new DataProvider(
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
   rank.init();
 }
 
-Rank.prototype.init = function() {
+RankView.prototype.init = function() {
+  this.fetchData();
+};
+
+RankView.prototype.fetchData = function() {
   const dp = this.dataProvider_;
   let self = this;
   dp.fetchCountryNames().
       then(dp.fetchJhuData.bind(dp)).
-      then(self.showRankPage.bind(self));
-  this.nav_.setupTopBar();
+      then(self.render.bind(self));
 };
 
-Rank.prototype.onToggleClicked = function(e) {
+RankView.prototype.onToggleClicked = function(e) {
   let toggle = document.getElementById('toggle');
   if (toggle.firstChild == e.target) {
     toggle.firstChild.classList.add('active');
@@ -51,7 +51,7 @@ Rank.prototype.onToggleClicked = function(e) {
   this.onModeToggled();
 }
 
-Rank.prototype.onModeToggled = function() {
+RankView.prototype.onModeToggled = function() {
   const aggregates = this.dataProvider_.getAggregateData();
   const key = showDeathCounts ? 'deaths' : 'cum_conf';
   let maxValue = 0;
@@ -66,7 +66,7 @@ Rank.prototype.onModeToggled = function() {
   this.showRankPageAtCurrentDate();
 }
 
-Rank.prototype.showRankPage = function() {
+RankView.prototype.render = function() {
   let container = document.getElementById('data');
   container.innerHTML = '';
   maxWidth = Math.floor(container.clientWidth);
@@ -78,7 +78,7 @@ Rank.prototype.showRankPage = function() {
     let el = document.createElement('div');
     el.setAttribute('id', code);
     el.classList.add('bar');
-    const color = Rank.CONTINENT_COLORS[c.getContinent()];
+    const color = RankView.CONTINENT_COLORS[c.getContinent()];
     el.style.backgroundColor = color;
     el.style.color = '#fff';
     let startSpan = document.createElement('span');
@@ -117,17 +117,17 @@ Rank.prototype.showRankPage = function() {
   toggle.lastChild.onclick = this.onToggleClicked.bind(this);
 }
 
-Rank.prototype.onRankTouchMove = function(delta) {
+RankView.prototype.onRankTouchMove = function(delta) {
   const points_per_step = 150;
   this.rankAdvance(delta > 0, Math.floor(Math.abs(delta / points_per_step)));
 }
 
-Rank.prototype.onRankWheel = function(e) {
+RankView.prototype.onRankWheel = function(e) {
   e.preventDefault();
   this.rankAdvance(e.deltaY > 0, 1);
 }
 
-Rank.prototype.rankAdvance = function(forward, steps) {
+RankView.prototype.rankAdvance = function(forward, steps) {
   let newDateIndex = currentDateIndex + (forward ? steps : -steps);
   newDateIndex = Math.max(newDateIndex, 0);
   newDateIndex = Math.min(newDateIndex,
@@ -136,7 +136,7 @@ Rank.prototype.rankAdvance = function(forward, steps) {
   this.showRankPageAtCurrentDate();
 }
 
-Rank.prototype.showRankPageAtCurrentDate = function() {
+RankView.prototype.showRankPageAtCurrentDate = function() {
   const date = this.dataProvider_.getDates()[currentDateIndex];
   document.getElementById('title').textContent = date;
   const data = this.dataProvider_.getAggregateData()[date];
@@ -176,5 +176,7 @@ Rank.prototype.showRankPageAtCurrentDate = function() {
     const item = data[i];
   }
 }
+
+RankView.prototype.onThemeChanged = function(darkTheme) { };
 
 globalThis['rankInit'] = rankInit;
