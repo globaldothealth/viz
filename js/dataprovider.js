@@ -175,9 +175,9 @@ DataProvider.prototype.fetchInitialData = function() {
 DataProvider.prototype.fetchDailySlices = function(eachSliceCallback) {
   let dailyFetches = [];
   for (let i = 0; i < this.dataSliceFileNames_.length; i++) {
-    dailyFetches.push(this.fetchDailySlice(
-        this.dataSliceFileNames_[i], false /* isNewest */).then(
-            eachSliceCallback));
+    let thisPromise = this.fetchDailySlice(
+        this.dataSliceFileNames_[i], false /* isNewest */);
+    dailyFetches.push(thisPromise.then(eachSliceCallback));
   }
   let self = this;
   Promise.all(dailyFetches).then(function() {

@@ -134,8 +134,9 @@ Viz.prototype.init = function() {
 
   // Once the initial data is here, fetch the daily slices. Start with the
   // newest.
+  let dp = this.dataProvider_;
   this.dataProvider_.fetchInitialData().
-      then(self.dataProvider_.fetchLatestDailySlice()).
+      then(dp.fetchLatestDailySlice.bind(dp)).
       then(function() {
       // The page is now interactive and showing the latest data. If we need to
       // focus on a given country, do that now.
@@ -146,9 +147,9 @@ Viz.prototype.init = function() {
       // At this point the dates only contain the latest date.
       // Show the latest data when we have that before fetching older data.
       map.showDataAtDate(self.dataProvider_.getLatestDate());
-      self.dataProvider_.fetchDailySlices(
+      dp.fetchDailySlices(
         // Update the time control UI after each daily slice.
-        self.timeAnimation_.updateTimeControl.bind(self));
+        self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_));
     });
   // Get the basic data about locations before we can start getting daily
   // slices.

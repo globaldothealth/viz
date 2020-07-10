@@ -253,7 +253,8 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   container.classList.add('chart');
   Graphing.makeCasesGraph(
       DataProvider.convertGeoJsonFeaturesToGraphData(
-          relevantFeaturesByDay, 'total'), false /* average */, container);
+          relevantFeaturesByDay, 'total'), false /* average */, container,
+      countryName);
   content.appendChild(container);
 
   // Ensure that if the map is zoomed out such that multiple

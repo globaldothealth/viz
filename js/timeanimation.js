@@ -2,17 +2,20 @@
 let TimeAnimation = function(dataProvider) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
+
+  this.timeControl_;
 };
 
 /** @const */
 TimeAnimation.ANIMATION_FRAME_DURATION_MS = 300;
 
 TimeAnimation.prototype.init = function() {
-  let timeControl = document.getElementById('slider');
+  this.timeControl_ = document.getElementById('slider');
+  console.log(this.timeControl_);
   let self = this;
-  timeControl.addEventListener('input', function() {
-    self.setTimeControlLabel(timeControl.value);
-    map.showDataAtDate(this.dataProvider.getDates()[timeControl.value]);
+  this.timeControl_.addEventListener('input', function() {
+    self.setTimeControlLabel(self.timeControl_.value);
+    map.showDataAtDate(this.dataProvider.getDates()[this.timeControl_.value]);
   });
 };
 
@@ -20,14 +23,14 @@ TimeAnimation.prototype.updateTimeControl = function() {
   const dateCount = this.dataProvider_.getDates().length;
   // There's no point in showing the time control if we only have data for one
   // date.
-  if (dateCount < 2) {
+  if (dateCount < 2 || !this.timeControl_) {
     return;
   }
   document.getElementById('range-slider').style.display = 'flex';
-  timeControl.min = 0;
-  timeControl.max = dateCount - 1;
+  this.timeControl_.min = 0;
+  this.timeControl_.max = dateCount - 1;
   // Keep the slider at max value.
-  timeControl.value = dateCount - 1;
+  this.timeControl_.value = dateCount - 1;
   this.setTimeControlLabel(dateCount - 1);
 }
 
@@ -43,13 +46,13 @@ TimeAnimation.prototype.toggleMapAnimation = function(animationEndedCallback) {
   if (shouldStart) {
     let i = 0;
     animationIntervalId = setInterval(function() {
-      timeControl.value = i;
+      this.timeControl_.value = i;
       showDataAtDate(dates[i]);
       this.setTimeControlLabel(i);
       i++;
       if (i === dates.length) {
         // We've reached the end.
-        toggleMapAnimation(null);
+        this.toggleMapAnimation(null);
         if (!!animationEndedCallback) {
           animationEndedCallback();
         }

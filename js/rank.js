@@ -30,11 +30,11 @@ Rank.prototype.init = function() {
   let self = this;
   dp.fetchCountryNames().
       then(dp.fetchJhuData.bind(dp)).
-      then(self.showRankPage);
+      then(self.showRankPage.bind(self));
   setupTopBar();
 };
 
-function onToggleClicked(e) {
+Rank.prototype.onToggleClicked = function(e) {
   let toggle = document.getElementById('toggle');
   if (toggle.firstChild == e.target) {
     toggle.firstChild.classList.add('active');
@@ -45,14 +45,14 @@ function onToggleClicked(e) {
     toggle.lastChild.classList.add('active');
     showDeathCounts = true;
   }
-  onModeToggled();
+  this.onModeToggled();
 }
 
-function onModeToggled() {
-  const aggregates = dataProvider.getAggregateData();
+Rank.prototype.onModeToggled = function() {
+  const aggregates = this.dataProvider_.getAggregateData();
   const key = showDeathCounts ? 'deaths' : 'cum_conf';
   let maxValue = 0;
-  dates = Object.keys(aggregates).sort();
+  let dates = Object.keys(aggregates).sort();
 
   for (let date in aggregates) {
     for (let country in aggregates[date]) {
@@ -60,7 +60,7 @@ function onModeToggled() {
     }
   }
   maxGraphedValue = Math.log10(maxValue);
-  showRankPageAtCurrentDate();
+  this.showRankPageAtCurrentDate();
 }
 
 Rank.prototype.showRankPage = function() {
@@ -90,13 +90,14 @@ Rank.prototype.showRankPage = function() {
     i++;
   }
 
-  onModeToggled();
+  this.onModeToggled();
+  let self = this;
   container.onwheel = function(e) {
-    onRankWheel(e)
+    self.onRankWheel(e)
   };
   container.ontouchmove = function(e) {
     e.preventDefault();
-    onRankTouchMove(e['touches'][0].clientY - currentTouchY)
+    self.onRankTouchMove(e['touches'][0].clientY - currentTouchY)
   };
   container.ontouchstart = function(e) {
     e.preventDefault();
@@ -109,32 +110,33 @@ Rank.prototype.showRankPage = function() {
 
   let toggle = document.getElementById('toggle');
   // Assume only two modes here.
-  toggle.firstChild.onclick = onToggleClicked;
-  toggle.lastChild.onclick = onToggleClicked;
+  toggle.firstChild.onclick = this.onToggleClicked;
+  toggle.lastChild.onclick = this.onToggleClicked;
 }
 
-function onRankTouchMove(delta) {
+Rank.prototype.onRankTouchMove = function(delta) {
   const points_per_step = 150;
-  rankAdvance(delta > 0, Math.floor(Math.abs(delta / points_per_step)));
+  this.rankAdvance(delta > 0, Math.floor(Math.abs(delta / points_per_step)));
 }
 
-function onRankWheel(e) {
+Rank.prototype.onRankWheel = function(e) {
   e.preventDefault();
-  rankAdvance(e.deltaY > 0, 1);
+  this.rankAdvance(e.deltaY > 0, 1);
 }
 
-function rankAdvance(forward, steps) {
+Rank.prototype.rankAdvance = function(forward, steps) {
   let newDateIndex = currentDateIndex + (forward ? steps : -steps);
   newDateIndex = Math.max(newDateIndex, 0);
-  newDateIndex = Math.min(newDateIndex, dates.length -1);
+  newDateIndex = Math.min(newDateIndex,
+                          this.dataProvider_.getDates().length -1);
   currentDateIndex = newDateIndex;
-  showRankPageAtCurrentDate();
+  this.showRankPageAtCurrentDate();
 }
 
-function showRankPageAtCurrentDate() {
-  const date = dates[currentDateIndex];
+Rank.prototype.showRankPageAtCurrentDate = function() {
+  const date = this.dataProvider_.getDates()[currentDateIndex];
   document.getElementById('title').textContent = date;
-  const data = dataProvider.getAggregateData()[date];
+  const data = this.dataProvider_.getAggregateData()[date];
   const y_step = 33;
   let container = document.getElementById('data');
   const key = showDeathCounts ? 'deaths' : 'cum_conf';
