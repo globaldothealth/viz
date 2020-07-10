@@ -10,15 +10,17 @@ let SyncView = function(dataProvider, nav) {
 const STARTING_CASE_COUNT = 10000;
 
 SyncView.prototype.init = function() {
+  this.fetchData();
+  this.nav_.setupTopBar();
+};
+
+SyncView.prototype.fetchData = function() {
   let self = this;
   const dp = this.dataProvider_;
   dp.fetchCountryNames().
       then(dp.fetchJhuData.bind(dp)).
       then(self.render.bind(self));
-  this.nav_.setupTopBar();
 };
-
-SyncView.prototype.fetchData = function() {};
 
 SyncView.prototype.render = function() {
   const aggregates = this.dataProvider_.getAggregateData();

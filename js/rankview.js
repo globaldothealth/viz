@@ -29,15 +29,17 @@ function rankInit() {
 }
 
 RankView.prototype.init = function() {
+  this.fetchData();
+  this.nav_.setupTopBar();
+};
+
+RankView.prototype.fetchData = function() {
   const dp = this.dataProvider_;
   let self = this;
   dp.fetchCountryNames().
       then(dp.fetchJhuData.bind(dp)).
       then(self.render.bind(self));
-  this.nav_.setupTopBar();
 };
-
-RankView.prototype.fetchData = function() {};
 
 RankView.prototype.onToggleClicked = function(e) {
   let toggle = document.getElementById('toggle');
