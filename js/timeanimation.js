@@ -8,6 +8,13 @@ let TimeAnimation = function(dataProvider, caseMapView) {
 
   /** @private {Element} */
   this.timeControl_ = null;
+
+  /**
+   * The ID number of the current animation interval, or zero if no interval is
+   * in progress.
+   * @private {number}
+   */
+  this.animationIntervalId_ = 0;
 };
 
 /** @const */
@@ -45,14 +52,14 @@ TimeAnimation.prototype.setTimeControlLabel = function(index) {
 }
 
 TimeAnimation.prototype.toggleMapAnimation = function(animationEndedCallback) {
-  const shouldStart = !animationIntervalId;
+  const shouldStart = !this.animationIntervalId_;
   let dates = this.dataProvider_.getDates();
   document.getElementById('playpause').setAttribute('src', 'img/' +
       (shouldStart ? 'pause' : 'play') + '.svg');
   let self = this;
   if (shouldStart) {
     let i = 0;
-    animationIntervalId = setInterval(function() {
+    this.animationIntervalId_ = setInterval(function() {
       self.timeControl_.value = i;
       self.caseMapView_.onTimeChanged(dates[i]);
       self.setTimeControlLabel(i);
@@ -66,7 +73,7 @@ TimeAnimation.prototype.toggleMapAnimation = function(animationEndedCallback) {
       }
     }, TimeAnimation.ANIMATION_FRAME_DURATION_MS);
   } else {
-    clearInterval(animationIntervalId);
-    animationIntervalId = 0;
+    clearInterval(this.animationIntervalId_);
+    this.animationIntervalId_ = 0;
   }
 }

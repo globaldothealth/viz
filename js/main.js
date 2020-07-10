@@ -40,7 +40,6 @@ let initialFlyTo;
 
 let currentIsoDate;
 let currentDateIndex = 0;
-let animationIntervalId = 0;
 let currentTouchY = -1;
 
 let atomicFeaturesByDay = {};
