@@ -24,6 +24,7 @@ def compile_js(quiet=False):
         "--js js/nav.js "
         "--js js/sidebar.js "
         "--js js/countrydashboard.js "
+        "--js js/casemapview.js "
         "--js js/rankview.js "
         "--js js/syncview.js "
         "--externs js/externs_chart.js "
