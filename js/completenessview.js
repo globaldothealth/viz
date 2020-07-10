@@ -14,12 +14,14 @@ CompletenessView.prototype.init = function() {
   this.dataProvider_.fetchInitialData().then(function() {
     // We only need the latest daily slice for the data completeness page.
     self.dataProvider_.fetchLatestDailySlice().then(
-        self.renderCompletenessPage.bind(self));
+        self.render.bind(self));
   });
   this.nav_.setupTopBar();
 };
 
-CompletenessView.prototype.renderCompletenessPage = function() {
+CompletenessView.prototype.fetchData = function() {};
+
+CompletenessView.prototype.render = function() {
   const latestCountryFeatures = this.dataProvider_.getCountryFeaturesForDay(
       this.dataProvider_.getLatestDate());
   console.log(latestCountryFeatures);

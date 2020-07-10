@@ -14,11 +14,13 @@ SyncView.prototype.init = function() {
   const dp = this.dataProvider_;
   dp.fetchCountryNames().
       then(dp.fetchJhuData.bind(dp)).
-      then(self.showSyncPage.bind(self));
+      then(self.render.bind(self));
   this.nav_.setupTopBar();
 };
 
-SyncView.prototype.showSyncPage = function() {
+SyncView.prototype.fetchData = function() {};
+
+SyncView.prototype.render = function() {
   const aggregates = this.dataProvider_.getAggregateData();
   let dates = Object.keys(aggregates);
   // Sort in chronological order.

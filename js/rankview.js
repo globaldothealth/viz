@@ -33,9 +33,11 @@ RankView.prototype.init = function() {
   let self = this;
   dp.fetchCountryNames().
       then(dp.fetchJhuData.bind(dp)).
-      then(self.showRankPage.bind(self));
+      then(self.render.bind(self));
   this.nav_.setupTopBar();
 };
+
+RankView.prototype.fetchData = function() {};
 
 RankView.prototype.onToggleClicked = function(e) {
   let toggle = document.getElementById('toggle');
@@ -66,7 +68,7 @@ RankView.prototype.onModeToggled = function() {
   this.showRankPageAtCurrentDate();
 }
 
-RankView.prototype.showRankPage = function() {
+RankView.prototype.render = function() {
   let container = document.getElementById('data');
   container.innerHTML = '';
   maxWidth = Math.floor(container.clientWidth);
