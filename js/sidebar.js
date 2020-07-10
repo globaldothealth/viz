@@ -1,3 +1,9 @@
+/** @constructor */
+let SideBar = function(dataProvider) {
+  /** @private @const {DataProvider} */
+  this.dataProvider_ = dataProvider;
+};
+
 // Filter list of locations
 function filterList() {
   let filter = document.getElementById('location-filter').value.toUpperCase();
@@ -25,16 +31,15 @@ function clearFilter() {
 }
 
 function toggleSideBar() {
-  let pageWrapper = document.getElementById('page-wrapper');
-  const previouslyHidden = pageWrapper.classList.contains('sidebar-hidden');
+  const previouslyHidden = document.body.classList.contains('sidebar-hidden');
   document.getElementById('sidebar-tab-icon').textContent =
         previouslyHidden ? '◀' : '▶';
-  pageWrapper.classList.toggle('sidebar-hidden');
+  document.body.classList.toggle('sidebar-hidden');
 }
 
-function renderCountryList() {
+SideBar.prototype.renderCountryList = function() {
   let countryList = document.getElementById('location-list');
-  const latestAggregateData = dataProvider.getLatestAggregateData();
+  const latestAggregateData = this.dataProvider_.getLatestAggregateData();
   if (!latestAggregateData) {
     console.log('No data for rendering country list');
     return;
@@ -51,7 +56,7 @@ function renderCountryList() {
       continue;
     }
     const code = location['code'];
-    const country = countries[code];
+    const country = this.dataProvider_.getCountry(code);
     if (!country) {
       continue;
     }
@@ -87,18 +92,18 @@ function renderCountryList() {
     }
   }
   if (!!countryList) {
-    updateCountryListCounts();
+    this.updateCountryListCounts();
   }
 }
 
-function updateCountryListCounts() {
+SideBar.prototype.updateCountryListCounts = function() {
   const list = document.getElementById('location-list');
   let countSpans = list.getElementsByClassName('num');
   for (let i = 0; i < countSpans.length; i++) {
     let span = countSpans[i];
     const code = span.parentNode.getAttribute('country');
-    const country = countries[code];
-    let countToShow = dataProvider.getLatestDataPerCountry()[code][0];
+    const country = this.dataProvider_.getCountry(code);
+    let countToShow = this.dataProvider_.getLatestDataPerCountry()[code][0];
     if (document.getElementById('percapita').checked) {
       const population = country.getPopulation();
       if (!!population) {
@@ -112,10 +117,10 @@ function updateCountryListCounts() {
     }
     span.textContent = countToShow;
   }
-  sortCountryList();
+  this.sortCountryList();
 };
 
-function sortCountryList() {
+SideBar.prototype.sortCountryList = function() {
   const list = document.getElementById('location-list');
   let items = list.children;
   let itemsArray = [];

@@ -1,5 +1,13 @@
+/** @constructor */
+let Rank = function(dataProvider, nav) {
+  /** @private @const {DataProvider} */
+  this.dataProvider_ = dataProvider;
 
-const CONTINENT_COLORS = {
+  /** @const @private {Nav} */
+  this.nav_ = new Nav();
+};
+
+Rank.CONTINENT_COLORS = {
   'O': '#b600ff',  // purple
   'S': '#0c1fb4',  // dark blue
   'N': '#0060ff',  // blue
@@ -9,38 +17,68 @@ const CONTINENT_COLORS = {
   'Z': '#e90000',  // red
 };
 
+let maxGraphedValue = 0;
+let maxWidth = 0;
+let showDeathCounts = false;
+
+let rank;
 function rankInit() {
-  dataProvider = new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
-  dataProvider.fetchCountryNames().
-      then(dataProvider.fetchJhuData.bind(dataProvider)).
-      then(showRankPage);
-  setupTopBar();
+  rank = new Rank(new DataProvider(
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), new Nav());
+  rank.init();
 }
 
-function showRankPage() {
-  let container = document.getElementById('data');
-  container.innerHTML = '';
-  const aggregates = dataProvider.getAggregateData();
-  const latestDate = dataProvider.getLatestDateWithAggregateData();
-  const maxWidth = Math.floor(container.clientWidth);
-  let maxCases = 0;
-  dates = Object.keys(aggregates).sort();
+Rank.prototype.init = function() {
+  const dp = this.dataProvider_;
+  let self = this;
+  dp.fetchCountryNames().
+      then(dp.fetchJhuData.bind(dp)).
+      then(self.showRankPage.bind(self));
+  this.nav_.setupTopBar();
+};
+
+Rank.prototype.onToggleClicked = function(e) {
+  let toggle = document.getElementById('toggle');
+  if (toggle.firstChild == e.target) {
+    toggle.firstChild.classList.add('active');
+    toggle.lastChild.classList.remove('active');
+    showDeathCounts = false;
+  } else if (toggle.lastChild == e.target) {
+    toggle.firstChild.classList.remove('active');
+    toggle.lastChild.classList.add('active');
+    showDeathCounts = true;
+  }
+  this.onModeToggled();
+}
+
+Rank.prototype.onModeToggled = function() {
+  const aggregates = this.dataProvider_.getAggregateData();
+  const key = showDeathCounts ? 'deaths' : 'cum_conf';
+  let maxValue = 0;
+  let dates = Object.keys(aggregates).sort();
 
   for (let date in aggregates) {
     for (let country in aggregates[date]) {
-      maxCases = Math.max(maxCases, aggregates[date][country]['cum_conf']);
+      maxValue = Math.max(maxValue, aggregates[date][country][key]);
     }
   }
-  const maxValue = Math.log10(maxCases);
+  maxGraphedValue = Math.log10(maxValue);
+  this.showRankPageAtCurrentDate();
+}
+
+Rank.prototype.showRankPage = function() {
+  let container = document.getElementById('data');
+  container.innerHTML = '';
+  maxWidth = Math.floor(container.clientWidth);
 
   let i = 0;
+  let countries = this.dataProvider_.getCountries();
   for (let code in countries) {
     const c = countries[code];
     let el = document.createElement('div');
     el.setAttribute('id', code);
     el.classList.add('bar');
-    const color = CONTINENT_COLORS[c.getContinent()];
+    const color = Rank.CONTINENT_COLORS[c.getContinent()];
     el.style.backgroundColor = color;
     el.style.color = '#fff';
     let startSpan = document.createElement('span');
@@ -55,13 +93,14 @@ function showRankPage() {
     i++;
   }
 
-  showRankPageAtCurrentDate(maxWidth, maxValue);
+  this.onModeToggled();
+  let self = this;
   container.onwheel = function(e) {
-    onRankWheel(e, maxWidth, maxValue)
+    self.onRankWheel(e)
   };
   container.ontouchmove = function(e) {
     e.preventDefault();
-    onRankTouchMove(e['touches'][0].clientY - currentTouchY, maxWidth, maxValue)
+    self.onRankTouchMove(e['touches'][0].clientY - currentTouchY)
   };
   container.ontouchstart = function(e) {
     e.preventDefault();
@@ -71,37 +110,43 @@ function showRankPage() {
     e.preventDefault();
     currentTouchY = -1;
   }
+
+  let toggle = document.getElementById('toggle');
+  // Assume only two modes here.
+  toggle.firstChild.onclick = this.onToggleClicked.bind(this);
+  toggle.lastChild.onclick = this.onToggleClicked.bind(this);
 }
 
-function onRankTouchMove(delta, maxWidth, maxValue) {
+Rank.prototype.onRankTouchMove = function(delta) {
   const points_per_step = 150;
-  rankAdvance(delta > 0, Math.floor(Math.abs(delta / points_per_step)),
-              maxWidth, maxValue);
+  this.rankAdvance(delta > 0, Math.floor(Math.abs(delta / points_per_step)));
 }
 
-function onRankWheel(e, maxWidth, maxValue) {
+Rank.prototype.onRankWheel = function(e) {
   e.preventDefault();
-  rankAdvance(e.deltaY > 0, 1, maxWidth, maxValue);
+  this.rankAdvance(e.deltaY > 0, 1);
 }
 
-function rankAdvance(forward, steps, maxWidth, maxValue) {
+Rank.prototype.rankAdvance = function(forward, steps) {
   let newDateIndex = currentDateIndex + (forward ? steps : -steps);
   newDateIndex = Math.max(newDateIndex, 0);
-  newDateIndex = Math.min(newDateIndex, dates.length -1);
+  newDateIndex = Math.min(newDateIndex,
+                          this.dataProvider_.getDates().length -1);
   currentDateIndex = newDateIndex;
-  showRankPageAtCurrentDate(maxWidth, maxValue);
+  this.showRankPageAtCurrentDate();
 }
 
-function showRankPageAtCurrentDate(maxWidth, maxValue) {
-  const date = dates[currentDateIndex];
+Rank.prototype.showRankPageAtCurrentDate = function() {
+  const date = this.dataProvider_.getDates()[currentDateIndex];
   document.getElementById('title').textContent = date;
-  const data = dataProvider.getAggregateData()[date];
+  const data = this.dataProvider_.getAggregateData()[date];
   const y_step = 33;
   let container = document.getElementById('data');
+  const key = showDeathCounts ? 'deaths' : 'cum_conf';
   let o = {};
   for (let i = 0; i < data.length; i++) {
     const item = data[i];
-    o[item['code']] = item['cum_conf'];
+    o[item['code']] = item[key];
   }
   let bars = [...document.getElementsByClassName('bar')];
   bars = bars.sort(function(a, b) {
@@ -124,7 +169,7 @@ function showRankPageAtCurrentDate(maxWidth, maxValue) {
     b.style.display = 'block';
     b.style.top = y + 'px';
     b.style.width = Math.floor(
-        maxWidth * Math.log10(case_count) / maxValue);
+        maxWidth * Math.log10(case_count) / maxGraphedValue);
     y += 37;
   }
   for (let i = 0; i < data.length; i++) {

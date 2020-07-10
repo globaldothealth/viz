@@ -1,11 +1,14 @@
 /** @constructor */
-let DiseaseMap = function() {
+let DiseaseMap = function(dataProvider) {
 
   /** @private */
   this.mapboxMap_;
 
   /** @private @type {Object} */
   this.popup_;
+
+  /** @private @const {DataProvider} */
+  this.dataProvider_ = dataProvider;
 };
 
 DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrOGl1NGNldTAyYXYzZnBqcnBmN3RjanAifQ.H377pe4LPPcymeZkUBiBtg';
@@ -14,6 +17,16 @@ DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG = 0.4;
 
 DiseaseMap.LIGHT_THEME = 'mapbox://styles/healthmap/ckc1y3lbr1upr1jq6pwfcb96k';
 DiseaseMap.DARK_THEME = 'mapbox://styles/healthmap/ck7o47dgs1tmb1ilh5b1ro1vn';
+
+/** @const */
+DiseaseMap.COLOR_MAP = [
+  ['#67009e', '< 10', 10],
+  ['#921694', '11–100', 100],
+  ['#d34d60', '101–500', 500],
+  ['#fb9533', '501–2000', 2000],
+  ['#edf91c', '> 2000'],
+  ['cornflowerblue', 'New'],
+];
 
 /**
  * Takes an array of features, and bundles them in a way that the map API
@@ -36,12 +49,12 @@ DiseaseMap.formatFeature = function(feature) {
     feature['properties']['new'] = 0;
   }
   let coords = feature['properties']['geoid'].split('|');
-  const featureType = threeDMode ? 'Polygon' : 'Point';
+  const featureType = twoDMode ? 'Point' : 'Polygon';
   const lat = parseFloat(coords[0]);
   const lng = parseFloat(coords[1]);
   // Flip latitude and longitude.
   let featureCoords = [lng, lat];
-  if (threeDMode) {
+  if (!twoDMode) {
     const half = DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG / 2;
     featureCoords = [[
       [lng + half, lat + half],
@@ -55,7 +68,7 @@ DiseaseMap.formatFeature = function(feature) {
     'type': featureType,
     'coordinates': featureCoords,
   };
-  if (threeDMode) {
+  if (!twoDMode) {
     feature['properties']['height'] = 10 * Math.sqrt(100000 * feature['properties']['total']);
   }
   return feature;
@@ -63,14 +76,14 @@ DiseaseMap.formatFeature = function(feature) {
 
 
 DiseaseMap.prototype.showDataAtLatestDate = function() {
-  if (!dates.length) {
+  if (!this.dataProvider_.getDates().length) {
     return;
   }
-  const latestDate = dates[dates.length - 1];
-  this.showDataAtDate(latestDate);
+  this.showDataAtDate(this.dataProvider_.getLatestDate());
 }
 
 DiseaseMap.prototype.showDataAtDate = function(isodate) {
+  console.log('Showing data at date ' + isodate);
   if (currentIsoDate != isodate) {
     currentIsoDate = isodate;
   }
@@ -84,15 +97,14 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   }
 };
 
-
 DiseaseMap.prototype.init = function() {
   mapboxgl.accessToken = DiseaseMap.MAPBOX_TOKEN;
   this.mapboxMap_ = new mapboxgl.Map({
     'container': 'map',
-    'style': lightTheme ? DiseaseMap.LIGHT_THEME : DiseaseMap.DARK_THEME,
     'center': [10, 0],
     'zoom': 1,
   }).addControl(new mapboxgl.NavigationControl());
+  this.setStyle(darkTheme);
   this.popup_ = new mapboxgl.Popup({
     'closeButton': false,
     'closeOnClick': true,
@@ -100,11 +112,6 @@ DiseaseMap.prototype.init = function() {
   });
 
   let self = this;
-  timeControl.addEventListener('input', function() {
-    setTimeControlLabel(timeControl.value);
-    self.showDataAtDate(dates[timeControl.value]);
-  });
-
   this.mapboxMap_.on('load', function () {
     self.mapboxMap_.addSource('counts', {
       'type': 'geojson',
@@ -113,8 +120,8 @@ DiseaseMap.prototype.init = function() {
 
     let circleColorForTotals = ['step', ['get', 'total']];
     // Don't use the last color here (for new cases).
-    for (let i = 0; i < COLOR_MAP.length - 1; i++) {
-      let color = COLOR_MAP[i];
+    for (let i = 0; i < DiseaseMap.COLOR_MAP.length - 1; i++) {
+      let color = DiseaseMap.COLOR_MAP[i];
       circleColorForTotals.push(color[0]);
       if (color.length > 2) {
         circleColorForTotals.push(color[2]);
@@ -137,16 +144,21 @@ DiseaseMap.prototype.init = function() {
     self.mapboxMap_.on('mouseleave', 'totals', function () {
       this.getCanvas().style.cursor = '';
     });
-    if (threeDMode) {
+    if (!twoDMode) {
       self.mapboxMap_.easeTo({pitch: 55});
     }
   });
-  showLegend();
+  this.showLegend();
 };
 
 
+DiseaseMap.prototype.setStyle = function(isDark) {
+  this.mapboxMap_.setStyle(isDark ?
+                           DiseaseMap.DARK_THEME : DiseaseMap.LIGHT_THEME);
+}
+
 DiseaseMap.prototype.addLayer = function(map, id, featureProperty, circleColor) {
-  const type = threeDMode ? 'fill-extrusion' : 'circle';
+  const type = twoDMode ? 'circle ' : 'fill-extrusion';
   // const type = threeDMode ? 'fill' : 'circle';
   let paint = {
     'circle-radius': [
@@ -156,7 +168,7 @@ DiseaseMap.prototype.addLayer = function(map, id, featureProperty, circleColor) 
     'circle-color': circleColor,
     'circle-opacity': 0.6,
   };
-  if (threeDMode) {
+  if (!twoDMode) {
     paint = {
       // 'fill-extrusion-base': 0,
       'fill-extrusion-height': ['get', 'height'],
@@ -179,7 +191,7 @@ DiseaseMap.prototype.addLayer = function(map, id, featureProperty, circleColor) 
  * @param {string} code The code of the country to fly to.
  */
 DiseaseMap.prototype.flyToCountry = function(code) {
-  const country = countries[code];
+  const country = this.dataProvider_.getCountry(code);
   const dest = country.getMainBoundingBox();
   this.mapboxMap_.fitBounds([[dest[0], dest[1]], [dest[2], dest[3]]]);
 };
@@ -203,7 +215,7 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   let location = locationInfo[geo_id].split('|');
   // Replace country code with name if necessary
   if (location[2].length == 2) {
-    location[2] = countries[location[2]].getName();
+    location[2] = this.dataProvider_.getCountry(location[2]).getName();
   }
   const countryName = location[2];
   const country = countriesByName[countryName];
@@ -226,6 +238,7 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
         locationSpan.join(', ') + '</span></h3>';
 
   let relevantFeaturesByDay = {};
+  const dates = this.dataProvider_.getDates();
   for (let i = 0; i < dates.length; i++) {
     const date = dates[i];
     relevantFeaturesByDay[date] = [];
@@ -241,7 +254,8 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   container.classList.add('chart');
   Graphing.makeCasesGraph(
       DataProvider.convertGeoJsonFeaturesToGraphData(
-          relevantFeaturesByDay, 'total'), false /* average */, container);
+          relevantFeaturesByDay, 'total'), false /* average */, container,
+      countryName);
   content.appendChild(container);
 
   // Ensure that if the map is zoomed out such that multiple
@@ -257,3 +271,20 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
     self.popup_.remove();
   };
 }
+
+DiseaseMap.prototype.showLegend = function() {
+  let list = document.getElementById('legend').getElementsByTagName('ul')[0];
+  for (let i = 0; i < DiseaseMap.COLOR_MAP.length; i++) {
+    let color = DiseaseMap.COLOR_MAP[i];
+    let item = document.createElement('li');
+    let circle = document.createElement('span');
+    circle.className = 'circle';
+    circle.style.backgroundColor = color[0];
+    let label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = color[1];
+    item.appendChild(circle);
+    item.appendChild(label);
+    list.appendChild(item);
+  }
+};

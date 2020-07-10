@@ -31,8 +31,6 @@ html {
 body {
   font-family: arial;
   line-height: 1.4;
-  color: $text-color-light;
-  background-color: $body-bgcolor;
 }
 
 a, a:visited {
@@ -72,10 +70,8 @@ input[type=text] {
   width: 100%;
   padding: .5rem 1rem;
   font-size: .9rem;
-  color: #ccc;
-  background-color: $sidebar-bgcolor;
-  border-radius: $box-corner;
   border: 1px solid #666;
+  border-radius: $box-corner;
   &::-ms-expand {
     background-color: transparent;
     border: 0;
@@ -104,25 +100,16 @@ input[type=text] {
 h1 {
   margin: 0;
   font-weight: 200;
-  color: #ececec;
-}
-
-#page-wrapper {
-  width: 100vw;
 }
 
 #topbar {
-  background-color: $sidebar-bgcolor;
-  height: $topbar-height;
+  font-size: 90%;
   left: 0;
+  padding: 1ex 0;
   position: absolute;
   right: 0;
   top: 0;
   z-index: 4;
-}
-
-.sidebar-hidden #topbar {
-  left: 0;
 }
 
 #topbar ul {
@@ -138,7 +125,6 @@ h1 {
   cursor: pointer;
   display: inline-block;
   flex-grow: 1;
-  font-size: 85%;
   list-item-style: none;
   padding: 0 5px;
   text-align: center;
@@ -151,19 +137,20 @@ h1 {
 
 #sidebar {
   backdrop-filter: blur(.5rem);
-  background-color: $sidebar-bgcolor;
   box-shadow: 0 -10px 12px -9px rgba(0,0,0,0.10);
-  border-top-left-radius: .75rem;
-  border-top-right-radius: .75rem;
+  border-radius: 1ex;
   color: #aaa;
   display: flex;
   flex-direction: column;
+  padding: 2ex;
   position: absolute;
-  height: 100vh;
+  height: 50%;
+  left: 5ex;
   margin-top: $mobile-map-height;
-  padding: .6rem 1.5rem 0 1.5rem;
   overflow: visible;
   transition: left 0.2s;
+  top: 25%;
+  bottom: 25%;
   width: $sidebar-width;
   z-index: 3;
   -webkit-backdrop-filter: blur(.5rem);
@@ -179,7 +166,6 @@ h1 {
 
 #sidebar-tab {
   align-items: center;
-  background-color: $sidebar-bgcolor;
   border-top-right-radius: 7px;
   border-bottom-right-radius: 7px;
   cursor: pointer;
@@ -432,13 +418,13 @@ div.mapboxgl-popup-content {
   width: 100%;
 }
 
-.credit {
+#credit {
   right: 0;
   bottom: .7rem;
   font-size: .8rem;
   color: #cccc;
   cursor: pointer;
-  left: $sidebar-width + $sidebar-margin-end;
+  left: 0;
   position: absolute;
   text-align: center;
   z-index: 8;
@@ -451,10 +437,6 @@ div.mapboxgl-popup-content {
   }
 }
 
-.sidebar-hidden .credit {
-  left: $sidebar-margin-end;
-}
-
 /* Mapbox UI chrome */
 
 .mapboxgl-ctrl-bottom-left,
@@ -463,7 +445,7 @@ div.mapboxgl-popup-content {
 }
 
 .mapboxgl-ctrl-bottom-left {
-  margin-left: $sidebar-width + $sidebar-margin-end;
+  margin-left: $sidebar-margin-end;
 }
 
 .autodrive #range-slider,
@@ -471,14 +453,14 @@ div.mapboxgl-popup-content {
   left: $sidebar-margin-end;
 }
 
-#page-wrapper .chart {
+.chart {
   height: 300px;
   width: 400px;
 }
 
 /* Overrides for autodrive mode: remove most interactive elements */
 
-.autodrive #sidebar, .autodrive .credit,
+.autodrive #sidebar, .autodrive #credit,
 .autodrive .mapboxgl-ctrl-top-left,
 .autodrive .mapboxgl-ctrl-top-right {
   display: none;
@@ -490,79 +472,6 @@ div.mapboxgl-popup-content {
 
 .mapboxgl-ctrl-bottom-right {
   margin-right: $page-padding-end;
-}
-
-/* Overrides for light theme mode: adjust colors */
-body.lighttheme {
-  background-color: $body-bgcolor-light;
-}
-.lighttheme #legend {
-  color: #333;
-  background-color: rgba(255,255,255,.8);
-  border: 1px solid #ececec;
-  .label, label span {
-    color: #333;
-  }
-}
-.lighttheme #range-slider {
-  background-color: rgba(225,225,225,.8);
-  label span {
-    color: #333;
-  }
-}
-.lighttheme #sidebar {
-  background-color: $sidebar-bgcolor-light;
-}
-
-.lighttheme #sidebar-tab {
-  background-color: #fff;
-  border: 1px solid #f0f0f0;
-  border-left: 0;
-}
-
-.lighttheme .location-filter-wrapper {
-  border-bottom-color: #ececec;
-}
-
-.lighttheme #location-list {
-  button {
-    color: #454545;
-    background-color: #fff;
-    border: 1px solid #f0f0f0;
-    box-shadow: none;
-    &:focus, &:hover, &:active, &.is-active {
-      background-color: #f3f3f3;
-    }
-  }
-  .num {
-    color: #999;
-  }
-}
-
-.lighttheme input[type=text] {
-  color: #333;
-  background-color: #fff;
-  border: 1px solid #ececec;
-  &::placeholder {
-    color: #999;
-  }
-}
-
-.lighttheme .reported-cases {
-  color: #333;
-  border: 1px solid transparent;
-  &:focus, &:hover, &:active, &.is-active {
-    border-color: #ececec;
-    background-color: #fff;
-  }
-}
-
-.lighttheme .last-updated-date {
-  color: #999;
-}
-
-.lighttheme h1 {
-  color: #333;
 }
 
 /* Country-specific pages */
@@ -748,7 +657,7 @@ body.lighttheme {
 
 #range-slider {
   position: absolute;
-  left: $sidebar-width + $sidebar-margin-end;
+  left: $page-padding-end;
   right: $page-padding-end;
   bottom: 2.25rem;
   padding: .25rem .5rem;
@@ -836,3 +745,5 @@ input[type=range]::-ms-tooltip {
 }
 
 @import 'media-queries';
+@import 'toggle';
+@import 'themed';

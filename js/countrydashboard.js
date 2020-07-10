@@ -1,16 +1,25 @@
-function countryInit() {
-  dataProvider = new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
-  dataProvider.fetchCountryNames().
-        then(dataProvider.fetchJhuData.bind(dataProvider)).
-        then(dataProvider.loadCountryData.bind(dataProvider)).
-        then(showCountryPage);
+/** @constructor */
+let CountryDashboard = function(dataProvider, countryCode) {
+  /** @private @const {DataProvider} */
+  this.dataProvider_ = dataProvider;
+
+  /** @private @const {string} */
+  this.code_ = countryCode;
+};
+
+CountryDashboard.prototype.init = function() {
+  let self = this;
+  const dp = self.dataProvider_;
+  dp.fetchCountryNames().
+        then(dp.fetchJhuData.bind(dp)).
+        then(dp.loadCountryData.bind(dp)).
+        then(self.showCountryPage);
 }
 
-function showCountryPage(data) {
+CountryDashboard.prototype.showCountryPage = function(data) {
   const dash = document.getElementById('dash');
   const code = dash.getAttribute('c');
-  const country = countries[code];
+  const country = this.dataProvider_.getCountry(this.code_);
   // De-duplicate geoids and dates, in case the data isn't well organized.
   let geoids = new Set();
   let dates = new Set();
@@ -50,12 +59,13 @@ function showCountryPage(data) {
   container.classList.add('chart');
   container.setAttribute('id', 'new');
   container.innerHTML = '';
-  Graphing.makeCasesGraph(o, true /* useAverageWindow */, container);
+  Graphing.makeCasesGraph(o, true /* useAverageWindow */, container,
+                          country.getName());
   chartsEl.appendChild(container);
 
   o = {'dates': dates};
   const centroidGeoid = country.getCentroid().join('|');
-  const aggregateData = dataProvider.getAggregateData();
+  const aggregateData = this.dataProvider_.getAggregateData();
   o[centroidGeoid] = [];
   for (let i = 0; i < dates.length; i++) {
     if (!aggregateData[dates[i]]) {
@@ -76,6 +86,12 @@ function showCountryPage(data) {
   // const totalCasesAggregateChart = Graphing.makeCasesGraph(
       // o, true /*average */, container);
   chartsEl.appendChild(container);
+}
+
+let dashboard;
+function countryInit(code) {
+  dashboard = new CountryDashboard(new DataProvider(
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), code);
 }
 
 globalThis['countryInit'] = countryInit;

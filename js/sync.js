@@ -1,16 +1,25 @@
+/** @constructor */
+let Sync = function(dataProvider, nav) {
+  /** @private @const {DataProvider} */
+  this.dataProvider_ = dataProvider;
+
+  /** @const @private {Nav} */
+  this.nav_ = new Nav();
+};
+
 const STARTING_CASE_COUNT = 10000;
 
-function syncInit() {
-  dataProvider = new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
-  dataProvider.fetchCountryNames().
-      then(dataProvider.fetchJhuData.bind(dataProvider)).
-      then(showSyncPage);
-  setupTopBar();
-}
+Sync.prototype.init = function() {
+  let self = this;
+  const dp = this.dataProvider_;
+  dp.fetchCountryNames().
+      then(dp.fetchJhuData.bind(dp)).
+      then(self.showSyncPage.bind(self));
+  this.nav_.setupTopBar();
+};
 
-function showSyncPage() {
-  const aggregates = dataProvider.getAggregateData();
+Sync.prototype.showSyncPage = function() {
+  const aggregates = this.dataProvider_.getAggregateData();
   let dates = Object.keys(aggregates);
   // Sort in chronological order.
   dates = dates.sort();
@@ -47,7 +56,7 @@ function showSyncPage() {
   }
   let i = 0;
   for (let code in curves) {
-    const country = countries[code];
+    const country = this.dataProvider_.getCountry(code);
     const name = country.getName();
     let thisData = [];
       for (let j = 0; j < curves[code].length; j++) {
@@ -81,6 +90,13 @@ function showSyncPage() {
   }
 
   new Chart(ctx, cfg);
+}
+
+let sync;
+function syncInit() {
+  sync = new Sync(new DataProvider(
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), new Nav());
+  sync.init();
 }
 
 globalThis['syncInit'] = syncInit;
