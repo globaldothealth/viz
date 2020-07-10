@@ -1,5 +1,8 @@
 /** @constructor */
-let Nav = function() { };
+let Nav = function(viz) {
+  /** @const @private {Viz} */
+  this.viz_ = viz;
+};
 
 /** @const */
 Nav.TOGGLES = [
@@ -44,15 +47,13 @@ Nav.prototype.processHash = function(oldUrl, newUrl) {
       }
     }
   }
-  onThemeChanged();
+  this.onThemeChanged();
 }
 
-function onThemeChanged() {
+Nav.prototype.onThemeChanged = function() {
   document.body.classList.add(darkTheme ? 'dark' : 'light');
   document.body.classList.remove(darkTheme ? 'light' : 'dark');
-  if (!!map) {
-    map.setStyle(darkTheme);
-  }
+  this.viz_.onThemeChanged(darkTheme);
 }
 
 function makeToggle(toggleId, name, checked) {

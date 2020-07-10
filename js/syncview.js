@@ -96,6 +96,8 @@ SyncView.prototype.render = function() {
   new Chart(ctx, cfg);
 }
 
+SyncView.prototype.onThemeChanged = function(darkTheme) { };
+
 let sync;
 function syncInit() {
   sync = new SyncView(new DataProvider(

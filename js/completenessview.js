@@ -1,17 +1,13 @@
 let completeness;
 
 /** @constructor @implements {View} */
-let CompletenessView = function(dataProvider, nav) {
+let CompletenessView = function(dataProvider) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
-
-  /** @const @private {Nav} */
-  this.nav_ = new Nav();
 };
 
 CompletenessView.prototype.init = function() {
   this.fetchData();
-  this.nav_.setupTopBar();
 };
 
 CompletenessView.prototype.fetchData = function() {
@@ -87,8 +83,10 @@ CompletenessView.prototype.render = function() {
 
 function completenessInit() {
   completeness = new CompletenessView(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), new Nav());
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
   completeness.init();
 }
+
+CompletenessView.prototype.onThemeChanged = function(darkTheme) { };
 
 globalThis['completenessInit'] = completenessInit;

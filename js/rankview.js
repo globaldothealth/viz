@@ -181,4 +181,6 @@ RankView.prototype.showRankPageAtCurrentDate = function() {
   }
 }
 
+RankView.prototype.onThemeChanged = function(darkTheme) { };
+
 globalThis['rankInit'] = rankInit;
