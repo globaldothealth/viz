@@ -15,7 +15,7 @@ TimeAnimation.prototype.init = function() {
   let self = this;
   this.timeControl_.addEventListener('input', function() {
     self.setTimeControlLabel(self.timeControl_.value);
-    map.showDataAtDate(this.dataProvider.getDates()[this.timeControl_.value]);
+    map.showDataAtDate(self.dataProvider_.getDates()[self.timeControl_.value]);
   });
 };
 
@@ -43,16 +43,17 @@ TimeAnimation.prototype.toggleMapAnimation = function(animationEndedCallback) {
   let dates = this.dataProvider_.getDates();
   document.getElementById('playpause').setAttribute('src', 'img/' +
       (shouldStart ? 'pause' : 'play') + '.svg');
+  let self = this;
   if (shouldStart) {
     let i = 0;
     animationIntervalId = setInterval(function() {
-      this.timeControl_.value = i;
+      self.timeControl_.value = i;
       showDataAtDate(dates[i]);
-      this.setTimeControlLabel(i);
+      self.setTimeControlLabel(i);
       i++;
       if (i === dates.length) {
         // We've reached the end.
-        this.toggleMapAnimation(null);
+        self.toggleMapAnimation(null);
         if (!!animationEndedCallback) {
           animationEndedCallback();
         }

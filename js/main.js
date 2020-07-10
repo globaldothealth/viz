@@ -100,10 +100,11 @@ function showDataAtDate(iso_date) {
 
 Viz.prototype.onMapAnimationEnded = function() {
   let self = this;
+  let ta = this.timeAnimation_;
   if (autoDriveMode) {
     // Let the last frame last for a few seconds before restarting.
     setTimeout(function() {
-      this.timeAnimation_.toggleMapAnimation(self.onMapAnimationEnded.bind(self));
+      ta.toggleMapAnimation(self.onMapAnimationEnded.bind(self));
     }, 2000);
   }
 }
@@ -151,11 +152,10 @@ Viz.prototype.init = function() {
         // Update the time control UI after each daily slice.
         self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_));
     });
-  // Get the basic data about locations before we can start getting daily
-  // slices.
 
+  let ta = this.timeAnimation_;
   document.getElementById('spread').
-      addEventListener('click', this.timeAnimation_.toggleMapAnimation);
+      addEventListener('click', ta.toggleMapAnimation.bind(ta));
   document.getElementById('playpause').setAttribute('src', 'img/play.svg');
   document.getElementById('credit').onclick = fetchAboutPage;
   window.setTimeout(this.updateData, Viz.LIVE_UPDATE_INTERVAL_MS);
