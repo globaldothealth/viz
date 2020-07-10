@@ -3,15 +3,13 @@ let Nav = function() { };
 
 /** @const */
 Nav.TOGGLES = [
-  ['3D Map', '3d'],
+  ['2D Map', '2d'],
   ['Auto-drive', 'autodrive'],
   ['Dark Theme', 'dark'],
 ];
 
 
-
-function processHash(oldUrl, newUrl) {
-  console.log('Process hash');
+Nav.prototype.processHash = function(oldUrl, newUrl) {
   let baseUrl = window.location.origin + window.location.pathname;
   if (!baseUrl.endsWith('/')) {
     baseUrl += '/';
@@ -25,8 +23,8 @@ function processHash(oldUrl, newUrl) {
       if (hashBrown.startsWith('#')) {
         hashBrown = hashBrown.substring(1);
       }
-      if (hashBrown.toLowerCase() == '3d') {
-        threeDMode = true;
+      if (hashBrown.toLowerCase() == '2d') {
+        twoDMode = true;
         continue;
       }
       if (hashBrown.toLowerCase() == 'autodrive') {
@@ -84,10 +82,10 @@ function onToggle(e) {
   const hashList = hashes.join('/');
   console.log('Setting URL to '+ baseUrl + (!!hashList ? '#' + hashList : ''));
   window.location.href = baseUrl + (!!hashList ? '#' + hashList : '');
-}
+};
 
-function setupTopBar() {
-  processHash('', window.location.href);
+Nav.prototype.setupTopBar = function() {
+  this.processHash('', window.location.href);
   const baseUrl = window.location.origin + '/';
   const LINKS = [
     ['Map', baseUrl],
@@ -100,7 +98,18 @@ function setupTopBar() {
 
   for (let i = 0; i < Nav.TOGGLES.length; i++) {
     const toggleId = Nav.TOGGLES[i][1];
-    let item = makeToggle(toggleId, Nav.TOGGLES[i][0], false /* checked */);
+    // TODO: make a proper map
+    let checked = false;
+    if (i == 0 && twoDMode) {
+      checked = true;
+    }
+    if (i == 1 && autoDriveMode) {
+      checked = true;
+    }
+    if (i == 2 && darkTheme) {
+      checked = true;
+    }
+    let item = makeToggle(toggleId, Nav.TOGGLES[i][0], checked);
     topBar.firstElementChild.appendChild(item);
     document.getElementById(toggleId).onclick = onToggle;
   }

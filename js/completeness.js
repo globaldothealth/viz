@@ -1,9 +1,12 @@
 let completeness;
 
 /** @constructor */
-let Completeness = function(dataProvider) {
+let Completeness = function(dataProvider, nav) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
+
+  /** @const @private {Nav} */
+  this.nav_ = new Nav();
 };
 
 Completeness.prototype.init = function() {
@@ -13,6 +16,7 @@ Completeness.prototype.init = function() {
     self.dataProvider_.fetchLatestDailySlice().then(
         self.renderCompletenessPage.bind(self));
   });
+  this.nav_.setupTopBar();
 };
 
 Completeness.prototype.renderCompletenessPage = function() {
@@ -79,9 +83,8 @@ Completeness.prototype.renderCompletenessPage = function() {
 
 function completenessInit() {
   completeness = new Completeness(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), new Nav());
   completeness.init();
-  setupTopBar();
 }
 
 globalThis['completenessInit'] = completenessInit;

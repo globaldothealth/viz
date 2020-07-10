@@ -49,12 +49,12 @@ DiseaseMap.formatFeature = function(feature) {
     feature['properties']['new'] = 0;
   }
   let coords = feature['properties']['geoid'].split('|');
-  const featureType = threeDMode ? 'Polygon' : 'Point';
+  const featureType = twoDMode ? 'Point' : 'Polygon';
   const lat = parseFloat(coords[0]);
   const lng = parseFloat(coords[1]);
   // Flip latitude and longitude.
   let featureCoords = [lng, lat];
-  if (threeDMode) {
+  if (!twoDMode) {
     const half = DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG / 2;
     featureCoords = [[
       [lng + half, lat + half],
@@ -68,7 +68,7 @@ DiseaseMap.formatFeature = function(feature) {
     'type': featureType,
     'coordinates': featureCoords,
   };
-  if (threeDMode) {
+  if (!twoDMode) {
     feature['properties']['height'] = 10 * Math.sqrt(100000 * feature['properties']['total']);
   }
   return feature;
@@ -83,6 +83,7 @@ DiseaseMap.prototype.showDataAtLatestDate = function() {
 }
 
 DiseaseMap.prototype.showDataAtDate = function(isodate) {
+  console.log('Showing data at date ' + isodate);
   if (currentIsoDate != isodate) {
     currentIsoDate = isodate;
   }
@@ -143,7 +144,7 @@ DiseaseMap.prototype.init = function() {
     self.mapboxMap_.on('mouseleave', 'totals', function () {
       this.getCanvas().style.cursor = '';
     });
-    if (threeDMode) {
+    if (!twoDMode) {
       self.mapboxMap_.easeTo({pitch: 55});
     }
   });
@@ -157,7 +158,7 @@ DiseaseMap.prototype.setStyle = function(isDark) {
 }
 
 DiseaseMap.prototype.addLayer = function(map, id, featureProperty, circleColor) {
-  const type = threeDMode ? 'fill-extrusion' : 'circle';
+  const type = twoDMode ? 'circle ' : 'fill-extrusion';
   // const type = threeDMode ? 'fill' : 'circle';
   let paint = {
     'circle-radius': [
@@ -167,7 +168,7 @@ DiseaseMap.prototype.addLayer = function(map, id, featureProperty, circleColor) 
     'circle-color': circleColor,
     'circle-opacity': 0.6,
   };
-  if (threeDMode) {
+  if (!twoDMode) {
     paint = {
       // 'fill-extrusion-base': 0,
       'fill-extrusion-height': ['get', 'height'],

@@ -288,6 +288,7 @@ DataProvider.prototype.fetchLatestDailySlice = function() {
  * fetches the latest slice first.
  */
 DataProvider.prototype.fetchDailySlice = function(sliceFileName, isNewest) {
+  console.log('Fetching slice ' + sliceFileName);
   const timestamp = (new Date()).getTime();
   let self = this;
   let url = this.baseUrl_ + 'd/' + sliceFileName;

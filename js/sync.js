@@ -1,7 +1,10 @@
 /** @constructor */
-let Sync = function(dataProvider) {
+let Sync = function(dataProvider, nav) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
+
+  /** @const @private {Nav} */
+  this.nav_ = new Nav();
 };
 
 const STARTING_CASE_COUNT = 10000;
@@ -12,7 +15,7 @@ Sync.prototype.init = function() {
   dp.fetchCountryNames().
       then(dp.fetchJhuData.bind(dp)).
       then(self.showSyncPage.bind(self));
-  setupTopBar();
+  this.nav_.setupTopBar();
 };
 
 Sync.prototype.showSyncPage = function() {
@@ -92,7 +95,7 @@ Sync.prototype.showSyncPage = function() {
 let sync;
 function syncInit() {
   sync = new Sync(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), new Nav());
   sync.init();
 }
 

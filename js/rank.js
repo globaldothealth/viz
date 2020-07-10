@@ -1,7 +1,10 @@
 /** @constructor */
-let Rank = function(dataProvider) {
+let Rank = function(dataProvider, nav) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
+
+  /** @const @private {Nav} */
+  this.nav_ = new Nav();
 };
 
 Rank.CONTINENT_COLORS = {
@@ -21,7 +24,7 @@ let showDeathCounts = false;
 let rank;
 function rankInit() {
   rank = new Rank(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'), new Nav());
   rank.init();
 }
 
@@ -31,7 +34,7 @@ Rank.prototype.init = function() {
   dp.fetchCountryNames().
       then(dp.fetchJhuData.bind(dp)).
       then(self.showRankPage.bind(self));
-  setupTopBar();
+  this.nav_.setupTopBar();
 };
 
 Rank.prototype.onToggleClicked = function(e) {

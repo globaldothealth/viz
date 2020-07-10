@@ -15,11 +15,14 @@ let Viz = function() {
   /** @const @private {SideBar} */
   this.sideBar_ = new SideBar(this.dataProvider_);
 
+  /** @const @private {Nav} */
+  this.nav_ = new Nav();
+
   /** @const @private {Completeness} */
-  this.completeness_ = new Completeness(this.dataProvider_);
+  this.completeness_ = new Completeness(this.dataProvider_, this.nav_);
 
   /** @const @private {Rank} */
-  this.rank_ = new Rank(this.dataProvider_);
+  this.rank_ = new Rank(this.dataProvider_, this.nav_);
 
   /** @const @private {TimeAnimation} */
   this.timeAnimation_ = new TimeAnimation(this.dataProvider_);
@@ -34,7 +37,7 @@ let locationInfo = {};
 let countriesByName = {};
 let map;
 let autoDriveMode = false;
-let threeDMode = false;
+let twoDMode = false;
 let darkTheme = false;
 let initialFlyTo;
 
@@ -123,10 +126,9 @@ Viz.prototype.init = function() {
   let self = this;
   window.onhashchange = function(h) {
     console.log('Hash change ' + h.newURL);
-    processHash(h.oldURL, h.newURL);
+    self.nav_.processHash(h.oldURL, h.newURL);
   }
-  setupTopBar();
-  //processHash('', window.location.href);
+  this.nav_.setupTopBar();
   document.getElementById('sidebar-tab').onclick = toggleSideBar;
   document.getElementById('percapita').addEventListener('change', function(e) {
     self.sideBar_.updateCountryListCounts();
@@ -147,10 +149,13 @@ Viz.prototype.init = function() {
       self.sideBar_.renderCountryList();
       // At this point the dates only contain the latest date.
       // Show the latest data when we have that before fetching older data.
-      map.showDataAtDate(self.dataProvider_.getLatestDate());
-      dp.fetchDailySlices(
+      //map.showDataAtDate(self.dataProvider_.getLatestDate());
+      // Give a bit of time for the map to show before fetching other slices.
+      window.setTimeout(function() {
+        dp.fetchDailySlices(
         // Update the time control UI after each daily slice.
         self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_));
+      }, 2000);
     });
 
   let ta = this.timeAnimation_;
@@ -158,7 +163,7 @@ Viz.prototype.init = function() {
       addEventListener('click', ta.toggleMapAnimation.bind(ta));
   document.getElementById('playpause').setAttribute('src', 'img/play.svg');
   document.getElementById('credit').onclick = fetchAboutPage;
-  window.setTimeout(this.updateData, Viz.LIVE_UPDATE_INTERVAL_MS);
+  window.setTimeout(this.updateData.bind(this), Viz.LIVE_UPDATE_INTERVAL_MS);
 }
 
 Viz.prototype.updateData = function() {
@@ -171,7 +176,7 @@ Viz.prototype.updateData = function() {
   });
 
   // Update the data again after another time interval.
-  window.setTimeout(this.updateData, Viz.LIVE_UPDATE_INTERVAL_MS);
+  window.setTimeout(this.updateData.bind(this), Viz.LIVE_UPDATE_INTERVAL_MS);
 }
 
 // Exports
