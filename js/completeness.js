@@ -16,7 +16,6 @@ Completeness.prototype.init = function() {
 };
 
 Completeness.prototype.renderCompletenessPage = function() {
-  console.log('Getting country features for ' + this.dataProvider_.getLatestDate());
   const latestCountryFeatures = this.dataProvider_.getCountryFeaturesForDay(
       this.dataProvider_.getLatestDate());
   console.log(latestCountryFeatures);

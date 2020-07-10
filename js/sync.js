@@ -11,7 +11,7 @@ Sync.prototype.init = function() {
   const dp = this.dataProvider_;
   dp.fetchCountryNames().
       then(dp.fetchJhuData.bind(dp)).
-      then(self.showSyncPage);
+      then(self.showSyncPage.bind(self));
   setupTopBar();
 };
 

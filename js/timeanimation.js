@@ -12,7 +12,6 @@ TimeAnimation.ANIMATION_FRAME_DURATION_MS = 300;
 
 TimeAnimation.prototype.init = function() {
   this.timeControl_ = document.getElementById('slider');
-  console.log(this.timeControl_);
   let self = this;
   this.timeControl_.addEventListener('input', function() {
     self.setTimeControlLabel(self.timeControl_.value);

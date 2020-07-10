@@ -152,7 +152,7 @@ DataProvider.prototype.getLatestDate = function() {
     return '';
   }
   let dates = Array.from(this.dates_).sort();
-  return dates[0];
+  return dates[dates.length - 1];
 };
 
 /** @return {Country} */
@@ -344,7 +344,6 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
     countryFeatures[countryCode]['new'] += feature['properties']['new'];
   }
 
-  console.log('Adding date ' + currentDate);
   this.dates_.add(currentDate);
 
   this.countryFeaturesByDay_[currentDate] = countryFeatures;
