@@ -110,8 +110,8 @@ Rank.prototype.showRankPage = function() {
 
   let toggle = document.getElementById('toggle');
   // Assume only two modes here.
-  toggle.firstChild.onclick = this.onToggleClicked;
-  toggle.lastChild.onclick = this.onToggleClicked;
+  toggle.firstChild.onclick = this.onToggleClicked.bind(this);
+  toggle.lastChild.onclick = this.onToggleClicked.bind(this);
 }
 
 Rank.prototype.onRankTouchMove = function(delta) {

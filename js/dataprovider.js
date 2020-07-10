@@ -4,8 +4,8 @@ let DataProvider = function(baseUrl) {
   /** @const @private {string} */
   this.baseUrl_ = baseUrl;
 
-  /** @private {Array.<string>} */
-  this.dates_ = [];
+  /** @private {!Set.<string>} */
+  this.dates_ = new Set();
 
   // A map from 2-letter ISO country codes to country objects.
   this.countries_ = {};
@@ -142,12 +142,17 @@ DataProvider.prototype.getAggregateData = function() {
 
 /** @return {Array.<string>} */
 DataProvider.prototype.getDates = function() {
-  return this.dates_;
+  let dates = Array.from(this.dates_).sort();
+  return dates;
 };
 
 /** @return {string} */
 DataProvider.prototype.getLatestDate = function() {
-  return this.dates_[0] || '';
+  if (!this.dates_.size) {
+    return '';
+  }
+  let dates = Array.from(this.dates_).sort();
+  return dates[0];
 };
 
 /** @return {Country} */
@@ -180,9 +185,7 @@ DataProvider.prototype.fetchDailySlices = function(eachSliceCallback) {
     dailyFetches.push(thisPromise.then(eachSliceCallback));
   }
   let self = this;
-  Promise.all(dailyFetches).then(function() {
-    self.dates_ = self.dates_.sort();
-  });
+  Promise.all(dailyFetches).then(function() { });
 };
 
 
@@ -341,7 +344,8 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
     countryFeatures[countryCode]['new'] += feature['properties']['new'];
   }
 
-  this.dates_.unshift(currentDate);
+  console.log('Adding date ' + currentDate);
+  this.dates_.add(currentDate);
 
   this.countryFeaturesByDay_[currentDate] = countryFeatures;
   this.provinceFeaturesByDay_[currentDate] = provinceFeatures;
@@ -359,6 +363,7 @@ DataProvider.prototype.fetchJhuData = function() {
       for (let date in jsonData) {
         // Ignore empty data for a given date.
         if (jsonData[date].length > 0) {
+          self.dates_.add(date);
           self.aggregateData_[date] = jsonData[date];
         }
       }
