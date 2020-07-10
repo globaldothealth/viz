@@ -1,3 +1,4 @@
+/** @constructor */
 let SideBar = function(dataProvider) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;

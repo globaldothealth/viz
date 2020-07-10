@@ -13,10 +13,10 @@ CountryDashboard.prototype.init = function() {
   dp.fetchCountryNames().
         then(dp.fetchJhuData.bind(dp)).
         then(dp.loadCountryData.bind(dp)).
-        then(showCountryPage);
+        then(self.showCountryPage);
 }
 
-function showCountryPage(data) {
+CountryDashboard.prototype.showCountryPage = function(data) {
   const dash = document.getElementById('dash');
   const code = dash.getAttribute('c');
   const country = this.dataProvider_.getCountry(this.code_);

@@ -3,7 +3,8 @@ let TimeAnimation = function(dataProvider) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
 
-  this.timeControl_;
+  /** @private {Element} */
+  this.timeControl_ = null;
 };
 
 /** @const */

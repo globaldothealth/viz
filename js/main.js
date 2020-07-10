@@ -158,10 +158,10 @@ Viz.prototype.init = function() {
       addEventListener('click', this.timeAnimation_.toggleMapAnimation);
   document.getElementById('playpause').setAttribute('src', 'img/play.svg');
   document.getElementById('credit').onclick = fetchAboutPage;
-  window.setTimeout(updateData, Viz.LIVE_UPDATE_INTERVAL_MS);
+  window.setTimeout(this.updateData, Viz.LIVE_UPDATE_INTERVAL_MS);
 }
 
-function updateData() {
+Viz.prototype.updateData = function() {
   console.log('Updating data...');
   this.dataProvider_.fetchLatestCounts().then(function() {
     console.log('Updated latest counts.');
@@ -171,7 +171,7 @@ function updateData() {
   });
 
   // Update the data again after another time interval.
-  window.setTimeout(updateData, Viz.LIVE_UPDATE_INTERVAL_MS);
+  window.setTimeout(this.updateData, Viz.LIVE_UPDATE_INTERVAL_MS);
 }
 
 // Exports

@@ -1,5 +1,6 @@
 let completeness;
 
+/** @constructor */
 let Completeness = function(dataProvider) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
