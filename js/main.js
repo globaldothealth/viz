@@ -21,8 +21,8 @@ let Viz = function() {
   /** @const @private {Completeness} */
   this.completeness_ = new Completeness(this.dataProvider_, this.nav_);
 
-  /** @const @private {Rank} */
-  this.rank_ = new Rank(this.dataProvider_, this.nav_);
+  /** @const @private {RankView} */
+  this.rank_ = new RankView(this.dataProvider_, this.nav_);
 
   /** @const @private {TimeAnimation} */
   this.timeAnimation_ = new TimeAnimation(this.dataProvider_);
