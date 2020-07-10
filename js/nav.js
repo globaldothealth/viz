@@ -25,6 +25,10 @@ function processHash(oldUrl, newUrl) {
       if (hashBrown.startsWith('#')) {
         hashBrown = hashBrown.substring(1);
       }
+      if (hashBrown.toLowerCase() == '3d') {
+        threeDMode = true;
+        continue;
+      }
       if (hashBrown.toLowerCase() == 'autodrive') {
         autoDriveMode = true;
         document.body.classList.add('autodrive');
@@ -48,7 +52,9 @@ function processHash(oldUrl, newUrl) {
 function onThemeChanged() {
   document.body.classList.add(darkTheme ? 'dark' : 'light');
   document.body.classList.remove(darkTheme ? 'light' : 'dark');
-  map.setStyle(darkTheme);
+  if (!!map) {
+    map.setStyle(darkTheme);
+  }
 }
 
 function makeToggle(toggleId, name, checked) {
