@@ -20,6 +20,7 @@ INCLUDE_LIST = [
     "c",
     "js/bundle.js",
     "completeness/index.html",
+    "freshness/index.html",
     "css/styles.css",
     "img/*",
     "rank/index.html",
@@ -28,11 +29,13 @@ INCLUDE_LIST = [
 
 HTML_FILES = [
     "country.html",
+    "freshness/index.html",
     "index.html",
     "completeness/index.html",
     "rank/index.html",
     "sync/index.html",
 ]
+
 
 # Returns True if everything we need is here, False otherwise.
 def check_dependencies():
