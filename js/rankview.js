@@ -7,6 +7,18 @@ constructor(dataProvider) {
   this.dataProvider_ = dataProvider;
 }
 
+isDataReady() {
+  return false;
+}
+
+fetchData() {
+  const dp = this.dataProvider_;
+  let self = this;
+  return dp.fetchCountryNames().
+      then(dp.fetchJhuData.bind(dp)).
+      then(self.render.bind(self));
+}
+
 render() {
   super.render();
   let container = document.getElementById('data');
@@ -89,14 +101,6 @@ RankView.prototype.getTitle = function() {
 
 RankView.prototype.init = function() {
   this.fetchData();
-};
-
-RankView.prototype.fetchData = function() {
-  const dp = this.dataProvider_;
-  let self = this;
-  dp.fetchCountryNames().
-      then(dp.fetchJhuData.bind(dp)).
-      then(self.render.bind(self));
 };
 
 RankView.prototype.onToggleClicked = function(e) {

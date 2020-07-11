@@ -7,6 +7,19 @@ constructor(dataProvider) {
   this.dataProvider_ = dataProvider;
 }
 
+isDataReady() {
+  return false;
+}
+
+fetchData() {
+  let self = this;
+  return this.dataProvider_.fetchInitialData().then(function() {
+    // We only need the latest daily slice for the data completeness page.
+    self.dataProvider_.fetchLatestDailySlice().then(
+        self.render.bind(self));
+  });
+}
+
 render() {
   super.render();
   const latestCountryFeatures = this.dataProvider_.getCountryFeaturesForDay(
@@ -64,7 +77,7 @@ render() {
           '</td><td>' + individual + ' vs ' + aggregate + '</td>';
     list.appendChild(row);
   }
-  const globalPercentage = (100 * totalIndividual / totalAggregate).
+ const globalPercentage = (100 * totalIndividual / totalAggregate).
       toFixed(ratioPrecision);
   container.innerHTML = '<h2>Global completeness: ' + globalPercentage + '%</h2>';
   container.appendChild(list);
@@ -78,15 +91,6 @@ CompletenessView.prototype.getTitle = function() {
 
 CompletenessView.prototype.init = function() {
   this.fetchData();
-};
-
-CompletenessView.prototype.fetchData = function() {
-  let self = this;
-  this.dataProvider_.fetchInitialData().then(function() {
-    // We only need the latest daily slice for the data completeness page.
-    self.dataProvider_.fetchLatestDailySlice().then(
-        self.render.bind(self));
-  });
 };
 
 function completenessInit() {

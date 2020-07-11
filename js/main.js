@@ -94,7 +94,7 @@ function handleHideModal() {
 Viz.prototype.init = function() {
 
   this.caseMapView_.init();
-  this.caseMapView_.fetchData();
+  this.caseMapView_.prepareAndRender();
 
   this.nav_.setupTopBar();
 

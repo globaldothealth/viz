@@ -16,6 +16,36 @@ constructor(dataProvider) {
   this.sideBar_ = new SideBar(this.dataProvider_, this);
 }
 
+isDataReady() {
+  return false;
+}
+
+fetchData() {
+  // Once the initial data is here, fetch the daily slices. Start with the
+  // newest.
+  let dp = this.dataProvider_;
+  let self = this;
+  return this.dataProvider_.fetchInitialData().
+      then(dp.fetchLatestDailySlice.bind(dp)).
+      then(function() {
+      // The page is now interactive and showing the latest data. If we need to
+      // focus on a given country, do that now.
+      if (!!initialFlyTo) {
+        self.flyToCountry(initialFlyTo);
+      }
+      self.sideBar_.renderCountryList();
+      // At this point the dates only contain the latest date.
+      // Show the latest data when we have that before fetching older data.
+      //map.showDataAtDate(self.dataProvider_.getLatestDate());
+      // Give a bit of time for the map to show before fetching other slices.
+      window.setTimeout(function() {
+        dp.fetchDailySlices(
+        // Update the time control UI after each daily slice.
+        self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_));
+      }, 2000);
+    });
+}
+
 render() {
   super.render();
 }
@@ -40,33 +70,6 @@ CaseMapView.prototype.init = function() {
     self.sideBar_.updateCountryListCounts();
   });
   toggleSideBar();
-};
-
-CaseMapView.prototype.fetchData = function() {
-  // Once the initial data is here, fetch the daily slices. Start with the
-  // newest.
-  let dp = this.dataProvider_;
-  let self = this;
-  this.dataProvider_.fetchInitialData().
-      then(dp.fetchLatestDailySlice.bind(dp)).
-      then(function() {
-      // The page is now interactive and showing the latest data. If we need to
-      // focus on a given country, do that now.
-      if (!!initialFlyTo) {
-        self.flyToCountry(initialFlyTo);
-      }
-      self.sideBar_.renderCountryList();
-      // At this point the dates only contain the latest date.
-      // Show the latest data when we have that before fetching older data.
-      //map.showDataAtDate(self.dataProvider_.getLatestDate());
-      // Give a bit of time for the map to show before fetching other slices.
-      window.setTimeout(function() {
-        dp.fetchDailySlices(
-        // Update the time control UI after each daily slice.
-        self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_));
-      }, 2000);
-    });
-
 };
 
 /** @param {string} date */

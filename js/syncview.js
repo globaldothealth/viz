@@ -6,6 +6,18 @@ constructor(dataProvider) {
   this.dataProvider_ = dataProvider;
 }
 
+isDataReady() {
+  return false;
+}
+
+fetchData() {
+  let self = this;
+  const dp = this.dataProvider_;
+  return dp.fetchCountryNames().
+      then(dp.fetchJhuData.bind(dp)).
+      then(self.render.bind(self));
+}
+
 render() {
   super.render();
   const aggregates = this.dataProvider_.getAggregateData();
@@ -91,14 +103,6 @@ SyncView.prototype.getTitle = function() {
 
 SyncView.prototype.init = function() {
   this.fetchData();
-};
-
-SyncView.prototype.fetchData = function() {
-  let self = this;
-  const dp = this.dataProvider_;
-  dp.fetchCountryNames().
-      then(dp.fetchJhuData.bind(dp)).
-      then(self.render.bind(self));
 };
 
 SyncView.prototype.onThemeChanged = function(darkTheme) { };
