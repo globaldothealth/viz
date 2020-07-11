@@ -1,5 +1,8 @@
-/** @constructor @implements {View} */
-let CaseMapView = function(dataProvider) {
+class CaseMapView extends View {
+
+constructor(dataProvider) {
+  super(dataProvider);
+
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
 
@@ -11,6 +14,16 @@ let CaseMapView = function(dataProvider) {
 
   /** @const @private {SideBar} */
   this.sideBar_ = new SideBar(this.dataProvider_, this);
+}
+
+render() {
+  super.render();
+}
+
+}
+
+CaseMapView.prototype.getTitle = function() {
+  return 'Case Map';
 };
 
 CaseMapView.prototype.init = function() {
@@ -59,9 +72,6 @@ CaseMapView.prototype.fetchData = function() {
 /** @param {string} date */
 CaseMapView.prototype.onTimeChanged = function(date) {
   this.map_.showDataAtDate(date);
-};
-
-CaseMapView.prototype.render = function() {
 };
 
 

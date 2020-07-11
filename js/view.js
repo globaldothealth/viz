@@ -1,8 +1,13 @@
-/** @interface */
-let View = function(dataProvider) {};
+/** @abstract */
+class View {
+  constructor(dataProvider) {};
 
-View.prototype.fetchData = function() { };
+  /** @abstract @return {string} */ getTitle() { };
+  /** @abstract */ fetchData() { };
 
-View.prototype.render = function() { };
+  render() {
+    document.title = this.getTitle();
+  };
 
-View.prototype.onThemeChanged = function(darkTheme) { };
+ /** @abstract */ onThemeChanged(darkTheme) { };
+}
