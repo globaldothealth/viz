@@ -1,25 +1,27 @@
 let completeness;
 
-/** @constructor @implements {View} */
-let CompletenessView = function(dataProvider) {
+class CompletenessView extends View {
+constructor(dataProvider) {
+  super(dataProvider);
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
-};
+}
 
-CompletenessView.prototype.init = function() {
-  this.fetchData();
-};
+isDataReady() {
+  return false;
+}
 
-CompletenessView.prototype.fetchData = function() {
+fetchData() {
   let self = this;
-  this.dataProvider_.fetchInitialData().then(function() {
+  return this.dataProvider_.fetchInitialData().then(function() {
     // We only need the latest daily slice for the data completeness page.
     self.dataProvider_.fetchLatestDailySlice().then(
         self.render.bind(self));
   });
-};
+}
 
-CompletenessView.prototype.render = function() {
+render() {
+  super.render();
   const latestCountryFeatures = this.dataProvider_.getCountryFeaturesForDay(
       this.dataProvider_.getLatestDate());
   console.log(latestCountryFeatures);
@@ -75,10 +77,20 @@ CompletenessView.prototype.render = function() {
           '</td><td>' + individual + ' vs ' + aggregate + '</td>';
     list.appendChild(row);
   }
-  const globalPercentage = (100 * totalIndividual / totalAggregate).
+ const globalPercentage = (100 * totalIndividual / totalAggregate).
       toFixed(ratioPrecision);
   container.innerHTML = '<h2>Global completeness: ' + globalPercentage + '%</h2>';
   container.appendChild(list);
+}
+
+}
+
+CompletenessView.prototype.getTitle = function() {
+  return 'Completeness';
+};
+
+CompletenessView.prototype.init = function() {
+  this.fetchData();
 };
 
 function completenessInit() {

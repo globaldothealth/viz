@@ -1,72 +1,26 @@
-/** @constructor @implements {View} */
-let RankView = function(dataProvider) {
+class RankView extends View {
+
+constructor(dataProvider) {
+  super(dataProvider);
+
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
-};
-
-RankView.CONTINENT_COLORS = {
-  'O': '#b600ff',  // purple
-  'S': '#0c1fb4',  // dark blue
-  'N': '#0060ff',  // blue
-  'E': '#00b31a',  // green
-  'A': '#bb9900',  // yellow
-  'P': '#e37300',  // orange
-  'Z': '#e90000',  // red
-};
-
-let maxGraphedValue = 0;
-let maxWidth = 0;
-let showDeathCounts = false;
-
-let rank;
-function rankInit() {
-  rank = new RankView(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
-  rank.init();
 }
 
-RankView.prototype.init = function() {
-  this.fetchData();
-};
+isDataReady() {
+  return false;
+}
 
-RankView.prototype.fetchData = function() {
+fetchData() {
   const dp = this.dataProvider_;
   let self = this;
-  dp.fetchCountryNames().
+  return dp.fetchCountryNames().
       then(dp.fetchJhuData.bind(dp)).
       then(self.render.bind(self));
-};
-
-RankView.prototype.onToggleClicked = function(e) {
-  let toggle = document.getElementById('toggle');
-  if (toggle.firstChild == e.target) {
-    toggle.firstChild.classList.add('active');
-    toggle.lastChild.classList.remove('active');
-    showDeathCounts = false;
-  } else if (toggle.lastChild == e.target) {
-    toggle.firstChild.classList.remove('active');
-    toggle.lastChild.classList.add('active');
-    showDeathCounts = true;
-  }
-  this.onModeToggled();
 }
 
-RankView.prototype.onModeToggled = function() {
-  const aggregates = this.dataProvider_.getAggregateData();
-  const key = showDeathCounts ? 'deaths' : 'cum_conf';
-  let maxValue = 0;
-  let dates = Object.keys(aggregates).sort();
-
-  for (let date in aggregates) {
-    for (let country in aggregates[date]) {
-      maxValue = Math.max(maxValue, aggregates[date][country][key]);
-    }
-  }
-  maxGraphedValue = Math.log10(maxValue);
-  this.showRankPageAtCurrentDate();
-}
-
-RankView.prototype.render = function() {
+render() {
+  super.render();
   let container = document.getElementById('data');
   container.innerHTML = '';
   maxWidth = Math.floor(container.clientWidth);
@@ -115,6 +69,67 @@ RankView.prototype.render = function() {
   // Assume only two modes here.
   toggle.firstChild.onclick = this.onToggleClicked.bind(this);
   toggle.lastChild.onclick = this.onToggleClicked.bind(this);
+}
+
+
+}
+
+RankView.CONTINENT_COLORS = {
+  'O': '#b600ff',  // purple
+  'S': '#0c1fb4',  // dark blue
+  'N': '#0060ff',  // blue
+  'E': '#00b31a',  // green
+  'A': '#bb9900',  // yellow
+  'P': '#e37300',  // orange
+  'Z': '#e90000',  // red
+};
+
+let maxGraphedValue = 0;
+let maxWidth = 0;
+let showDeathCounts = false;
+
+let rank;
+function rankInit() {
+  rank = new RankView(new DataProvider(
+      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
+  rank.init();
+}
+
+RankView.prototype.getTitle = function() {
+  return 'Rank';
+};
+
+RankView.prototype.init = function() {
+  this.fetchData();
+};
+
+RankView.prototype.onToggleClicked = function(e) {
+  let toggle = document.getElementById('toggle');
+  if (toggle.firstChild == e.target) {
+    toggle.firstChild.classList.add('active');
+    toggle.lastChild.classList.remove('active');
+    showDeathCounts = false;
+  } else if (toggle.lastChild == e.target) {
+    toggle.firstChild.classList.remove('active');
+    toggle.lastChild.classList.add('active');
+    showDeathCounts = true;
+  }
+  this.onModeToggled();
+}
+
+RankView.prototype.onModeToggled = function() {
+  const aggregates = this.dataProvider_.getAggregateData();
+  const key = showDeathCounts ? 'deaths' : 'cum_conf';
+  let maxValue = 0;
+  let dates = Object.keys(aggregates).sort();
+
+  for (let date in aggregates) {
+    for (let country in aggregates[date]) {
+      maxValue = Math.max(maxValue, aggregates[date][country][key]);
+    }
+  }
+  maxGraphedValue = Math.log10(maxValue);
+  this.showRankPageAtCurrentDate();
 }
 
 RankView.prototype.onRankTouchMove = function(delta) {

@@ -1,24 +1,25 @@
-/** @constructor */
-let SyncView = function(dataProvider) {
+class SyncView extends View {
+
+constructor(dataProvider) {
+  super(dataProvider);
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
-};
+}
 
-const STARTING_CASE_COUNT = 10000;
+isDataReady() {
+  return false;
+}
 
-SyncView.prototype.init = function() {
-  this.fetchData();
-};
-
-SyncView.prototype.fetchData = function() {
+fetchData() {
   let self = this;
   const dp = this.dataProvider_;
-  dp.fetchCountryNames().
+  return dp.fetchCountryNames().
       then(dp.fetchJhuData.bind(dp)).
       then(self.render.bind(self));
-};
+}
 
-SyncView.prototype.render = function() {
+render() {
+  super.render();
   const aggregates = this.dataProvider_.getAggregateData();
   let dates = Object.keys(aggregates);
   // Sort in chronological order.
@@ -91,6 +92,18 @@ SyncView.prototype.render = function() {
 
   new Chart(ctx, cfg);
 }
+
+
+}
+const STARTING_CASE_COUNT = 10000;
+
+SyncView.prototype.getTitle = function() {
+  return 'Synchronized';
+};
+
+SyncView.prototype.init = function() {
+  this.fetchData();
+};
 
 SyncView.prototype.onThemeChanged = function(darkTheme) { };
 

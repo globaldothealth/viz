@@ -33,8 +33,6 @@ Viz.LIVE_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
 // Globals
 let locationInfo = {};
-// A map from country names to country objects.
-let countriesByName = {};
 let autoDriveMode = false;
 let twoDMode = false;
 let darkTheme = false;
@@ -42,7 +40,6 @@ let initialFlyTo;
 
 let currentIsoDate;
 let currentDateIndex = 0;
-let animationIntervalId = 0;
 let currentTouchY = -1;
 
 let atomicFeaturesByDay = {};
@@ -97,7 +94,7 @@ function handleHideModal() {
 Viz.prototype.init = function() {
 
   this.caseMapView_.init();
-  this.caseMapView_.fetchData();
+  this.caseMapView_.prepareAndRender();
 
   this.nav_.setupTopBar();
 

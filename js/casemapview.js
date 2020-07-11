@@ -1,5 +1,8 @@
-/** @constructor @implements {View} */
-let CaseMapView = function(dataProvider) {
+class CaseMapView extends View {
+
+constructor(dataProvider) {
+  super(dataProvider);
+
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
 
@@ -11,30 +14,18 @@ let CaseMapView = function(dataProvider) {
 
   /** @const @private {SideBar} */
   this.sideBar_ = new SideBar(this.dataProvider_, this);
-};
+}
 
-CaseMapView.prototype.init = function() {
-  let ta = this.timeAnimation_;
-  ta.init();
-  document.getElementById('spread').
-      addEventListener('click', ta.toggleMapAnimation.bind(ta));
+isDataReady() {
+  return false;
+}
 
-  this.map_.init();
-  this.fetchData();
-  let self = this;
-  document.getElementById('sidebar-tab').onclick = toggleSideBar;
-  document.getElementById('percapita').addEventListener('change', function(e) {
-    self.sideBar_.updateCountryListCounts();
-  });
-  toggleSideBar();
-};
-
-CaseMapView.prototype.fetchData = function() {
+fetchData() {
   // Once the initial data is here, fetch the daily slices. Start with the
   // newest.
   let dp = this.dataProvider_;
   let self = this;
-  this.dataProvider_.fetchInitialData().
+  return this.dataProvider_.fetchInitialData().
       then(dp.fetchLatestDailySlice.bind(dp)).
       then(function() {
       // The page is now interactive and showing the latest data. If we need to
@@ -53,15 +44,37 @@ CaseMapView.prototype.fetchData = function() {
         self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_));
       }, 2000);
     });
+}
 
+render() {
+  super.render();
+}
+
+}
+
+CaseMapView.prototype.getTitle = function() {
+  return 'Case Map';
+};
+
+CaseMapView.prototype.init = function() {
+  let ta = this.timeAnimation_;
+  ta.init();
+  document.getElementById('spread').
+      addEventListener('click', ta.toggleMapAnimation.bind(ta));
+
+  this.map_.init();
+  this.fetchData();
+  let self = this;
+  document.getElementById('sidebar-tab').onclick = toggleSideBar;
+  document.getElementById('percapita').addEventListener('change', function(e) {
+    self.sideBar_.updateCountryListCounts();
+  });
+  toggleSideBar();
 };
 
 /** @param {string} date */
 CaseMapView.prototype.onTimeChanged = function(date) {
   this.map_.showDataAtDate(date);
-};
-
-CaseMapView.prototype.render = function() {
 };
 
 
