@@ -99,7 +99,7 @@ Viz.prototype.init = function() {
     self.nav_.processHash(h.oldURL, h.newURL);
   }
 
-  document.getElementById('credit').onclick = fetchAboutPage;
+  // document.getElementById('credit').onclick = fetchAboutPage;
   window.setTimeout(this.updateData.bind(this), Viz.LIVE_UPDATE_INTERVAL_MS);
 }
 

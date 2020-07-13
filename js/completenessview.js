@@ -11,7 +11,7 @@ getId() {
   return 'completeness';
 }
 
-getTitle = function() {
+getTitle() {
   return 'Completeness';
 };
 
@@ -21,11 +21,9 @@ isDataReady() {
 
 fetchData() {
   let self = this;
-  return this.dataProvider_.fetchInitialData().then(function() {
+  return this.dataProvider_.fetchInitialData().then(
     // We only need the latest daily slice for the data completeness page.
-    self.dataProvider_.fetchLatestDailySlice().then(
-        self.render.bind(self));
-  });
+    self.dataProvider_.fetchLatestDailySlice.bind(self.dataProvider_));
 }
 
 render() {

@@ -9,6 +9,7 @@ class View {
     if (this.isDataReady()) {
       this.render();
     } else {
+      console.log('Fetching data for ' + this.getId());
       this.fetchData().then(this.render.bind(this));
     }
   };

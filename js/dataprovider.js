@@ -9,7 +9,7 @@ let DataProvider = function(baseUrl) {
 
   /**
    * A map from 2-letter ISO country codes to country objects.
-   * @private {Object}
+   * @private {!Object}
    */
   this.countries_ = {};
 
@@ -234,6 +234,11 @@ DataProvider.prototype.fetchDataIndex = function() {
 
 
 DataProvider.prototype.fetchCountryNames = function() {
+  let countryCount = Object.keys(this.countries_).length;
+  if (!!countryCount) {
+    console.log('Already have countries.');
+    return Promise.resolve();
+  }
   let self = this;
   return fetch('https://raw.githubusercontent.com/ghdsi/common/master/countries.data')
     .then(function(response) { return response.text(); })

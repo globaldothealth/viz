@@ -52,6 +52,11 @@ SideBar.prototype.flyToCountry = function(event) {
   this.caseMapView_.flyToCountry(code);
 }
 
+SideBar.prototype.render = function() {
+  let container = document.getElementById('sidebar');
+  container.innerHTML = '<div id="sidebar-tab"><span id="sidebar-tab-icon"></span></div><div class="sidebar-header"><img src="img/gh_logo_white.svg" style="width: 7ex; margin-right: 1ex; display: none;" /><h1 class="sidebar-title">COVID-19</h1></div>';
+};
+
 SideBar.prototype.renderCountryList = function() {
   let countryList = document.getElementById('location-list');
   const latestAggregateData = this.dataProvider_.getLatestAggregateData();

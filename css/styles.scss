@@ -33,6 +33,9 @@ body {
   // line-height: 1.4;
 }
 
+#app {
+}
+
 body.rank {
   overflow: hidden;
 }
@@ -70,6 +73,7 @@ body.rank #app {
 body.rank #rank_content {
   flex-grow: 1;
   position: relative;
+  width: 100%;
 }
 
 body.rank .bar {

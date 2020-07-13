@@ -10,7 +10,7 @@ getId() {
   return 'sync';
 }
 
-getTitle = function() {
+getTitle() {
   return 'Synchronized';
 };
 
@@ -22,8 +22,7 @@ fetchData() {
   let self = this;
   const dp = this.dataProvider_;
   return dp.fetchCountryNames().
-      then(dp.fetchJhuData.bind(dp)).
-      then(self.render.bind(self));
+      then(dp.fetchJhuData.bind(dp));
 }
 
 render() {
