@@ -7,6 +7,10 @@ constructor(dataProvider) {
   this.dataProvider_ = dataProvider;
 }
 
+getId() {
+  return 'rank';
+}
+
 isDataReady() {
   return false;
 }
@@ -21,8 +25,10 @@ fetchData() {
 
 render() {
   super.render();
-  let container = document.getElementById('data');
+  document.getElementById('app').innerHTML = '<h1>Rank</h1><div style="text-align: center">Scroll to advance. Logarithmic scale.</div><div id="toggle"><div class="active">Cases</div><div>Deaths</div></div><div id="rank_content">Loading...</div><div id="minimap"></div>';
+  let container = document.getElementById('rank_content');
   container.innerHTML = '';
+
   maxWidth = Math.floor(container.clientWidth);
 
   let i = 0;
@@ -50,7 +56,7 @@ render() {
   this.onModeToggled();
   let self = this;
   container.onwheel = function(e) {
-    self.onRankWheel(e)
+    self.onRankWheel(e);
   };
   container.ontouchmove = function(e) {
     e.preventDefault();
@@ -153,10 +159,10 @@ RankView.prototype.rankAdvance = function(forward, steps) {
 
 RankView.prototype.showRankPageAtCurrentDate = function() {
   const date = this.dataProvider_.getDates()[currentDateIndex];
-  document.getElementById('title').textContent = date;
+  document.getElementsByTagName('h1')[0].textContent = date;
   const data = this.dataProvider_.getAggregateData()[date];
   const y_step = 33;
-  let container = document.getElementById('data');
+  let container = document.getElementById('rank_content');
   const key = showDeathCounts ? 'deaths' : 'cum_conf';
   let o = {};
   for (let i = 0; i < data.length; i++) {

@@ -16,6 +16,10 @@ constructor(dataProvider) {
   this.sideBar_ = new SideBar(this.dataProvider_, this);
 }
 
+getId() {
+  return 'casemap';
+}
+
 isDataReady() {
   return false;
 }
@@ -25,6 +29,14 @@ fetchData() {
   // newest.
   let dp = this.dataProvider_;
   let self = this;
+  let mapBoxScript = document.createElement('script');
+  mapBoxScript.setAttribute('src', 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js');
+  // TODO: Set onload
+  let mapBoxStyle = document.createElement('link');
+  mapBoxStyle.setAttribute('href', 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css');
+  mapBoxStyle.setAttribute('rel', 'stylesheet');
+  document.body.appendChild(mapBoxScript);
+  document.body.appendChild(mapBoxStyle);
   return this.dataProvider_.fetchInitialData().
       then(dp.fetchLatestDailySlice.bind(dp)).
       then(function() {
@@ -48,6 +60,17 @@ fetchData() {
 
 render() {
   super.render();
+  let app = document.getElementById('app');
+  app.innerHTML = '';
+  let sideBarEl = document.createElement('div');
+  sideBarEl.setAttribute('id', 'sidebar');
+  app.appendChild(sideBarEl);
+  let self = this;
+  document.getElementById('sidebar-tab').onclick = toggleSideBar;
+  document.getElementById('percapita').addEventListener('change', function(e) {
+    self.sideBar_.updateCountryListCounts();
+  });
+  toggleSideBar();
 }
 
 }
@@ -64,12 +87,6 @@ CaseMapView.prototype.init = function() {
 
   this.map_.init();
   this.fetchData();
-  let self = this;
-  document.getElementById('sidebar-tab').onclick = toggleSideBar;
-  document.getElementById('percapita').addEventListener('change', function(e) {
-    self.sideBar_.updateCountryListCounts();
-  });
-  toggleSideBar();
 };
 
 /** @param {string} date */
@@ -94,5 +111,8 @@ CaseMapView.prototype.onMapAnimationEnded = function() {
 }
 
 CaseMapView.prototype.onThemeChanged = function(darkTheme) {
+  if (!this.isShown()) {
+    return;
+  }
   this.map_.setStyle(darkTheme);
 };

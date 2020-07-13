@@ -2,6 +2,8 @@
 class View {
   constructor(dataProvider) {};
 
+  /** @abstract @return {string} */ getId() { };
+
   /** @abstract @return {string} */ getTitle() { };
   prepareAndRender() {
     if (this.isDataReady()) {
@@ -10,6 +12,8 @@ class View {
       this.fetchData().then(this.render.bind(this));
     }
   };
+
+  /** @abstract */ init() { };
 
   /** @abstract @return {boolean} */ isDataReady() {};
 
@@ -21,7 +25,12 @@ class View {
 
   render() {
     document.title = this.getTitle();
+    document.body.className = this.getId();
   };
+
+  isShown() {
+    return document.body.className == this.getId();
+  }
 
  /** @abstract */ onThemeChanged(darkTheme) { };
 }

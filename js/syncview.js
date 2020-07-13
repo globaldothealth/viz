@@ -6,6 +6,10 @@ constructor(dataProvider) {
   this.dataProvider_ = dataProvider;
 }
 
+getId() {
+  return 'sync';
+}
+
 isDataReady() {
   return false;
 }

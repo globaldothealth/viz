@@ -7,6 +7,10 @@ constructor(dataProvider) {
   this.dataProvider_ = dataProvider;
 }
 
+getId() {
+  return 'completeness';
+}
+
 isDataReady() {
   return false;
 }
@@ -101,4 +105,5 @@ function completenessInit() {
 
 CompletenessView.prototype.onThemeChanged = function(darkTheme) { };
 
-globalThis['completenessInit'] = completenessInit;
+// globalThis['completenessInit'] = completenessInit;
+// viz.registerView(this);
