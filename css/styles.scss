@@ -30,7 +30,7 @@ html {
 
 body {
   font-family: arial;
-  line-height: 1.4;
+  // line-height: 1.4;
 }
 
 body.rank {
@@ -55,11 +55,21 @@ body.rank #toggle div.active {
   background: cornflowerblue;
 }
 
-body.rank #app {
-  height: 100%;
+body.rank #app, body.completeness #app {
   margin: 25px auto;
   position: relative;
-  width: 90%;
+}
+
+body.rank #app {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+
+body.rank #rank_content {
+  flex-grow: 1;
+  position: relative;
 }
 
 body.rank .bar {
@@ -86,7 +96,7 @@ body.rank .bar .end {
   right: 5px;
 }
 
-body.rank  #minimap {
+body.rank #minimap {
   background:
   url('https://raw.githubusercontent.com/ghdsi/common/master/worldmap.png');
   bottom: 0;
@@ -169,12 +179,12 @@ h1 {
 
 #topbar {
   font-size: 90%;
-  left: 0;
+  // left: 0;
   padding: 1ex 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 4;
+  // position: absolute;
+  // right: 0;
+  // top: 0;
+  // z-index: 4;
 }
 
 #topbar ul {

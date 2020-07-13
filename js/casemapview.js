@@ -20,6 +20,11 @@ getId() {
   return 'casemap';
 }
 
+getTitle = function() {
+  return 'Case Map';
+};
+
+
 isDataReady() {
   return false;
 }
@@ -74,10 +79,6 @@ render() {
 }
 
 }
-
-CaseMapView.prototype.getTitle = function() {
-  return 'Case Map';
-};
 
 CaseMapView.prototype.init = function() {
   let ta = this.timeAnimation_;

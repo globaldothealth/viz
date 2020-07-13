@@ -11,6 +11,10 @@ getId() {
   return 'completeness';
 }
 
+getTitle = function() {
+  return 'Completeness';
+};
+
 isDataReady() {
   return false;
 }
@@ -62,7 +66,7 @@ render() {
     }
     return (ratio_a > ratio_b) ? 1 : -1;
   });
-  let container = document.getElementById('data');
+  let container = document.getElementById('app');
   container.innerHTML = '';
   let list = document.createElement('table');
   list.innerHTML = '<tr><th>Country</th><th>Completion</th><th>"Line list" vs JHU aggregate</th></tr>';
@@ -88,10 +92,6 @@ render() {
 }
 
 }
-
-CompletenessView.prototype.getTitle = function() {
-  return 'Completeness';
-};
 
 CompletenessView.prototype.init = function() {
   this.fetchData();

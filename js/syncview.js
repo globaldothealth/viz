@@ -10,6 +10,10 @@ getId() {
   return 'sync';
 }
 
+getTitle = function() {
+  return 'Synchronized';
+};
+
 isDataReady() {
   return false;
 }
@@ -74,7 +78,7 @@ render() {
     i++;
   }
 
-  let container = document.getElementById('data');
+  let container = document.getElementById('app');
   container.innerHTML = '';
   let canvas = document.createElement('canvas');
   canvas.setAttribute('width', container.clientWidth + 'px');
@@ -100,10 +104,6 @@ render() {
 
 }
 const STARTING_CASE_COUNT = 10000;
-
-SyncView.prototype.getTitle = function() {
-  return 'Synchronized';
-};
 
 SyncView.prototype.init = function() {
   this.fetchData();
