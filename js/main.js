@@ -110,7 +110,7 @@ Viz.prototype.registerView = function(view) {
 
 Viz.prototype.updateData = function() {
   console.log('Updating data...');
-  this.dataProvider_.fetchLatestCounts().then(function() {
+  this.dataProvider_.fetchLatestCounts(true /* forceRefresh */).then(function() {
     console.log('Updated latest counts.');
   });
   this.dataProvider_.fetchDataIndex().then(function() {
