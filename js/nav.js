@@ -11,6 +11,12 @@ Nav.TOGGLES = [
   ['Dark Theme', 'dark'],
 ];
 
+Nav.VIEWS = [
+  ['Case Map', 'casemap'],
+  ['Rank', 'rank'],
+  ['Sync', 'sync'],
+  ['Completeness', 'completeness']
+];
 
 Nav.prototype.processHash = function(oldUrl, newUrl) {
   let baseUrl = window.location.origin + window.location.pathname;
@@ -20,24 +26,34 @@ Nav.prototype.processHash = function(oldUrl, newUrl) {
   const oldHashes = !!oldUrl ? oldUrl.substring(baseUrl.length).split('/') : [];
   const newHashes = newUrl.substring(baseUrl.length).split('/');
   darkTheme = false;
+  let themeChanged = false;
+  let viewToLoad = 'casemap';
   if (newHashes.length > 0 || oldHashes.length > 0) {
     for (let i = 0; i < newHashes.length; i++) {
       let hashBrown = newHashes[i];
       if (hashBrown.startsWith('#')) {
         hashBrown = hashBrown.substring(1);
       }
-      if (hashBrown.toLowerCase() == '2d') {
+      // Views
+      const h = hashBrown.toLowerCase();
+      if (h == 'rank' || h == 'sync' || h == 'completeness') {
+        viewToLoad = hashBrown;
+        continue;
+      }
+      // Features
+      if (h == '2d') {
         twoDMode = true;
         continue;
       }
-      if (hashBrown.toLowerCase() == 'autodrive') {
+      if (h == 'autodrive') {
         autoDriveMode = true;
         document.body.classList.add('autodrive');
         continue;
       }
 
-      if (hashBrown.toLowerCase() == 'dark') {
+      if (h == 'dark') {
         darkTheme = true;
+        themeChanged = true;
         continue;
       }
 
@@ -47,7 +63,10 @@ Nav.prototype.processHash = function(oldUrl, newUrl) {
       }
     }
   }
-  this.onThemeChanged();
+  this.viz_.loadView(viewToLoad);
+  if (themeChanged) {
+    this.onThemeChanged();
+  }
 }
 
 Nav.prototype.onThemeChanged = function() {
@@ -90,9 +109,9 @@ Nav.prototype.setupTopBar = function() {
   const baseUrl = window.location.origin + '/';
   const LINKS = [
     ['Map', baseUrl],
-    ['Rank', baseUrl + 'rank'],
-    ['Sync', baseUrl + 'sync'],
-    ['Completeness', baseUrl + 'completeness'],
+    ['Rank', baseUrl + '#rank'],
+    ['Sync', baseUrl + '#sync'],
+    ['Completeness', baseUrl + '#completeness'],
   ];
   let topBar = document.getElementById('topbar');
   topBar.innerHTML = '<ul></ul>';

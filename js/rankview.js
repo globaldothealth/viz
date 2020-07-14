@@ -5,25 +5,34 @@ constructor(dataProvider) {
 
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
+
+  /** @private {number} */
+  this.maxGraphedValue_ = 0;
 }
 
-isDataReady() {
-  return false;
+getId() {
+  return 'rank';
 }
+
+getTitle() {
+  return 'Rank';
+};
 
 fetchData() {
   const dp = this.dataProvider_;
   let self = this;
-  return dp.fetchCountryNames().
-      then(dp.fetchJhuData.bind(dp)).
-      then(self.render.bind(self));
+  return dp.fetchCountryNames().then(dp.fetchJhuData.bind(dp));
 }
 
 render() {
   super.render();
-  let container = document.getElementById('data');
+  console.log('Rendering ' + this.getId());
+  document.getElementById('app').innerHTML = '<h1>Rank</h1><div style="text-align: center">Scroll to advance. Logarithmic scale.</div><div id="toggle"><div class="active">Cases</div><div>Deaths</div></div><div id="rank_content">Loading...</div><div id="minimap"></div>';
+  let container = document.getElementById('rank_content');
   container.innerHTML = '';
+
   maxWidth = Math.floor(container.clientWidth);
+  console.log('Max width ' + maxWidth);
 
   let i = 0;
   let countries = this.dataProvider_.getCountries();
@@ -50,7 +59,7 @@ render() {
   this.onModeToggled();
   let self = this;
   container.onwheel = function(e) {
-    self.onRankWheel(e)
+    self.onRankWheel(e);
   };
   container.ontouchmove = function(e) {
     e.preventDefault();
@@ -84,7 +93,6 @@ RankView.CONTINENT_COLORS = {
   'Z': '#e90000',  // red
 };
 
-let maxGraphedValue = 0;
 let maxWidth = 0;
 let showDeathCounts = false;
 
@@ -94,10 +102,6 @@ function rankInit() {
       'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
   rank.init();
 }
-
-RankView.prototype.getTitle = function() {
-  return 'Rank';
-};
 
 RankView.prototype.init = function() {
   this.fetchData();
@@ -128,7 +132,7 @@ RankView.prototype.onModeToggled = function() {
       maxValue = Math.max(maxValue, aggregates[date][country][key]);
     }
   }
-  maxGraphedValue = Math.log10(maxValue);
+  this.maxGraphedValue_ = Math.log10(maxValue);
   this.showRankPageAtCurrentDate();
 }
 
@@ -153,10 +157,10 @@ RankView.prototype.rankAdvance = function(forward, steps) {
 
 RankView.prototype.showRankPageAtCurrentDate = function() {
   const date = this.dataProvider_.getDates()[currentDateIndex];
-  document.getElementById('title').textContent = date;
+  document.getElementsByTagName('h1')[0].textContent = date;
   const data = this.dataProvider_.getAggregateData()[date];
   const y_step = 33;
-  let container = document.getElementById('data');
+  let container = document.getElementById('rank_content');
   const key = showDeathCounts ? 'deaths' : 'cum_conf';
   let o = {};
   for (let i = 0; i < data.length; i++) {
@@ -183,8 +187,9 @@ RankView.prototype.showRankPageAtCurrentDate = function() {
     b.getElementsByClassName('end')[0].textContent = case_count.toLocaleString();
     b.style.display = 'block';
     b.style.top = y + 'px';
-    b.style.width = Math.floor(
-        maxWidth * Math.log10(case_count) / maxGraphedValue);
+    const displayedWidth = Math.floor(
+        maxWidth * Math.log10(case_count) / this.maxGraphedValue_);
+    b.style.width = displayedWidth + 'px';
     y += 37;
   }
   for (let i = 0; i < data.length; i++) {

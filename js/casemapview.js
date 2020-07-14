@@ -16,18 +16,32 @@ constructor(dataProvider) {
   this.sideBar_ = new SideBar(this.dataProvider_, this);
 }
 
-isDataReady() {
-  return false;
+getId() {
+  return 'casemap';
 }
 
+getTitle() {
+  return 'Case Map';
+};
+
 fetchData() {
-  // Once the initial data is here, fetch the daily slices. Start with the
-  // newest.
   let dp = this.dataProvider_;
   let self = this;
-  return this.dataProvider_.fetchInitialData().
+  return new Promise(function(resolve, reject) {
+    let mapBoxStyle = document.createElement('link');
+    mapBoxStyle.setAttribute('href', 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css');
+    mapBoxStyle.setAttribute('rel', 'stylesheet');
+    document.body.appendChild(mapBoxStyle);
+    let mapBoxScript = document.createElement('script');
+    mapBoxScript.src = 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js';
+    mapBoxScript.onload = () => resolve(mapBoxScript);
+    document.body.appendChild(mapBoxScript);
+  }).then(
+      this.dataProvider_.fetchInitialData().
       then(dp.fetchLatestDailySlice.bind(dp)).
       then(function() {
+
+      self.onMapReady.bind(self)();
       // The page is now interactive and showing the latest data. If we need to
       // focus on a given country, do that now.
       if (!!initialFlyTo) {
@@ -43,33 +57,41 @@ fetchData() {
         // Update the time control UI after each daily slice.
         self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_));
       }, 2000);
-    });
+    }));
 }
 
 render() {
   super.render();
-}
-
-}
-
-CaseMapView.prototype.getTitle = function() {
-  return 'Case Map';
-};
-
-CaseMapView.prototype.init = function() {
-  let ta = this.timeAnimation_;
-  ta.init();
-  document.getElementById('spread').
-      addEventListener('click', ta.toggleMapAnimation.bind(ta));
-
-  this.map_.init();
-  this.fetchData();
+  let app = document.getElementById('app');
+  app.innerHTML = '';
+  let sideBarEl = document.createElement('div');
+  sideBarEl.setAttribute('id', 'sidebar');
+  let mapEl = document.createElement('div');
+  mapEl.className = 'map-wrapper';
+  mapEl.innerHTML = '<div id="legend"><div class="legend-header">Cases</div><ul class="list-reset"></ul></div><div id="range-slider"></div><div id="map"></div>';
+  app.appendChild(sideBarEl);
+  app.appendChild(mapEl);
+  this.sideBar_.render();
   let self = this;
   document.getElementById('sidebar-tab').onclick = toggleSideBar;
   document.getElementById('percapita').addEventListener('change', function(e) {
     self.sideBar_.updateCountryListCounts();
   });
   toggleSideBar();
+  this.timeAnimation_.render();
+}
+
+}
+
+CaseMapView.prototype.init = function() {
+  let ta = this.timeAnimation_;
+  ta.init();
+
+};
+
+CaseMapView.prototype.onMapReady = function() {
+  this.map_.init();
+  this.fetchData();
 };
 
 /** @param {string} date */
@@ -94,5 +116,8 @@ CaseMapView.prototype.onMapAnimationEnded = function() {
 }
 
 CaseMapView.prototype.onThemeChanged = function(darkTheme) {
+  if (!this.isShown()) {
+    return;
+  }
   this.map_.setStyle(darkTheme);
 };

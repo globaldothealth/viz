@@ -9,7 +9,7 @@ let DataProvider = function(baseUrl) {
 
   /**
    * A map from 2-letter ISO country codes to country objects.
-   * @private {Object}
+   * @private {!Object}
    */
   this.countries_ = {};
 
@@ -38,12 +38,19 @@ let DataProvider = function(baseUrl) {
    */
   this.latestDataPerCountry_ = null;
 
+  /**
+   * @private @const {Array.<number>} The latest global counts, in this order:
+   * confirmed cases, deaths, date of last update.
+   */
+  this.latestGlobalCounts_ = [];
+
   /** @private */
   this.dataSliceFileNames_ = [];
 
   /**
     * An object whose keys are ISO-formatted dates, and values are mapping
-    * between country codes and aggregated data (total case count, deaths, etc.)
+    * between country codes and aggregated data (total case count, deaths,
+    * etc.). This is null if and only if the data is absent.
     * @type {Object}
     * @private
     */
@@ -182,7 +189,7 @@ DataProvider.prototype.getCountries = function() {
 DataProvider.prototype.fetchInitialData = function() {
   const self = this;
   return Promise.all([
-    this.fetchLatestCounts(),
+    this.fetchLatestCounts(false /* forceRefresh */),
     this.fetchCountryNames(),
     this.fetchDataIndex(),
     this.fetchLocationData(),
@@ -234,6 +241,11 @@ DataProvider.prototype.fetchDataIndex = function() {
 
 
 DataProvider.prototype.fetchCountryNames = function() {
+  let countryCount = Object.keys(this.countries_).length;
+  if (!!countryCount) {
+    console.log('Already have countries.');
+    return Promise.resolve();
+  }
   let self = this;
   return fetch('https://raw.githubusercontent.com/ghdsi/common/master/countries.data')
     .then(function(response) { return response.text(); })
@@ -259,25 +271,36 @@ DataProvider.prototype.fetchCountryNames = function() {
 };
 
 
-/** Loads the latest case counts from the scraper. */
-DataProvider.prototype.fetchLatestCounts = function() {
+/**
+ * Loads the latest case counts from the scraper.
+ * @param forceRefresh Whether to fetch the latest counts even if we have some
+ *     numbers locally.
+ */
+DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
+  if (!forceRefresh && !!this.latestGlobalCounts_.length) {
+    console.log('We already have latest counts.');
+    return Promise.resolve();
+  }
   const timestamp = (new Date()).getTime();
+  let self = this;
   return fetch(this.baseUrl_ + 'latestCounts.json?nocache=' + timestamp)
     .then(function(response) { return response.json(); })
     .then(function(jsonData) {
+      const counts = jsonData[0];
+      self.latestGlobalCounts_ = [parseInt(counts['caseCount'], 10),
+                                  parseInt(counts['deaths'], 10),
+                                  counts['date']];
       const totalCasesEl = document.getElementById('total-cases');
       const totalDeathsEl = document.getElementById('total-deaths');
       const lastUpdatedDateEl = document.getElementById('last-updated-date');
       if (!!totalCasesEl) {
-        const totalCases = parseInt(jsonData[0]['caseCount'], 10);
-        totalCasesEl.innerText = totalCases.toLocaleString();
+        totalCasesEl.innerText = self.latestGlobalCounts_[0].toLocaleString();
       }
       if (!!totalDeathsEl) {
-        const totalDeaths = parseInt(jsonData[0]['deaths'], 10);
-        totalDeathsEl.innerText = totalDeaths.toLocaleString();
+        totalDeathsEl.innerText = self.latestGlobalCounts_[1].toLocaleString();
       }
       if (!!lastUpdatedDateEl) {
-        lastUpdatedDateEl.innerText = jsonData[0]['date'];
+        lastUpdatedDateEl.innerText = self.latestGlobalCounts_[2];
       }
     });
 };
@@ -367,6 +390,10 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
 
 
 DataProvider.prototype.fetchJhuData = function() {
+  if (!!this.aggregateData_) {
+    console.log('We already have aggregate data');
+    return Promise.resolve();
+  }
   const timestamp = (new Date()).getTime();
   let self = this;
   return fetch(this.baseUrl_ + 'aggregate.json?nocache=' + timestamp)

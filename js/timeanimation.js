@@ -21,11 +21,18 @@ let TimeAnimation = function(dataProvider, caseMapView) {
 TimeAnimation.ANIMATION_FRAME_DURATION_MS = 300;
 
 TimeAnimation.prototype.init = function() {
+};
+
+TimeAnimation.prototype.render = function() {
+  let rangeSliderEl = document.getElementById('range-slider');
+  rangeSlider.innerHTML = '<div id="spread"><img id="playpause" width="20" height="20" alt="Play" /></div><input id="slider" type="range" value="1000" min="0" max="1000" step="1" /><label><span id="date"></span></label>';
   this.timeControl_ = document.getElementById('slider');
   let playEl = document.getElementById('playpause');
   playEl.setAttribute('src', 'img/play.svg');
   playEl.onclick = this.toggleMapAnimation.bind(this);
   let self = this;
+  document.getElementById('spread').
+      addEventListener('click', this.toggleMapAnimation.bind(this));
   this.timeControl_.addEventListener('input', function() {
     self.setTimeControlLabel(self.timeControl_.value);
     self.caseMapView_.onTimeChanged(self.dataProvider_.getDates()[self.timeControl_.value]);

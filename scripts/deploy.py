@@ -19,21 +19,13 @@ INCLUDE_LIST = [
     "index.html",
     "c",
     "js/bundle.js",
-    "completeness/index.html",
-    "freshness/index.html",
     "css/styles.css",
     "img/*",
-    "rank/index.html",
-    "sync/index.html",
 ]
 
 HTML_FILES = [
     "country.html",
-    "freshness/index.html",
     "index.html",
-    "completeness/index.html",
-    "rank/index.html",
-    "sync/index.html",
 ]
 
 

@@ -5,49 +5,48 @@
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
   <link rel="stylesheet" type="text/css" href="css/styles.css?c" />
 </head>
-<body class="sidebar-hidden">
+<body class="sidebar-hidden" onload="bootstrap()">
   <div id="modal-wrapper">
     <div class="modal-backdrop"></div>
     <div id="modal"></div>
   </div>
   <div id="topbar"></div>
-  <div id="sidebar">
-    <div id="sidebar-tab"><span id="sidebar-tab-icon"></span></div>
-    <div class="pullbar"></div>
-    <div class="sidebar-header">
-      <img src="img/gh_logo_white.svg" style="width: 7ex; margin-right: 1ex;
-          display: none;" />
-      <h1 class="sidebar-title">COVID-19</h1>
-    </div>
-    <div class="reported-cases" onClick="handleFlyTo(10, 0, 1)">
-      <span id="total-cases"></span><span class="reported-cases-label">cases</span>
-      <span id="total-deaths"></span><span class="total-deaths-label">deaths</span>
-      <div class="last-updated-date">Updated <span id="last-updated-date"></span></div>
-    </div>
-    <div id="per-capita-container"><input type="checkbox" id="percapita"><label for="percapita">Per capita</label></div>
-    <div class="location-filter-wrapper">
-      <input type="text" id="location-filter" name="location-filter" onkeyup="filterList()" placeholder="Filter country list" />
-      <div id="clear-filter" onClick="clearFilter()"><img src="img/close-icon.svg" width="12" height="12" alt="Clear" /></div>
-    </div>
-    <ul id="location-list" class="list-reset"></ul>
-  </div>
-  <div class="map-wrapper">
-    <div id="credit" onClick="fetchAboutPage()">About this map</div>
-    <div class="mobile-header">
-      <h1 class="mobile-title">COVID-19</h1>
-    </div>
-    <div id="legend">
-      <div class="legend-header">Cases</div>
-      <ul class="list-reset"></ul>
-    </div>
-    <div id="range-slider" style="display: none;">
-      <div id="spread">
-        <img id="playpause" width="20" height="20" alt="Play" />
-      </div>
-      <input id="slider" type="range" value="1000" min="0" max="1000" step="1" />
-      <label><span id="date"></span></label>
-    </div>
-    <div id="map"></div>
+  <div id="app">
+    <!-- <div id="sidebar"> -->
+      <!-- <div id="sidebar-tab"><span id="sidebar-tab-icon"></span></div> -->
+      <!-- <div class="pullbar"></div> -->
+      <!-- <div class="sidebar-header"> -->
+        <!-- <img src="img/gh_logo_white.svg" style="width: 7ex; margin-right: 1ex; -->
+            <!-- display: none;" /> -->
+        <!-- <h1 class="sidebar-title">COVID-19</h1> -->
+      <!-- </div> -->
+      <!-- <div class="reported-cases" onClick="handleFlyTo(10, 0, 1)"> -->
+        <!-- <span id="total-cases"></span><span class="reported-cases-label">cases</span> -->
+        <!-- <span id="total-deaths"></span><span class="total-deaths-label">deaths</span> -->
+        <!-- <div class="last-updated-date">Updated <span id="last-updated-date"></span></div> -->
+      <!-- </div> -->
+      <!-- <\!-- <div id="per-capita-container"><input type="checkbox" id="percapita"><label for="percapita">Per capita</label></div> -\-> -->
+      <!-- <div class="location-filter-wrapper"> -->
+        <!-- <\!-- <input type="text" id="location-filter" name="location-filter" onkeyup="filterList()" placeholder="Filter country list" /> -\-> -->
+        <!-- <\!-- <div id="clear-filter" onClick="clearFilter()"><img src="img/close-icon.svg" width="12" height="12" alt="Clear" /></div> -\-> -->
+      <!-- </div> -->
+      <!-- <ul id="location-list" class="list-reset"></ul> -->
+    <!-- </div> -->
+    <!-- <div class="map-wrapper"> -->
+      <!-- <div id="credit" onClick="fetchAboutPage()">About this map</div> -->
+      <!-- <div id="legend"> -->
+        <!-- <div class="legend-header">Cases</div> -->
+        <!-- <ul class="list-reset"></ul> -->
+      <!-- </div> -->
+      <!-- <div id="range-slider" style="display: none;"> -->
+        <!-- <div id="spread"> -->
+          <!-- <img id="playpause" width="20" height="20" alt="Play" /> -->
+        <!-- </div> -->
+        <!-- <input id="slider" type="range" value="1000" min="0" max="1000" step="1" /> -->
+        <!-- <label><span id="date"></span></label> -->
+      <!-- </div> -->
+      <!-- <div id="map"></div> -->
+    <!-- </div> -->
   </div>
   <!-- js -->
   <script src="/js/util.js"></script>
@@ -65,11 +64,6 @@
   <script src="js/casemapview.js"></script>
   <script src="js/main.js"></script>
   <!-- /js -->
-  <script async defer
-          src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"
-          onload="bootstrap()"></script>
-  <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css"
-        rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.min.js"></script>
 
 </body>

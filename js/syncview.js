@@ -6,16 +6,19 @@ constructor(dataProvider) {
   this.dataProvider_ = dataProvider;
 }
 
-isDataReady() {
-  return false;
+getId() {
+  return 'sync';
 }
+
+getTitle() {
+  return 'Synchronized';
+};
 
 fetchData() {
   let self = this;
   const dp = this.dataProvider_;
   return dp.fetchCountryNames().
-      then(dp.fetchJhuData.bind(dp)).
-      then(self.render.bind(self));
+      then(dp.fetchJhuData.bind(dp));
 }
 
 render() {
@@ -70,7 +73,7 @@ render() {
     i++;
   }
 
-  let container = document.getElementById('data');
+  let container = document.getElementById('app');
   container.innerHTML = '';
   let canvas = document.createElement('canvas');
   canvas.setAttribute('width', container.clientWidth + 'px');
@@ -96,10 +99,6 @@ render() {
 
 }
 const STARTING_CASE_COUNT = 10000;
-
-SyncView.prototype.getTitle = function() {
-  return 'Synchronized';
-};
 
 SyncView.prototype.init = function() {
   this.fetchData();

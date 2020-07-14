@@ -12,20 +12,11 @@ let Viz = function() {
   this.dataProvider_ = new DataProvider(
       'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
 
+  /** @private @const {Object.<View>} */
+  this.views_ = {};
+
   /** @const @private {Nav} */
   this.nav_ = new Nav(this);
-
-  /** @const @private {CaseMapView} */
-  this.caseMapView_ = new CaseMapView(this.dataProvider_);
-
-  /** @const @private {CompletenessView} */
-  this.completeness_ = new CompletenessView(this.dataProvider_);
-
-  /** @const @private {RankView} */
-  this.rank_ = new RankView(this.dataProvider_);
-
-  /** @const @private {SyncView} */
-  this.sync_ = new SyncView(this.dataProvider_);
 };
 
 /** @const */
@@ -93,10 +84,14 @@ function handleHideModal() {
 
 Viz.prototype.init = function() {
 
-  this.caseMapView_.init();
-  this.caseMapView_.prepareAndRender();
-
   this.nav_.setupTopBar();
+
+  this.registerView(new CaseMapView(this.dataProvider_));
+  this.registerView(new RankView(this.dataProvider_));
+  this.registerView(new SyncView(this.dataProvider_));
+  this.registerView(new CompletenessView(this.dataProvider_));
+
+  this.nav_.processHash('', window.location.href);
 
   let self = this;
   window.onhashchange = function(h) {
@@ -104,13 +99,18 @@ Viz.prototype.init = function() {
     self.nav_.processHash(h.oldURL, h.newURL);
   }
 
-  document.getElementById('credit').onclick = fetchAboutPage;
+  // document.getElementById('credit').onclick = fetchAboutPage;
   window.setTimeout(this.updateData.bind(this), Viz.LIVE_UPDATE_INTERVAL_MS);
+}
+
+/** @param {View} view */
+Viz.prototype.registerView = function(view) {
+  this.views_[view.getId()] = view;
 }
 
 Viz.prototype.updateData = function() {
   console.log('Updating data...');
-  this.dataProvider_.fetchLatestCounts().then(function() {
+  this.dataProvider_.fetchLatestCounts(true /* forceRefresh */).then(function() {
     console.log('Updated latest counts.');
   });
   this.dataProvider_.fetchDataIndex().then(function() {
@@ -121,9 +121,16 @@ Viz.prototype.updateData = function() {
   window.setTimeout(this.updateData.bind(this), Viz.LIVE_UPDATE_INTERVAL_MS);
 };
 
+Viz.prototype.loadView = function(viewId) {
+  if (this.views_.hasOwnProperty(viewId)) {
+    const view = this.views_[viewId];
+    view.init();
+    view.prepareAndRender();
+  }
+}
+
 Viz.prototype.onThemeChanged = function(darkMode) {
-  /** @type {Array.<View>} */
-  const views = [this.caseMapView_, this.sync_, this.completeness_, this.rank_];
+  let views = this.views_.values();
   for (let i = 0; i < views.length; i++) {
     views[i].onThemeChanged(darkMode);
   }

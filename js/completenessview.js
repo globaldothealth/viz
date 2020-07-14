@@ -7,24 +7,29 @@ constructor(dataProvider) {
   this.dataProvider_ = dataProvider;
 }
 
+getId() {
+  return 'completeness';
+}
+
+getTitle() {
+  return 'Completeness';
+};
+
 isDataReady() {
   return false;
 }
 
 fetchData() {
   let self = this;
-  return this.dataProvider_.fetchInitialData().then(function() {
+  return this.dataProvider_.fetchInitialData().then(
     // We only need the latest daily slice for the data completeness page.
-    self.dataProvider_.fetchLatestDailySlice().then(
-        self.render.bind(self));
-  });
+    self.dataProvider_.fetchLatestDailySlice.bind(self.dataProvider_));
 }
 
 render() {
   super.render();
   const latestCountryFeatures = this.dataProvider_.getCountryFeaturesForDay(
       this.dataProvider_.getLatestDate());
-  console.log(latestCountryFeatures);
 
   const aggregates = {};
   const totalsFromIndividuals = {};
@@ -58,7 +63,7 @@ render() {
     }
     return (ratio_a > ratio_b) ? 1 : -1;
   });
-  let container = document.getElementById('data');
+  let container = document.getElementById('app');
   container.innerHTML = '';
   let list = document.createElement('table');
   list.innerHTML = '<tr><th>Country</th><th>Completion</th><th>"Line list" vs JHU aggregate</th></tr>';
@@ -85,10 +90,6 @@ render() {
 
 }
 
-CompletenessView.prototype.getTitle = function() {
-  return 'Completeness';
-};
-
 CompletenessView.prototype.init = function() {
   this.fetchData();
 };
@@ -101,4 +102,5 @@ function completenessInit() {
 
 CompletenessView.prototype.onThemeChanged = function(darkTheme) { };
 
-globalThis['completenessInit'] = completenessInit;
+// globalThis['completenessInit'] = completenessInit;
+// viz.registerView(this);
