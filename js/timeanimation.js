@@ -25,7 +25,7 @@ TimeAnimation.prototype.init = function() {
 
 TimeAnimation.prototype.render = function() {
   let rangeSliderEl = document.getElementById('range-slider');
-  rangeSlider.innerHTML = '<div id="spread"><img id="playpause" width="20" height="20" alt="Play" /></div><input id="slider" type="range" value="1000" min="0" max="1000" step="1" /><label><span id="date"></span></label>';
+  rangeSliderEl.innerHTML = '<div id="spread"><img id="playpause" width="20" height="20" alt="Play" /></div><input id="slider" type="range" value="1000" min="0" max="1000" step="1" /><label><span id="date"></span></label>';
   this.timeControl_ = document.getElementById('slider');
   let playEl = document.getElementById('playpause');
   playEl.setAttribute('src', 'img/play.svg');

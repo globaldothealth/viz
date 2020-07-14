@@ -55,7 +55,8 @@ fetchData() {
       window.setTimeout(function() {
         dp.fetchDailySlices(
         // Update the time control UI after each daily slice.
-        self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_));
+        self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(
+          function() { });
       }, 2000);
     }));
 }
