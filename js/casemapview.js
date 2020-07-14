@@ -84,12 +84,6 @@ render() {
 
 }
 
-CaseMapView.prototype.init = function() {
-  let ta = this.timeAnimation_;
-  ta.init();
-
-};
-
 CaseMapView.prototype.onMapReady = function() {
   this.map_.init();
   this.fetchData();

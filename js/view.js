@@ -10,8 +10,6 @@ class View {
     this.fetchData().then(this.render.bind(this));
   };
 
-  /** @abstract */ init() { };
-
   /**
    * Returns the function that should be called to fetch the necessary data.
    * @abstract @return {!Promise}

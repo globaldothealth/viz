@@ -123,9 +123,7 @@ Viz.prototype.updateData = function() {
 
 Viz.prototype.loadView = function(viewId) {
   if (this.views_.hasOwnProperty(viewId)) {
-    const view = this.views_[viewId];
-    view.init();
-    view.prepareAndRender();
+    this.views_[viewId].prepareAndRender();
   }
 }
 
