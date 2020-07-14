@@ -6,17 +6,11 @@ class View {
 
   /** @abstract @return {string} */ getTitle() { };
   prepareAndRender() {
-    if (this.isDataReady()) {
-      this.render();
-    } else {
-      console.log('Fetching data for ' + this.getId());
-      this.fetchData().then(this.render.bind(this));
-    }
+    console.log('Fetching data for ' + this.getId());
+    this.fetchData().then(this.render.bind(this));
   };
 
   /** @abstract */ init() { };
-
-  /** @abstract @return {boolean} */ isDataReady() {};
 
   /**
    * Returns the function that should be called to fetch the necessary data.

@@ -14,10 +14,6 @@ getTitle() {
   return 'Synchronized';
 };
 
-isDataReady() {
-  return false;
-}
-
 fetchData() {
   let self = this;
   const dp = this.dataProvider_;

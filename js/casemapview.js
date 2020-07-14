@@ -24,11 +24,6 @@ getTitle() {
   return 'Case Map';
 };
 
-
-isDataReady() {
-  return false;
-}
-
 fetchData() {
   let dp = this.dataProvider_;
   let self = this;

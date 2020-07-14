@@ -18,10 +18,6 @@ getTitle() {
   return 'Rank';
 };
 
-isDataReady() {
-  return false;
-}
-
 fetchData() {
   const dp = this.dataProvider_;
   let self = this;
