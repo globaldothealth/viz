@@ -165,7 +165,6 @@ RankView.prototype.showRankPageAtCurrentDate = function() {
   const data = this.dataProvider_.getAggregateData()[date];
   const y_step = 33;
   let container = document.getElementById('rank_content');
-  console.log('Max graphed value ' + this.maxGraphedValue_);
   const key = showDeathCounts ? 'deaths' : 'cum_conf';
   let o = {};
   for (let i = 0; i < data.length; i++) {
@@ -192,8 +191,9 @@ RankView.prototype.showRankPageAtCurrentDate = function() {
     b.getElementsByClassName('end')[0].textContent = case_count.toLocaleString();
     b.style.display = 'block';
     b.style.top = y + 'px';
-    b.style.width = Math.floor(
+    const displayedWidth = Math.floor(
         maxWidth * Math.log10(case_count) / this.maxGraphedValue_);
+    b.style.width = displayedWidth + 'px';
     y += 37;
   }
   for (let i = 0; i < data.length; i++) {
