@@ -36,6 +36,7 @@ body {
 #app {
   height: 100%;
   left: 0;
+  padding: $topbar-height 2ex 0 2ex;;
   position: absolute;
   top: 0;
   width: 100%;
@@ -61,10 +62,6 @@ body.rank #toggle div {
 body.rank #toggle div.active {
   color: black;
   background: cornflowerblue;
-}
-
-body.rank #app, body.completeness #app {
-  margin: 25px auto;
 }
 
 body.rank #rank_content {
@@ -183,12 +180,12 @@ h1 {
 
 #topbar {
   font-size: 90%;
-  // left: 0;
+  left: 0;
   padding: 1ex 0;
-  // position: absolute;
-  // right: 0;
-  // top: 0;
-  // z-index: 4;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 4;
 }
 
 #topbar ul {

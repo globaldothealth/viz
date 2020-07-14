@@ -43,7 +43,8 @@ let DataProvider = function(baseUrl) {
 
   /**
     * An object whose keys are ISO-formatted dates, and values are mapping
-    * between country codes and aggregated data (total case count, deaths, etc.)
+    * between country codes and aggregated data (total case count, deaths,
+    * etc.). This is null if and only if the data is absent.
     * @type {Object}
     * @private
     */
@@ -372,6 +373,10 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
 
 
 DataProvider.prototype.fetchJhuData = function() {
+  if (!!this.aggregateData_) {
+    console.log('We already have aggregate data');
+    return Promise.resolve();
+  }
   const timestamp = (new Date()).getTime();
   let self = this;
   return fetch(this.baseUrl_ + 'aggregate.json?nocache=' + timestamp)

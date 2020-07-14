@@ -30,7 +30,6 @@ render() {
   super.render();
   const latestCountryFeatures = this.dataProvider_.getCountryFeaturesForDay(
       this.dataProvider_.getLatestDate());
-  console.log(latestCountryFeatures);
 
   const aggregates = {};
   const totalsFromIndividuals = {};
