@@ -27,38 +27,45 @@ getTitle() {
 fetchData() {
   let dp = this.dataProvider_;
   let self = this;
-  return new Promise(function(resolve, reject) {
+  const styleId = 'mapobox-style';
+  if (!document.getElementById(styleId)) {
     let mapBoxStyle = document.createElement('link');
+    mapBoxStyle.setAttribute('id', styleId);
     mapBoxStyle.setAttribute('href', 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css');
     mapBoxStyle.setAttribute('rel', 'stylesheet');
     document.body.appendChild(mapBoxStyle);
+  }
+  return new Promise(function(resolve, reject) {
     let mapBoxScript = document.createElement('script');
+    console.log('Adding mb script');
     mapBoxScript.src = 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js';
-    mapBoxScript.onload = () => resolve(mapBoxScript);
+    mapBoxScript.onload = () => resolve();
     document.body.appendChild(mapBoxScript);
   }).then(
-      this.dataProvider_.fetchInitialData().
-      then(dp.fetchLatestDailySlice.bind(dp)).
+      dp.fetchInitialData.bind(dp)().
+      then(dp.fetchLatestDailySlice.bind(dp)()).
       then(function() {
+        console.log('Latest daily slice fetched');
 
-      self.onMapReady.bind(self)();
-      // The page is now interactive and showing the latest data. If we need to
-      // focus on a given country, do that now.
-      if (!!initialFlyTo) {
-        self.flyToCountry(initialFlyTo);
-      }
-      self.sideBar_.renderCountryList();
-      // At this point the dates only contain the latest date.
-      // Show the latest data when we have that before fetching older data.
-      //map.showDataAtDate(self.dataProvider_.getLatestDate());
-      // Give a bit of time for the map to show before fetching other slices.
-      window.setTimeout(function() {
-        dp.fetchDailySlices(
-        // Update the time control UI after each daily slice.
-        self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(
-          function() { });
-      }, 2000);
-    }));
+        self.onMapReady.bind(self)();
+        // The page is now interactive and showing the latest data. If we need to
+        // focus on a given country, do that now.
+        if (!!initialFlyTo) {
+          self.flyToCountry(initialFlyTo);
+        }
+        self.sideBar_.renderCountryList();
+        // At this point the dates only contain the latest date.
+        // Show the latest data when we have that before fetching older data.
+        //map.showDataAtDate(self.dataProvider_.getLatestDate());
+        // Give a bit of time for the map to show before fetching other slices.
+        window.setTimeout(function() {
+          dp.fetchDailySlices(
+          // Update the time control UI after each daily slice.
+          self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(
+            function() { });
+        }, 2000);
+      })
+  );
 }
 
 render() {
@@ -75,9 +82,9 @@ render() {
   this.sideBar_.render();
   let self = this;
   document.getElementById('sidebar-tab').onclick = toggleSideBar;
-  document.getElementById('percapita').addEventListener('change', function(e) {
-    self.sideBar_.updateCountryListCounts();
-  });
+  // document.getElementById('percapita').addEventListener('change', function(e) {
+    // self.sideBar_.updateCountryListCounts();
+  // });
   toggleSideBar();
   this.timeAnimation_.render();
 }
@@ -86,7 +93,6 @@ render() {
 
 CaseMapView.prototype.onMapReady = function() {
   this.map_.init();
-  this.fetchData();
 };
 
 /** @param {string} date */

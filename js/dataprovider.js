@@ -202,16 +202,17 @@ DataProvider.prototype.fetchInitialData = function() {
 };
 
 
+/** @return {Promise} */
 DataProvider.prototype.fetchDailySlices = function(eachSliceCallback) {
   let dailyFetches = [];
   let fileNames = Object.keys(this.dataSliceFileNames_);
+  console.log(fileNames);
   for (let i = 0; i < fileNames.length; i++) {
     const fileName = fileNames[i];
     if (!!this.dataSliceFileNames_[fileName]) {
       continue;
     }
-    let thisPromise = this.fetchDailySlice(
-        this.dataSliceFileNames_[i], false /* isNewest */);
+    let thisPromise = this.fetchDailySlice(fileName, false /* isNewest */);
     dailyFetches.push(thisPromise.then(eachSliceCallback));
   }
   if (!dailyFetches.length) {
@@ -221,7 +222,10 @@ DataProvider.prototype.fetchDailySlices = function(eachSliceCallback) {
 };
 
 
-/** Loads the location data (geo names from latitude and longitude). */
+/**
+ * Loads the location data (geo names from latitude and longitude).
+ * @return {Promise}
+ */
 DataProvider.prototype.fetchLocationData = function() {
   return fetch(this.baseUrl_ + 'location_info.data')
     .then(function(response) { return response.text(); })
@@ -253,6 +257,7 @@ DataProvider.prototype.fetchDataIndex = function() {
 };
 
 
+/** @return {Promise} */
 DataProvider.prototype.fetchCountryNames = function() {
   let countryCount = Object.keys(this.countries_).length;
   if (!!countryCount) {
@@ -287,6 +292,7 @@ DataProvider.prototype.fetchCountryNames = function() {
  * Loads the latest case counts from the scraper.
  * @param forceRefresh Whether to fetch the latest counts even if we have some
  *     numbers locally.
+ * @return {Promise}
  */
 DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
   if (!forceRefresh && !!this.latestGlobalCounts_.length) {
@@ -317,7 +323,10 @@ DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
 };
 
 
-/** Loads the appropriate country-specific data. */
+/**
+ * Loads the appropriate country-specific data.
+ * @return {Promise}
+ */
 DataProvider.prototype.loadCountryData = function() {
   const code = document.getElementById('dash').getAttribute('c');
   let self = this;
@@ -337,9 +346,10 @@ DataProvider.prototype.fetchLatestDailySlice = function() {
 /**
  * Fetches the next daily slice of data we need. If no argument is provided,
  * fetches the latest slice first.
+ * @return {Promise}
  */
 DataProvider.prototype.fetchDailySlice = function(sliceFileName, isNewest) {
-  if (this.dataSliceFileNames_[sliceFileName]) {
+  if (!!this.dataSliceFileNames_[sliceFileName]) {
     return Promise.resolve();
   }
   const timestamp = (new Date()).getTime();
