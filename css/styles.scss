@@ -42,6 +42,10 @@ body {
   width: 100%;
 }
 
+body.casemap #app {
+  padding: 0;
+}
+
 body.rank {
   overflow: hidden;
 }
