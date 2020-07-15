@@ -1,11 +1,21 @@
-/** @constructor */
-let SideBar = function(dataProvider, caseMapView) {
+class SideBar {
+
+constructor(dataProvider, caseMapView) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
 
   /** @const @private {CaseMapView} */
   this.caseMapView_ = caseMapView;
-};
+}
+
+toggle() {
+  const previouslyHidden = document.body.classList.contains('sidebar-hidden');
+  document.getElementById('sidebar-tab-icon').textContent =
+        previouslyHidden ? '◀' : '▶';
+  document.body.classList.toggle('sidebar-hidden');
+}
+
+}
 
 // Filter list of locations
 function filterList() {
@@ -33,13 +43,6 @@ function clearFilter() {
   filterList();
 }
 
-function toggleSideBar() {
-  const previouslyHidden = document.body.classList.contains('sidebar-hidden');
-  document.getElementById('sidebar-tab-icon').textContent =
-        previouslyHidden ? '◀' : '▶';
-  document.body.classList.toggle('sidebar-hidden');
-}
-
 SideBar.prototype.flyToCountry = function(event) {
   let target = event.target;
   while (!target.getAttribute('country')) {
@@ -55,6 +58,7 @@ SideBar.prototype.flyToCountry = function(event) {
 SideBar.prototype.render = function() {
   let container = document.getElementById('sidebar');
   container.innerHTML = '<div id="sidebar-tab"><span id="sidebar-tab-icon"></span></div><div class="sidebar-header"><img src="img/gh_logo_white.svg" style="width: 7ex; margin-right: 1ex; display: none;" /><h1 class="sidebar-title">COVID-19</h1></div>';
+  document.getElementById('sidebar-tab').onclick = this.toggle;
 };
 
 SideBar.prototype.renderCountryList = function() {

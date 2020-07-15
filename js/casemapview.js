@@ -37,7 +37,6 @@ fetchData() {
   }
   return new Promise(function(resolve, reject) {
     let mapBoxScript = document.createElement('script');
-    console.log('Adding mb script');
     mapBoxScript.src = 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js';
     mapBoxScript.onload = () => resolve();
     document.body.appendChild(mapBoxScript);
@@ -77,13 +76,14 @@ render() {
   mapEl.innerHTML = '<div id="legend"><div class="legend-header">Cases</div><ul class="list-reset"></ul></div><div id="range-slider"></div><div id="map"></div>';
   app.appendChild(sideBarEl);
   app.appendChild(mapEl);
+
   this.sideBar_.render();
-  let self = this;
-  document.getElementById('sidebar-tab').onclick = toggleSideBar;
+  // let self = this;
   // document.getElementById('percapita').addEventListener('change', function(e) {
     // self.sideBar_.updateCountryListCounts();
   // });
-  toggleSideBar();
+  console.log(this.sideBar_);
+  this.sideBar_.toggle();
   this.timeAnimation_.render();
 }
 
