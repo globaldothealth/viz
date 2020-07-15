@@ -41,31 +41,29 @@ fetchData() {
     mapBoxScript.src = 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js';
     mapBoxScript.onload = () => resolve();
     document.body.appendChild(mapBoxScript);
-  }).then(
-      dp.fetchInitialData.bind(dp)().
-      then(dp.fetchLatestDailySlice.bind(dp)()).
-      then(function() {
-        console.log('Latest daily slice fetched');
-
-        self.onMapReady.bind(self)();
-        // The page is now interactive and showing the latest data. If we need to
-        // focus on a given country, do that now.
-        if (!!initialFlyTo) {
-          self.flyToCountry(initialFlyTo);
-        }
-        self.sideBar_.renderCountryList();
-        // At this point the dates only contain the latest date.
-        // Show the latest data when we have that before fetching older data.
-        //map.showDataAtDate(self.dataProvider_.getLatestDate());
-        // Give a bit of time for the map to show before fetching other slices.
-        window.setTimeout(function() {
-          dp.fetchDailySlices(
-          // Update the time control UI after each daily slice.
-          self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(
-            function() { });
-        }, 2000);
-      })
-  );
+    return dp.fetchInitialData.bind(dp)().then(function() {
+      return dp.fetchLatestDailySlice.bind(dp)();
+    }).then(function() {
+      self.onMapReady.bind(self)();
+      // The page is now interactive and showing the latest data. If we need to
+      // focus on a given country, do that now.
+      if (!!initialFlyTo) {
+        self.flyToCountry(initialFlyTo);
+      }
+      self.sideBar_.renderCountryList();
+      // At this point the dates only contain the latest date.
+      // Show the latest data when we have that before fetching older data.
+      //map.showDataAtDate(self.dataProvider_.getLatestDate());
+      // Give a bit of time for the map to show before fetching other slices.
+      window.setTimeout(function() {
+        dp.fetchDailySlices(
+        // Update the time control UI after each daily slice.
+        self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(
+          function() { });
+      }, 2000);
+      resolve();
+    });
+  });
 }
 
 render() {

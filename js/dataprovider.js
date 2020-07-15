@@ -206,19 +206,20 @@ DataProvider.prototype.fetchInitialData = function() {
 DataProvider.prototype.fetchDailySlices = function(eachSliceCallback) {
   let dailyFetches = [];
   let fileNames = Object.keys(this.dataSliceFileNames_);
-  console.log(fileNames);
   for (let i = 0; i < fileNames.length; i++) {
     const fileName = fileNames[i];
     if (!!this.dataSliceFileNames_[fileName]) {
       continue;
     }
-    let thisPromise = this.fetchDailySlice(fileName, false /* isNewest */);
-    dailyFetches.push(thisPromise.then(eachSliceCallback));
+    let thisPromise = this.fetchDailySlice(
+      fileName, false /* isNewest */, eachSliceCallback);
+    dailyFetches.push(thisPromise);
   }
   if (!dailyFetches.length) {
+    eachSliceCallback();
     return Promise.resolve();
   }
-  return Promise.all(dailyFetches).then(function() { });
+  return Promise.all(dailyFetches);
 };
 
 
@@ -242,18 +243,22 @@ DataProvider.prototype.fetchLocationData = function() {
 /** @return {!Promise} */
 DataProvider.prototype.fetchDataIndex = function() {
   let self = this;
-  return fetch(this.baseUrl_ + '/d/index.txt')
-    .then(function(response) { return response.text(); })
-    .then(function(responseText) {
-      let lines = responseText.split('\n');
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (!!line) {
-          if (!self.dataSliceFileNames_[line]) {
-            self.dataSliceFileNames_[line] = false;
+  return new Promise(function(resolve, reject) {
+    fetch(self.baseUrl_ + '/d/index.txt').then(function(response) {
+        return response.text();
+      }).then(function(responseText) {
+        let lines = responseText.split('\n');
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!!line) {
+            if (!self.dataSliceFileNames_[line]) {
+              self.dataSliceFileNames_[line] = false;
+            }
           }
         }
-      }
+        resolve();
+      }).
+      catch(function(msg) { console.error(msg); });
     });
 };
 
@@ -342,7 +347,7 @@ DataProvider.prototype.fetchLatestDailySlice = function() {
   let fileNames = Object.keys(this.dataSliceFileNames_);
   fileNames.sort();
   return this.fetchDailySlice(fileNames[fileNames.length - 1],
-                              true /* isNewest */);
+                              true /* isNewest */, function() {});
 }
 
 /**
@@ -350,7 +355,8 @@ DataProvider.prototype.fetchLatestDailySlice = function() {
  * fetches the latest slice first.
  * @return {!Promise}
  */
-DataProvider.prototype.fetchDailySlice = function(sliceFileName, isNewest) {
+DataProvider.prototype.fetchDailySlice = function(
+    sliceFileName, isNewest, callback) {
   if (!!this.dataSliceFileNames_[sliceFileName]) {
     return Promise.resolve();
   }
@@ -361,15 +367,20 @@ DataProvider.prototype.fetchDailySlice = function(sliceFileName, isNewest) {
   if (isNewest) {
     url += '?nocache=' + timestamp;
   }
-  return fetch(url)
-      .then(function(response) {
-          return response.status == 200 ? response.json() : undefined;
-      })
-      .then(function(jsonData) {
-        if (!jsonData) {
-          return;
-        }
-        self.processDailySlice(jsonData, isNewest);
+  return new Promise(function(resolve, reject) {
+    fetch(url).then(function(response) {
+      if (response.status != 200) {
+        reject('Bad response status ' + response.status + ' for ' + url);
+      }
+      return response.json();
+    }).then(function(jsonData) {
+      if (!jsonData) {
+        reject('JSON data is empty');
+      }
+      self.processDailySlice(jsonData, isNewest);
+      callback();
+      resolve();
+    });
   });
 };
 

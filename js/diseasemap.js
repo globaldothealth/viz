@@ -83,7 +83,6 @@ DiseaseMap.prototype.showDataAtLatestDate = function() {
 }
 
 DiseaseMap.prototype.showDataAtDate = function(isodate) {
-  console.log('Showing data at date ' + isodate);
   if (currentIsoDate != isodate) {
     currentIsoDate = isodate;
   }
