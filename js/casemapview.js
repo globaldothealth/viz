@@ -79,7 +79,6 @@ fetchData() {
     mapBoxScript.onload = () => resolve();
     document.body.appendChild(mapBoxScript);
   });
-  console.log('Returning case map promises');
   return Promise.all([dataPromise, mapPromise]);
 }
 
@@ -111,6 +110,10 @@ render() {
     this.flyToCountry(initialFlyTo);
   }
 }
+
+showHistoricalData() {
+  return !!this.historicalData_;
+};
 
 }
 

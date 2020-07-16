@@ -160,7 +160,6 @@ Nav.prototype.processHash = function(oldUrl, newUrl) {
 
 /** @param {boolean} darkTheme Whether the new theme is dark. */
 Nav.prototype.onThemeChanged = function(darkTheme) {
-  console.log('onTheme Changed, dark? ' + darkTheme);
   document.body.classList.add(darkTheme ? 'dark' : 'light');
   document.body.classList.remove(darkTheme ? 'light' : 'dark');
   this.viz_.onThemeChanged(darkTheme);

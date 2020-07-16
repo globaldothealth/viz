@@ -130,6 +130,9 @@ DiseaseMap.prototype.init = function(dark) {
 
 DiseaseMap.prototype.setupSource = function() {
   const sourceId = 'counts';
+  if (!!this.mapboxMap_.getSource(sourceId)) {
+    return;
+  }
   this.mapboxMap_.addSource(sourceId, {
     'type': 'geojson',
     'data': DiseaseMap.formatFeatureSet([])
@@ -137,6 +140,10 @@ DiseaseMap.prototype.setupSource = function() {
 };
 
 DiseaseMap.prototype.setupLayers = function() {
+  const layerId = 'totals';
+  if (!!this.mapboxMap_.getLayer(layerId)) {
+    return;
+  }
   let circleColorForTotals = ['step', ['get', 'total']];
   // Don't use the last color here (for new cases).
   for (let i = 0; i < DiseaseMap.COLOR_MAP.length - 1; i++) {
@@ -174,6 +181,8 @@ DiseaseMap.prototype.setStyle = function(isDark) {
   // Not sure why we need to reload the data after a style change.
   let self = this;
   this.mapboxMap_.on('styledata', function () {
+    self.setupSource();
+    self.setupLayers();
     self.loadDataIntoMap();
     if (!twoDMode) {
       self.mapboxMap_.easeTo({pitch: 55});
@@ -262,7 +271,7 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   content.innerHTML = '<h3 class="popup-header"><span>' +
         locationSpan.join(', ') + '</span></h3>';
 
-  if (this.view_.historicalData_) {
+  if (this.view_.showHistoricalData()) {
     let relevantFeaturesByDay = {};
     const dates = this.dataProvider_.getDates();
     for (let i = 0; i < dates.length; i++) {
