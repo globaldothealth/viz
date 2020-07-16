@@ -87,7 +87,7 @@ render() {
 
   let mapEl = document.createElement('div');
   mapEl.className = 'map-wrapper';
-  mapEl.innerHTML = '<div id="legend"><div class="legend-header">Cases</div><ul class="list-reset"></ul></div><div id="range-slider"></div><div id="map"></div>';
+  mapEl.innerHTML = '<div id="legend"><div class="legend-header">Cases</div><ul class="list-reset"></ul></div><div id="map"></div>';
   app.appendChild(sideBarEl);
   app.appendChild(mapEl);
   this.onMapReady();
