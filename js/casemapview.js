@@ -62,7 +62,6 @@ fetchData() {
   });
   let mapPromise = new Promise(function(resolve, reject) {
     const mapBoxId = 'mapbox';
-    console.log(document.getElementById(mapBoxId));
     if (!!document.getElementById(mapBoxId)) {
       console.log('Mapbox script already present');
       resolve();

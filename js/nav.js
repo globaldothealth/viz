@@ -43,9 +43,15 @@ constructor(viz) {
   /** @private {boolean} */
   this.darkTheme_ = false;
 
+  /** @private {!Object.<boolean>} */
+  this.config_ = {};
+
+  // Config
   this.registerNavItem('2D Map', '2d', true, false);
   this.registerNavItem('Auto-drive', 'autodrive', true, false);
-  this.registerNavItem('Dark Theme', 'dark', true, false);
+  this.registerNavItem('Dark', 'dark', true, false);
+
+  // Views
   this.registerNavItem('Case Map', 'casemap', false);
   this.registerNavItem('Rank', 'rank', false);
   this.registerNavItem('Sync', 'sync', false);
@@ -59,12 +65,27 @@ constructor(viz) {
  * @param {boolean=} defaultValue
  */
 registerNavItem(name, id, isToggle, defaultValue) {
+  if (isToggle) {
+    this.config_[id] = defaultValue;
+  }
   this.items_[id] = new NavItem(name, id, isToggle, defaultValue);
 }
 
 navigate(id) {
   console.log('Navigating to ' + id);
   this.viz_.loadView(id);
+}
+
+toggle(id) {
+  console.log('Toggling ' + id);
+  this.config_[id] = !!document.getElementById(id).checked;
+  this.onConfigChanged(id);
+}
+
+onConfigChanged(changedId) {
+  if (changedId == 'dark') {
+    this.onThemeChanged(this.config_['dark']);
+  }
 }
 
 } // Nav
@@ -185,11 +206,12 @@ Nav.prototype.setupTopBar = function() {
       let checked = item.getDefaultValue();
       // TODO: Get potentially non-default value
       itemEl = makeToggle(item.getId(), item.getName(), checked);
+      itemEl.onclick = this.toggle.bind(this, item.getId());
     } else {
       itemEl = document.createElement('li');
       itemEl.textContent = item.getName();
+      itemEl.onclick = this.navigate.bind(this, item.getId());
     }
-    itemEl.onclick = this.navigate.bind(this, item.getId());
     topBar.firstElementChild.appendChild(itemEl);
   }
     // const toggleId = Nav.TOGGLES[i][1];
