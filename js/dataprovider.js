@@ -150,6 +150,10 @@ DataProvider.prototype.getAtomicFeaturesForDay = function(date) {
 };
 
 
+DataProvider.prototype.getLatestGlobalCounts = function() {
+  return this.latestGlobalCounts_;
+};
+
 DataProvider.prototype.getLatestAggregateData = function() {
   if (!this.aggregateData_) {
     return null;
@@ -314,18 +318,6 @@ DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
       self.latestGlobalCounts_ = [parseInt(counts['caseCount'], 10),
                                   parseInt(counts['deaths'], 10),
                                   counts['date']];
-      const totalCasesEl = document.getElementById('total-cases');
-      const totalDeathsEl = document.getElementById('total-deaths');
-      const lastUpdatedDateEl = document.getElementById('last-updated-date');
-      if (!!totalCasesEl) {
-        totalCasesEl.innerText = self.latestGlobalCounts_[0].toLocaleString();
-      }
-      if (!!totalDeathsEl) {
-        totalDeathsEl.innerText = self.latestGlobalCounts_[1].toLocaleString();
-      }
-      if (!!lastUpdatedDateEl) {
-        lastUpdatedDateEl.innerText = self.latestGlobalCounts_[2];
-      }
     });
 };
 
