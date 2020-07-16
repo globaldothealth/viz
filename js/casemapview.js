@@ -93,10 +93,6 @@ render() {
   this.onMapReady();
 
   this.sideBar_.render();
-  // let self = this;
-  // document.getElementById('percapita').addEventListener('change', function(e) {
-    // self.sideBar_.updateCountryListCounts();
-  // });
   this.sideBar_.renderCountryList();
   this.sideBar_.toggle();
   if (!!this.timeAnimation_) {
