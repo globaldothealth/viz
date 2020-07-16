@@ -221,18 +221,15 @@ h1 {
 #sidebar {
   backdrop-filter: blur(.5rem);
   background-color: $sidebar-bgcolor-dark;
-  // box-shadow: 0 -10px 12px -9px rgba(0,0,0,0.10);
   box-shadow: 2px 0 12px 0 rgba(0,0,0,0.10);
   border-radius: 1ex;
   color: #aaa;
-  display: flex;
-  flex-direction: column;
   padding: 2ex;
   position: fixed;
   height: 50%;
   left: 5ex;
   margin-top: 0;
-  overflow: visible;
+  overflow: hidden;
   transition: left 0.2s;
   top: 25%;
   bottom: 25%;
@@ -263,31 +260,8 @@ h1 {
   font-size: 80%;
 }
 
-.mobile-header {
-  position: fixed;
-  top: .8rem;
-  left: .8rem;
-  z-index: 5;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  img {
-    width: 8rem;
-  }
-  h1 {
-    font-size: 1.1rem;
-  }
-}
-
-.pullbar {
-  position: relative;
-  left: 50%;
-  width: 5rem;
-  height: .3rem;
-  margin-bottom: 1rem;
-  background-color: #C4C4C4;
-  border-radius: .5rem;
-  transform: translateX(-50%);
+#sidebar #latest-global {
+  margin: 2ex 0;
 }
 
 .reported-cases {
