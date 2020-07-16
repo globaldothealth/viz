@@ -25,11 +25,7 @@ let DataProvider = function(baseUrl) {
   /** @private */
   this.countryFeaturesByDay_ = {};
 
-  /** @private */
-  this.provinceFeaturesByDay_ = {};
-
-  /** @private */
-  this.cityFeaturesByDay_ = {};
+  this.atomicFeaturesByDay_ = {};
 
   /**
    * A map from country names to most recent data (case count, etc.), or
@@ -146,6 +142,11 @@ DataProvider.prototype.getLatestDataPerCountry = function() {
 
 DataProvider.prototype.getCountryFeaturesForDay = function(date) {
   return this.countryFeaturesByDay_[date];
+};
+
+
+DataProvider.prototype.getAtomicFeaturesForDay = function(date) {
+  return this.atomicFeaturesByDay_[date];
 };
 
 
@@ -390,8 +391,7 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
   let currentDate = jsonData['date'];
   let features = jsonData['features'];
 
-  // Cases grouped by country and province.
-  let provinceFeatures = {};
+  // Cases grouped by country
   let countryFeatures = {};
 
   // "Re-hydrate" the features into objects ingestable by the map.
@@ -410,11 +410,6 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
       console.log('Warning: invalid country code: ' + countryCode);
       console.log('From ' + location);
     }
-    if (!provinceFeatures[location[1]]) {
-      provinceFeatures[location[1]] = {'total': 0, 'new': 0};
-    }
-    provinceFeatures[location[1]]['total'] += feature['properties']['total'];
-    provinceFeatures[location[1]]['new'] += feature['properties']['new'];
     if (!countryFeatures[countryCode]) {
       countryFeatures[countryCode] = {'total': 0, 'new': 0};
     }
@@ -425,8 +420,7 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
   this.dates_.add(currentDate);
 
   this.countryFeaturesByDay_[currentDate] = countryFeatures;
-  this.provinceFeaturesByDay_[currentDate] = provinceFeatures;
-  atomicFeaturesByDay[currentDate] = features;
+  this.atomicFeaturesByDay_[currentDate] = features;
   this.dataSliceFileNames_[currentDate + '.json'] = true;
 };
 

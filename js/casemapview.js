@@ -3,6 +3,9 @@ class CaseMapView extends View {
 constructor(dataProvider) {
   super(dataProvider);
 
+  /** @private {boolean} */
+  this.historicalData_ = false;
+
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
 
@@ -10,7 +13,8 @@ constructor(dataProvider) {
   this.map_ = new DiseaseMap(this.dataProvider_);
 
   /** @const @private {TimeAnimation} */
-  this.timeAnimation_ = new TimeAnimation(this.dataProvider_, this);
+  this.timeAnimation_ = this.historicalData_ ?
+    new TimeAnimation(this.dataProvider_, this) : null;
 
   /** @private {SideBar} */
   this.sideBar_ = null;
@@ -27,6 +31,7 @@ getTitle() {
 fetchData() {
   let dp = this.dataProvider_;
   let self = this;
+  let fetchHistoricalData = false;
   const styleId = 'mapobox-style';
   if (!document.getElementById(styleId)) {
     let mapBoxStyle = document.createElement('link');
@@ -42,6 +47,7 @@ fetchData() {
       // At this point the dates only contain the latest date.
       // Show the latest data when we have that before fetching older data.
       //map.showDataAtDate(self.dataProvider_.getLatestDate());
+      if (fetchHistoricalData) {
         dp.fetchDailySlices(
         // Update the time control UI after each daily slice.
         self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(
@@ -49,6 +55,9 @@ fetchData() {
             resolve();
           }
         );
+      } else {
+        resolve();
+      }
     });
   });
   let mapPromise = new Promise(function(resolve, reject) {
@@ -90,7 +99,9 @@ render() {
   // });
   this.sideBar_.renderCountryList();
   this.sideBar_.toggle();
-  this.timeAnimation_.render();
+  if (!!this.timeAnimation_) {
+    this.timeAnimation_.render();
+  }
 
   // The page is now interactive and showing the latest data. If we need to
   // focus on a given country, do that now.

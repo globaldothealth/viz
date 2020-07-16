@@ -35,8 +35,6 @@ let currentIsoDate;
 let currentDateIndex = 0;
 let currentTouchY = -1;
 
-let atomicFeaturesByDay = {};
-
 function fetchAboutPage() {
   fetch('https://raw.githubusercontent.com/ghdsi/covid-19/master/about.html')
     .then(function(response) { return response.text(); })

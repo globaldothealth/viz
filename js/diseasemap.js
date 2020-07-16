@@ -86,7 +86,7 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   if (currentIsoDate != isodate) {
     currentIsoDate = isodate;
   }
-  let featuresToShow = atomicFeaturesByDay[isodate];
+  let featuresToShow = this.dataProvider_.getAtomicFeaturesForDay(isodate);
 
   // If the map is ready, show the data. Otherwise it will be shown when
   // the map is finished loading.
@@ -240,8 +240,9 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   for (let i = 0; i < dates.length; i++) {
     const date = dates[i];
     relevantFeaturesByDay[date] = [];
-    for (let j = 0; j < atomicFeaturesByDay[date].length; j++) {
-      const feature = atomicFeaturesByDay[date][j];
+    const atomicFeatures = this.dataProvider_.getAtomicFeaturesForDay(date);
+    for (let j = 0; j < atomicFeatures.length; j++) {
+      const feature = atomicFeatures[i][j];
       if (feature['properties']['geoid'] == geo_id) {
         relevantFeaturesByDay[date].push(feature);
       }

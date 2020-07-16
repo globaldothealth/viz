@@ -20,11 +20,7 @@ getTitle() {
 
 fetchData() {
   const dp = this.dataProvider_;
-  return new Promise(function(resolve, reject) {
-    dp.fetchCountryNames.bind(dp)();
-  }).then(function() {
-    dp.fetchJhuData.bind(dp)();
-  });
+  return dp.fetchCountryNames().then(dp.fetchJhuData.bind(dp));
 }
 
 render() {

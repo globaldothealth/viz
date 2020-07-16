@@ -17,8 +17,7 @@ getTitle() {
 fetchData() {
   let self = this;
   const dp = this.dataProvider_;
-  return dp.fetchCountryNames().
-      then(dp.fetchJhuData.bind(dp));
+  return dp.fetchCountryNames().then(dp.fetchJhuData.bind(dp));
 }
 
 render() {
