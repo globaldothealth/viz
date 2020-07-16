@@ -66,7 +66,7 @@ constructor(viz) {
  */
 registerNavItem(name, id, isToggle, defaultValue) {
   if (isToggle) {
-    this.config_[id] = defaultValue;
+    this.config_[id] = !!defaultValue;
   }
   this.items_[id] = new NavItem(name, id, isToggle, defaultValue);
 }
@@ -86,6 +86,10 @@ onConfigChanged(changedId) {
   if (changedId == 'dark') {
     this.onThemeChanged(this.config_['dark']);
   }
+}
+
+getConfig(id) {
+  return this.config_[id];
 }
 
 } // Nav

@@ -96,14 +96,14 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   }
 };
 
-DiseaseMap.prototype.init = function() {
+DiseaseMap.prototype.init = function(dark) {
   mapboxgl.accessToken = DiseaseMap.MAPBOX_TOKEN;
   this.mapboxMap_ = new mapboxgl.Map({
     'container': 'map',
     'center': [10, 0],
     'zoom': 1,
   }).addControl(new mapboxgl.NavigationControl());
-  this.setStyle(false /* darkTheme */);
+  this.setStyle(dark);
   this.popup_ = new mapboxgl.Popup({
     'closeButton': false,
     'closeOnClick': true,

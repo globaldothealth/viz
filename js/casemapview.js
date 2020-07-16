@@ -1,6 +1,10 @@
 class CaseMapView extends View {
 
-constructor(dataProvider) {
+/**
+ * @param {DataProvider} dataProvider
+ * @param {Nav} nav
+ */
+constructor(dataProvider, nav) {
   super(dataProvider);
 
   /** @private {boolean} */
@@ -8,6 +12,9 @@ constructor(dataProvider) {
 
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
+
+  /** @private @const {Nav} */
+  this.nav_ = nav;
 
   /** @const @private {DiseaseMap} */
   this.map_ = new DiseaseMap(this.dataProvider_);
@@ -108,7 +115,7 @@ render() {
 }
 
 CaseMapView.prototype.onMapReady = function() {
-  this.map_.init();
+  this.map_.init(this.nav_.getConfig('dark'));
 };
 
 /** @param {string} date */
