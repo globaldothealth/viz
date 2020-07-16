@@ -12,7 +12,7 @@ let Viz = function() {
   this.dataProvider_ = new DataProvider(
       'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
 
-  /** @private @const {Object.<View>} */
+  /** @private @const {!Object.<!View>} */
   this.views_ = {};
 
   /** @const @private {Nav} */
@@ -26,7 +26,6 @@ Viz.LIVE_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 let locationInfo = {};
 let autoDriveMode = false;
 let twoDMode = false;
-let darkTheme = false;
 let initialFlyTo;
 
 let currentIsoDate;
@@ -91,8 +90,6 @@ Viz.prototype.init = function() {
   this.registerView(new SyncView(this.dataProvider_));
   this.registerView(new CompletenessView(this.dataProvider_));
 
-  this.nav_.processHash('', window.location.href);
-
   let self = this;
   window.onhashchange = function(h) {
     console.log('Hash change ' + h.newURL);
@@ -103,7 +100,7 @@ Viz.prototype.init = function() {
   window.setTimeout(this.updateData.bind(this), Viz.LIVE_UPDATE_INTERVAL_MS);
 }
 
-/** @param {View} view */
+/** @param {!View} view */
 Viz.prototype.registerView = function(view) {
   this.views_[view.getId()] = view;
 }
@@ -127,10 +124,10 @@ Viz.prototype.loadView = function(viewId) {
   }
 }
 
-Viz.prototype.onThemeChanged = function(darkMode) {
-  let views = this.views_.values();
+Viz.prototype.onThemeChanged = function(darkTheme) {
+  let views = Object.values(this.views_);
   for (let i = 0; i < views.length; i++) {
-    views[i].onThemeChanged(darkMode);
+    views[i].onThemeChanged(darkTheme);
   }
 }
 

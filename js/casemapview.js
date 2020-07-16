@@ -12,8 +12,8 @@ constructor(dataProvider) {
   /** @const @private {TimeAnimation} */
   this.timeAnimation_ = new TimeAnimation(this.dataProvider_, this);
 
-  /** @const @private {SideBar} */
-  this.sideBar_ = new SideBar(this.dataProvider_, this);
+  /** @private {SideBar} */
+  this.sideBar_ = null;
 }
 
 getId() {
@@ -71,6 +71,8 @@ render() {
   app.innerHTML = '';
   let sideBarEl = document.createElement('div');
   sideBarEl.setAttribute('id', 'sidebar');
+  this.sideBar_ = new SideBar(this.dataProvider_, this, sideBarEl);
+
   let mapEl = document.createElement('div');
   mapEl.className = 'map-wrapper';
   mapEl.innerHTML = '<div id="legend"><div class="legend-header">Cases</div><ul class="list-reset"></ul></div><div id="range-slider"></div><div id="map"></div>';

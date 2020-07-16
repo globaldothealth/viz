@@ -2,6 +2,9 @@
 let Nav = function(viz) {
   /** @const @private {Viz} */
   this.viz_ = viz;
+
+  /** @private {boolean} */
+  this.darkTheme_ = false;
 };
 
 /** @const */
@@ -19,14 +22,14 @@ Nav.VIEWS = [
 ];
 
 Nav.prototype.processHash = function(oldUrl, newUrl) {
+  console.log('Old URL is ' + oldUrl);
   let baseUrl = window.location.origin + window.location.pathname;
   if (!baseUrl.endsWith('/')) {
     baseUrl += '/';
   }
   const oldHashes = !!oldUrl ? oldUrl.substring(baseUrl.length).split('/') : [];
   const newHashes = newUrl.substring(baseUrl.length).split('/');
-  darkTheme = false;
-  let themeChanged = false;
+  let darkTheme = false;
   let viewToLoad = 'casemap';
   if (newHashes.length > 0 || oldHashes.length > 0) {
     for (let i = 0; i < newHashes.length; i++) {
@@ -53,7 +56,6 @@ Nav.prototype.processHash = function(oldUrl, newUrl) {
 
       if (h == 'dark') {
         darkTheme = true;
-        themeChanged = true;
         continue;
       }
 
@@ -64,12 +66,17 @@ Nav.prototype.processHash = function(oldUrl, newUrl) {
     }
   }
   this.viz_.loadView(viewToLoad);
-  if (themeChanged) {
-    this.onThemeChanged();
+  // If this is our first load (oldURL is empty), do as if the theme had been
+  // changed so that the first setup happens.
+  if (!oldUrl || this.darkTheme_ != darkTheme) {
+    this.darkTheme_ = darkTheme;
+    this.onThemeChanged(this.darkTheme_);
   }
 }
 
-Nav.prototype.onThemeChanged = function() {
+/** @param {boolean} darkTheme Whether the new theme is dark. */
+Nav.prototype.onThemeChanged = function(darkTheme) {
+  console.log('onTheme Changed, dark? ' + darkTheme);
   document.body.classList.add(darkTheme ? 'dark' : 'light');
   document.body.classList.remove(darkTheme ? 'light' : 'dark');
   this.viz_.onThemeChanged(darkTheme);
@@ -126,7 +133,7 @@ Nav.prototype.setupTopBar = function() {
     if (i == 1 && autoDriveMode) {
       checked = true;
     }
-    if (i == 2 && darkTheme) {
+    if (i == 2 && this.darkTheme_) {
       checked = true;
     }
     let item = makeToggle(toggleId, Nav.TOGGLES[i][0], checked);

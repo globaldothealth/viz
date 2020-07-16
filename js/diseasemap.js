@@ -103,7 +103,7 @@ DiseaseMap.prototype.init = function() {
     'center': [10, 0],
     'zoom': 1,
   }).addControl(new mapboxgl.NavigationControl());
-  this.setStyle(darkTheme);
+  this.setStyle(false /* darkTheme */);
   this.popup_ = new mapboxgl.Popup({
     'closeButton': false,
     'closeOnClick': true,
