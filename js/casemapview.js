@@ -52,8 +52,15 @@ fetchData() {
     });
   });
   let mapPromise = new Promise(function(resolve, reject) {
+    const mapBoxId = 'mapbox';
+    console.log(document.getElementById(mapBoxId));
+    if (!!document.getElementById(mapBoxId)) {
+      console.log('Mapbox script already present');
+      resolve();
+    }
     let mapBoxScript = document.createElement('script');
     mapBoxScript.src = 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js';
+    mapBoxScript.setAttribute('id', mapBoxId);
     mapBoxScript.onload = () => resolve();
     document.body.appendChild(mapBoxScript);
   });
@@ -81,7 +88,6 @@ render() {
   // document.getElementById('percapita').addEventListener('change', function(e) {
     // self.sideBar_.updateCountryListCounts();
   // });
-  console.log(this.sideBar_);
   this.sideBar_.renderCountryList();
   this.sideBar_.toggle();
   this.timeAnimation_.render();

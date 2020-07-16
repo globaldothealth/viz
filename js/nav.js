@@ -1,25 +1,73 @@
-/** @constructor */
-let Nav = function(viz) {
+class NavItem {
+
+/**
+ * @param {string} name
+ * @param {string} id
+ * @param {boolean} isToggle
+ * @param {boolean=} defaultValue
+ */
+constructor(name, id, isToggle, defaultValue) {
+
+  /** @private @const {string} */
+  this.name_ = name;
+
+  /** @private @const {string} */
+  this.id_ = id;
+
+  /** @private @const {boolean} */
+  this.isToggle_ = isToggle;
+
+  /** @private @const {boolean} */
+  this.defaultValue_ = !!defaultValue;
+}
+
+getName() { return this.name_; }
+
+getId() { return this.id_; }
+
+isToggle() { return this.isToggle_; }
+
+getDefaultValue() { return this.defaultValue_; }
+
+} // NavItem
+
+class Nav {
+
+constructor(viz) {
   /** @const @private {Viz} */
   this.viz_ = viz;
 
+  /** @const {!Object.<!NavItem>} */
+  this.items_ = {};
+
   /** @private {boolean} */
   this.darkTheme_ = false;
-};
 
-/** @const */
-Nav.TOGGLES = [
-  ['2D Map', '2d'],
-  ['Auto-drive', 'autodrive'],
-  ['Dark Theme', 'dark'],
-];
+  this.registerNavItem('2D Map', '2d', true, false);
+  this.registerNavItem('Auto-drive', 'autodrive', true, false);
+  this.registerNavItem('Dark Theme', 'dark', true, false);
+  this.registerNavItem('Case Map', 'casemap', false);
+  this.registerNavItem('Rank', 'rank', false);
+  this.registerNavItem('Sync', 'sync', false);
+  this.registerNavItem('Completeness', 'completeness', false);
+}
 
-Nav.VIEWS = [
-  ['Case Map', 'casemap'],
-  ['Rank', 'rank'],
-  ['Sync', 'sync'],
-  ['Completeness', 'completeness']
-];
+/**
+ * @param {string} name
+ * @param {string} id
+ * @param {boolean} isToggle
+ * @param {boolean=} defaultValue
+ */
+registerNavItem(name, id, isToggle, defaultValue) {
+  this.items_[id] = new NavItem(name, id, isToggle, defaultValue);
+}
+
+navigate(id) {
+  console.log('Navigating to ' + id);
+  this.viz_.loadView(id);
+}
+
+} // Nav
 
 Nav.prototype.processHash = function(oldUrl, newUrl) {
   console.log('Old URL is ' + oldUrl);
@@ -37,34 +85,45 @@ Nav.prototype.processHash = function(oldUrl, newUrl) {
       if (hashBrown.startsWith('#')) {
         hashBrown = hashBrown.substring(1);
       }
-      // Views
-      const h = hashBrown.toLowerCase();
-      if (h == 'rank' || h == 'sync' || h == 'completeness') {
+
+      // Handle a country code.
+      if (hashBrown.length == 2 && hashBrown.toUpperCase() == hashBrown) {
+        initialFlyTo = hashBrown;
+        continue;
+      }
+
+      hashBrown = hashBrown.toLowerCase();
+      let navItem = this.items_[hashBrown];
+      if (!navItem) {
+        // We don't recognize this.
+        continue;
+      }
+
+      if (navItem.isToggle()) {
+        if (hashBrown == '2d') {
+          twoDMode = true;
+          continue;
+        }
+        if (hashBrown == 'autodrive') {
+          autoDriveMode = true;
+          document.body.classList.add('autodrive');
+          continue;
+        }
+
+        if (hashBrown == 'dark') {
+          darkTheme = true;
+          continue;
+        }
+
+        // TODO
+      } else {
+        // This is a view. If several views are specified, last one wins.
         viewToLoad = hashBrown;
         continue;
       }
-      // Features
-      if (h == '2d') {
-        twoDMode = true;
-        continue;
-      }
-      if (h == 'autodrive') {
-        autoDriveMode = true;
-        document.body.classList.add('autodrive');
-        continue;
-      }
-
-      if (h == 'dark') {
-        darkTheme = true;
-        continue;
-      }
-
-      // Country codes
-      if (hashBrown.length == 2 && hashBrown.toUpperCase() == hashBrown) {
-        initialFlyTo = hashBrown;
-      }
     }
   }
+
   // If this is our first load (oldURL is empty), do as if the theme had been
   // changed so that the first setup happens.
   if (!oldUrl || this.darkTheme_ != darkTheme) {
@@ -97,61 +156,64 @@ function makeToggle(toggleId, name, checked) {
   return container;
 }
 
-function onToggle(e) {
-  let hashes = [];
-  for (let i = 0; i < Nav.TOGGLES.length; i++) {
-    const toggleId = Nav.TOGGLES[i][1];
-    if (document.getElementById(toggleId).checked) {
-      hashes.push(toggleId);
-    }
-  }
-  const baseUrl = window.location.origin + window.location.pathname;
-  const hashList = hashes.join('/');
-  console.log('Setting URL to '+ baseUrl + (!!hashList ? '#' + hashList : ''));
-  window.location.href = baseUrl + (!!hashList ? '#' + hashList : '');
-};
+// function onToggle(e) {
+  // let hashes = [];
+  // for (let i = 0; i < Nav.NAV_ITEMS.length; i++) {
+    // const toggleId = Nav.NAV_ITEMS[i][1];
+    // let input = document.getElementById(toggleId);
+    // if (!!input && input.checked) {
+      // hashes.push(toggleId);
+    // }
+  // }
+  // const baseUrl = window.location.origin + window.location.pathname;
+  // const hashList = hashes.join('/');
+  // console.log('Setting URL to '+ baseUrl + (!!hashList ? '#' + hashList : ''));
+  // window.location.href = baseUrl + (!!hashList ? '#' + hashList : '');
+// };
 
 Nav.prototype.setupTopBar = function() {
   this.processHash('', window.location.href);
   const baseUrl = window.location.origin + '/';
-  const LINKS = [
-    ['Map', baseUrl],
-    ['Rank', baseUrl + '#rank'],
-    ['Sync', baseUrl + '#sync'],
-    ['Completeness', baseUrl + '#completeness'],
-  ];
   let topBar = document.getElementById('topbar');
   topBar.innerHTML = '<ul></ul>';
 
-  for (let i = 0; i < Nav.TOGGLES.length; i++) {
-    const toggleId = Nav.TOGGLES[i][1];
-    // TODO: make a proper map
-    let checked = false;
-    if (i == 0 && twoDMode) {
-      checked = true;
+  const navIds = Object.keys(this.items_);
+  for (let i = 0; i < navIds.length; i++) {
+    const item = this.items_[navIds[i]];
+    let itemEl;
+    if (item.isToggle()) {
+      let checked = item.getDefaultValue();
+      // TODO: Get potentially non-default value
+      itemEl = makeToggle(item.getId(), item.getName(), checked);
+    } else {
+      itemEl = document.createElement('li');
+      itemEl.textContent = item.getName();
     }
-    if (i == 1 && autoDriveMode) {
-      checked = true;
-    }
-    if (i == 2 && this.darkTheme_) {
-      checked = true;
-    }
-    let item = makeToggle(toggleId, Nav.TOGGLES[i][0], checked);
-    topBar.firstElementChild.appendChild(item);
-    document.getElementById(toggleId).onclick = onToggle;
+    itemEl.onclick = this.navigate.bind(this, item.getId());
+    topBar.firstElementChild.appendChild(itemEl);
   }
+    // const toggleId = Nav.TOGGLES[i][1];
+    // // TODO: make a proper map
+    // let checked = false;
+    // if (i == 0 && twoDMode) {
+      // checked = true;
+    // }
+    // if (i == 1 && autoDriveMode) {
+      // checked = true;
+    // }
+    // if (i == 2 && this.darkTheme_) {
+      // checked = true;
+    // }
+  // }
 
-  for (let i = 0; i < LINKS.length; i++) {
-    let item = document.createElement('li');
-    const url = window.location.href;
-    const target = LINKS[i][1];
-    if (url.startsWith(target) && url.length - target.length < 2) {
-      item.classList.add('active');
-    }
-    item.textContent = LINKS[i][0];
-    item.onclick = function() {
-      window.location.replace(LINKS[i][1]);
-    }
-    topBar.firstElementChild.appendChild(item);
-  }
+  // for (let i = 0; i < LINKS.length; i++) {
+    // const url = window.location.href;
+    // const target = LINKS[i][1];
+    // if (url.startsWith(target) && url.length - target.length < 2) {
+      // item.classList.add('active');
+    // }
+    // item.onclick = function() {
+      // window.location.replace(LINKS[i][1]);
+    // }
+  // }
 }

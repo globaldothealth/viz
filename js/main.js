@@ -122,6 +122,11 @@ Viz.prototype.updateData = function() {
 };
 
 Viz.prototype.loadView = function(viewId) {
+  if (this.currentViewId_ == viewId) {
+    // Nothing to do.
+    console.log('Same view requested again, aborting.');
+    return;
+  }
   if (this.views_.hasOwnProperty(viewId)) {
     if (!!this.currentViewId_) {
       this.views_[this.currentViewId_].unload();
