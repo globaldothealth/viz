@@ -11,6 +11,7 @@ mapboxgl.Map.prototype.addSource = function(s, obj) {};
 mapboxgl.Map.prototype.getCanvas = function() {};
 mapboxgl.Map.prototype.getSource = function(s, obj) {};
 mapboxgl.Map.prototype.getZoom = function() {};
+mapboxgl.Map.prototype.isSourceLoaded = function(i) {};
 mapboxgl.Map.prototype.on = function(e, t, f) {};
 mapboxgl.Map.prototype.flyTo = function(obj) {};
 mapboxgl.Map.prototype.setStyle = function(s) {};

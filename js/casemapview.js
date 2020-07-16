@@ -17,7 +17,7 @@ constructor(dataProvider, nav) {
   this.nav_ = nav;
 
   /** @const @private {DiseaseMap} */
-  this.map_ = new DiseaseMap(this.dataProvider_);
+  this.map_ = new DiseaseMap(this.dataProvider_, this);
 
   /** @const @private {TimeAnimation} */
   this.timeAnimation_ = this.historicalData_ ?
