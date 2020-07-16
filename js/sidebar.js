@@ -59,7 +59,7 @@ SideBar.prototype.flyToCountry = function(event) {
 }
 
 SideBar.prototype.render = function() {
-  this.element_.innerHTML = '<div id="sidebar-tab"><span id="sidebar-tab-icon"></span></div><div class="sidebar-header"><img src="img/gh_logo_white.svg" style="width: 7ex; margin-right: 1ex; display: none;" /><h1 class="sidebar-title">COVID-19</h1><div id="location-list"></div></div>';
+  this.element_.innerHTML = '<div id="sidebar-tab"><span id="sidebar-tab-icon"></span></div><div class="sidebar-header"><img src="img/gh_logo_white.svg" style="width: 7ex; margin-right: 1ex; display: none;" /><h1 class="sidebar-title">COVID-19</h1></div><div id="per-capita-container"><input type="checkbox" id="percapita"><label or="percapita">Per capita</label></div><div id="location-list"></div>';
   document.getElementById('sidebar-tab').onclick = this.toggle;
 };
 

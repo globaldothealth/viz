@@ -123,7 +123,7 @@ CaseMapView.prototype.onTimeChanged = function(date) {
 
 
 CaseMapView.prototype.flyToCountry = function(code) {
-  this.map_.flyToCountry(initialFlyTo);
+  this.map_.flyToCountry(code);
 };
 
 CaseMapView.prototype.onMapAnimationEnded = function() {
