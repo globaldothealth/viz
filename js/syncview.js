@@ -96,7 +96,6 @@ render() {
   new Chart(ctx, cfg);
 }
 
-
 }
 const STARTING_CASE_COUNT = 10000;
 

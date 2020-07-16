@@ -65,13 +65,13 @@ Nav.prototype.processHash = function(oldUrl, newUrl) {
       }
     }
   }
-  this.viz_.loadView(viewToLoad);
   // If this is our first load (oldURL is empty), do as if the theme had been
   // changed so that the first setup happens.
   if (!oldUrl || this.darkTheme_ != darkTheme) {
     this.darkTheme_ = darkTheme;
     this.onThemeChanged(this.darkTheme_);
   }
+  this.viz_.loadView(viewToLoad);
 }
 
 /** @param {boolean} darkTheme Whether the new theme is dark. */

@@ -17,6 +17,9 @@ let Viz = function() {
 
   /** @const @private {Nav} */
   this.nav_ = new Nav(this);
+
+  /** @private {string} */
+  this.currentViewId_ = '';
 };
 
 /** @const */
@@ -83,12 +86,12 @@ function handleHideModal() {
 
 Viz.prototype.init = function() {
 
-  this.nav_.setupTopBar();
-
   this.registerView(new CaseMapView(this.dataProvider_));
   this.registerView(new RankView(this.dataProvider_));
   this.registerView(new SyncView(this.dataProvider_));
   this.registerView(new CompletenessView(this.dataProvider_));
+
+  this.nav_.setupTopBar();
 
   let self = this;
   window.onhashchange = function(h) {
@@ -120,6 +123,10 @@ Viz.prototype.updateData = function() {
 
 Viz.prototype.loadView = function(viewId) {
   if (this.views_.hasOwnProperty(viewId)) {
+    if (!!this.currentViewId_) {
+      this.views_[this.currentViewId_].unload();
+    }
+    this.currentViewId_ = viewId;
     this.views_[viewId].prepareAndRender();
   }
 }

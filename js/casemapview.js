@@ -35,34 +35,30 @@ fetchData() {
     mapBoxStyle.setAttribute('rel', 'stylesheet');
     document.body.appendChild(mapBoxStyle);
   }
-  return new Promise(function(resolve, reject) {
+  let dataPromise = new Promise(function(resolve, reject) {
+    dp.fetchInitialData.bind(dp)().then(function() {
+      return dp.fetchLatestDailySlice.bind(dp)();
+    }).then(function() {
+      // At this point the dates only contain the latest date.
+      // Show the latest data when we have that before fetching older data.
+      //map.showDataAtDate(self.dataProvider_.getLatestDate());
+        dp.fetchDailySlices(
+        // Update the time control UI after each daily slice.
+        self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(
+          function() {
+            resolve();
+          }
+        );
+    });
+  });
+  let mapPromise = new Promise(function(resolve, reject) {
     let mapBoxScript = document.createElement('script');
     mapBoxScript.src = 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js';
     mapBoxScript.onload = () => resolve();
     document.body.appendChild(mapBoxScript);
-    return dp.fetchInitialData.bind(dp)().then(function() {
-      return dp.fetchLatestDailySlice.bind(dp)();
-    }).then(function() {
-      self.onMapReady.bind(self)();
-      // The page is now interactive and showing the latest data. If we need to
-      // focus on a given country, do that now.
-      if (!!initialFlyTo) {
-        self.flyToCountry(initialFlyTo);
-      }
-      self.sideBar_.renderCountryList();
-      // At this point the dates only contain the latest date.
-      // Show the latest data when we have that before fetching older data.
-      //map.showDataAtDate(self.dataProvider_.getLatestDate());
-      // Give a bit of time for the map to show before fetching other slices.
-      window.setTimeout(function() {
-        dp.fetchDailySlices(
-        // Update the time control UI after each daily slice.
-        self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(
-          function() { });
-      }, 2000);
-      resolve();
-    });
   });
+  console.log('Returning case map promises');
+  return Promise.all([dataPromise, mapPromise]);
 }
 
 render() {
@@ -78,6 +74,7 @@ render() {
   mapEl.innerHTML = '<div id="legend"><div class="legend-header">Cases</div><ul class="list-reset"></ul></div><div id="range-slider"></div><div id="map"></div>';
   app.appendChild(sideBarEl);
   app.appendChild(mapEl);
+  this.onMapReady();
 
   this.sideBar_.render();
   // let self = this;
@@ -85,8 +82,15 @@ render() {
     // self.sideBar_.updateCountryListCounts();
   // });
   console.log(this.sideBar_);
+  this.sideBar_.renderCountryList();
   this.sideBar_.toggle();
   this.timeAnimation_.render();
+
+  // The page is now interactive and showing the latest data. If we need to
+  // focus on a given country, do that now.
+  if (!!initialFlyTo) {
+    this.flyToCountry(initialFlyTo);
+  }
 }
 
 }

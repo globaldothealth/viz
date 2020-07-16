@@ -20,8 +20,11 @@ getTitle() {
 
 fetchData() {
   const dp = this.dataProvider_;
-  let self = this;
-  return dp.fetchCountryNames().then(dp.fetchJhuData.bind(dp));
+  return new Promise(function(resolve, reject) {
+    dp.fetchCountryNames.bind(dp)();
+  }).then(function() {
+    dp.fetchJhuData.bind(dp)();
+  });
 }
 
 render() {
@@ -79,7 +82,6 @@ render() {
   toggle.firstChild.onclick = this.onToggleClicked.bind(this);
   toggle.lastChild.onclick = this.onToggleClicked.bind(this);
 }
-
 
 }
 

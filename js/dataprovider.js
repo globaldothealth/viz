@@ -358,6 +358,7 @@ DataProvider.prototype.fetchLatestDailySlice = function() {
 DataProvider.prototype.fetchDailySlice = function(
     sliceFileName, isNewest, callback) {
   if (!!this.dataSliceFileNames_[sliceFileName]) {
+    console.log('Already have ' + sliceFileName);
     return Promise.resolve();
   }
   const timestamp = (new Date()).getTime();
