@@ -60,6 +60,9 @@ render() {
   let i = 0;
   for (let code in curves) {
     const country = this.dataProvider_.getCountry(code);
+    if (!country) {
+      continue;
+    }
     const name = country.getName();
     let thisData = [];
       for (let j = 0; j < curves[code].length; j++) {
@@ -68,15 +71,18 @@ render() {
         thisData.push(percentage);
     }
     const color = Graphing.CURVE_COLORS[i % Graphing.CURVE_COLORS.length];
-    dataToPlot.push({'data': thisData, 'label': name, 'borderColor': color});
+    dataToPlot.push({
+      'data': thisData, 'label': name, 'borderColor': color,
+      'backgroundColor': 'transparent'});
     i++;
   }
 
   let container = document.getElementById('app');
-  container.innerHTML = '';
+  container.innerHTML = '<h1>Synchronized</h1><h2>D = day of the ' +
+      STARTING_CASE_COUNT + '<sup>th</sup> case</h2>';
   let canvas = document.createElement('canvas');
   canvas.setAttribute('width', container.clientWidth + 'px');
-  canvas.setAttribute('height', container.clientHeight + 'px');
+  canvas.setAttribute('height', Math.floor(0.8 * container.clientHeight) + 'px');
   container.appendChild(canvas);
   let ctx = canvas.getContext('2d');
   let cfg = Graphing.CHART_CONFIG;
@@ -96,6 +102,6 @@ render() {
 }
 
 }
-const STARTING_CASE_COUNT = 10000;
+const STARTING_CASE_COUNT = 1000;
 
 SyncView.prototype.onConfigChanged = function(config) { };

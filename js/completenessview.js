@@ -80,7 +80,7 @@ render() {
   }
  const globalPercentage = (100 * totalIndividual / totalAggregate).
       toFixed(ratioPrecision);
-  container.innerHTML = '<h2>Global completeness: ' + globalPercentage + '%</h2>';
+  container.innerHTML = '<h1>Global completeness: ' + globalPercentage + '%</h1>';
   container.appendChild(list);
 }
 

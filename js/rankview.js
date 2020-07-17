@@ -26,7 +26,7 @@ fetchData() {
 render() {
   super.render();
   console.log('Rendering ' + this.getId());
-  document.getElementById('app').innerHTML = '<h1>Rank</h1><div style="text-align: center">Scroll to advance. Logarithmic scale.</div><div id="toggle"><div class="active">Cases</div><div>Deaths</div></div><div id="rank_content">Loading...</div><div id="minimap"></div>';
+  document.getElementById('app').innerHTML = '<h1>Rank</h1><h2>Scroll to advance. Logarithmic scale.</h2><div id="toggle"><div class="active">Cases</div><div>Deaths</div></div><div id="rank_content">Loading...</div><div id="minimap"></div>';
   let container = document.getElementById('rank_content');
   container.innerHTML = '';
 
