@@ -71,6 +71,18 @@ registerNavItem(name, id, isToggle, defaultValue) {
 navigate(id) {
   console.log('Navigating to ' + id);
   this.viz_.loadView(id);
+  const navIds = Object.keys(this.items_);
+  for (let i = 0; i < navIds.length; i++) {
+    const item = this.items_[navIds[i]];
+    if (!item.isToggle()) {
+      const el = document.getElementById(item.getId());
+      if (item.getId() == id) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    }
+  }
 }
 
 toggle(id) {
@@ -155,7 +167,7 @@ Nav.prototype.processHash = function(oldUrl, newUrl) {
   if (!oldUrl) {
     this.onConfigChanged(this.config_);
   }
-  this.viz_.loadView(viewToLoad);
+  this.navigate(viewToLoad);
 }
 
 function makeToggle(toggleId, name, checked) {
@@ -173,23 +185,7 @@ function makeToggle(toggleId, name, checked) {
   return container;
 }
 
-// function onToggle(e) {
-  // let hashes = [];
-  // for (let i = 0; i < Nav.NAV_ITEMS.length; i++) {
-    // const toggleId = Nav.NAV_ITEMS[i][1];
-    // let input = document.getElementById(toggleId);
-    // if (!!input && input.checked) {
-      // hashes.push(toggleId);
-    // }
-  // }
-  // const baseUrl = window.location.origin + window.location.pathname;
-  // const hashList = hashes.join('/');
-  // console.log('Setting URL to '+ baseUrl + (!!hashList ? '#' + hashList : ''));
-  // window.location.href = baseUrl + (!!hashList ? '#' + hashList : '');
-// };
-
 Nav.prototype.setupTopBar = function() {
-  this.processHash('', window.location.href);
   const baseUrl = window.location.origin + '/';
   let topBar = document.getElementById('topbar');
   topBar.innerHTML = '<ul></ul>';
@@ -205,33 +201,11 @@ Nav.prototype.setupTopBar = function() {
       itemEl.onclick = this.toggle.bind(this, item.getId());
     } else {
       itemEl = document.createElement('li');
+      itemEl.setAttribute('id', navIds[i]);
       itemEl.textContent = item.getName();
       itemEl.onclick = this.navigate.bind(this, item.getId());
     }
     topBar.firstElementChild.appendChild(itemEl);
   }
-    // const toggleId = Nav.TOGGLES[i][1];
-    // // TODO: make a proper map
-    // let checked = false;
-    // if (i == 0 && twoDMode) {
-      // checked = true;
-    // }
-    // if (i == 1 && autoDriveMode) {
-      // checked = true;
-    // }
-    // if (i == 2 && this.darkTheme_) {
-      // checked = true;
-    // }
-  // }
-
-  // for (let i = 0; i < LINKS.length; i++) {
-    // const url = window.location.href;
-    // const target = LINKS[i][1];
-    // if (url.startsWith(target) && url.length - target.length < 2) {
-      // item.classList.add('active');
-    // }
-    // item.onclick = function() {
-      // window.location.replace(LINKS[i][1]);
-    // }
-  // }
+  this.processHash('', window.location.href);
 }
