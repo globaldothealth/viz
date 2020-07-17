@@ -35,6 +35,11 @@ let currentIsoDate;
 let currentDateIndex = 0;
 let currentTouchY = -1;
 
+/** @return {string} */
+Viz.prototype.getCurrentViewId = function() {
+  return this.currentViewId_;
+};
+
 function fetchAboutPage() {
   fetch('https://raw.githubusercontent.com/ghdsi/covid-19/master/about.html')
     .then(function(response) { return response.text(); })
@@ -94,7 +99,6 @@ Viz.prototype.init = function() {
   let self = this;
   window.onhashchange = function(h) {
     console.log('Hash change ' + h.newURL);
-    self.nav_.processHash(h.oldURL, h.newURL);
   }
 
   // document.getElementById('credit').onclick = fetchAboutPage;

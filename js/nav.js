@@ -83,11 +83,13 @@ navigate(id) {
       }
     }
   }
+  this.updateHash();
 }
 
 toggle(id) {
   this.config_[id] = !!document.getElementById(id).checked;
   this.onConfigChanged(this.config_);
+  this.updateHash();
 }
 
 /** @param {!Object} config The new config object. */
@@ -106,16 +108,19 @@ getConfig(id) {
 
 } // Nav
 
-Nav.prototype.processHash = function(oldUrl, newUrl) {
+/**
+ * Deserializes the state from the URL. This should only be called at the
+ * start of a session.
+ */
+Nav.prototype.processHash = function(newUrl) {
   let baseUrl = window.location.origin + window.location.pathname;
   if (!baseUrl.endsWith('/')) {
     baseUrl += '/';
   }
-  const oldHashes = !!oldUrl ? oldUrl.substring(baseUrl.length).split('/') : [];
   const newHashes = newUrl.substring(baseUrl.length).split('/');
   let darkTheme = false;
   let viewToLoad = 'casemap';
-  if (newHashes.length > 0 || oldHashes.length > 0) {
+  if (newHashes.length > 0) {
     for (let i = 0; i < newHashes.length; i++) {
       let hashBrown = newHashes[i];
       if (hashBrown.startsWith('#')) {
@@ -160,12 +165,28 @@ Nav.prototype.processHash = function(oldUrl, newUrl) {
     }
   }
 
-  // If this is our first load (oldURL is empty), do as if the config had been
-  // changed so that the first setup happens.
-  if (!oldUrl) {
-    this.onConfigChanged(this.config_);
-  }
+  // Do as if the config had been changed so that the first setup happens.
+  this.onConfigChanged(this.config_);
   this.navigate(viewToLoad);
+}
+
+/** Serializes the state into the URL so that it can be shared or reloaded. */
+Nav.prototype.updateHash = function() {
+  let baseUrl = window.location.origin + window.location.pathname;
+  if (!baseUrl.endsWith('/')) {
+    baseUrl += '/';
+  }
+  let hashes = [this.viz_.getCurrentViewId()];
+  const navIds = Object.keys(this.items_);
+  let configKeys = Object.keys(this.config_);
+  for (let i = 0; i < configKeys.length; i++) {
+    const key = configKeys[i];
+    // Assume that a "true" value means it is non-default.
+    if (this.config_[key]) {
+      hashes.push(key);
+    }
+  }
+  window.location.href = baseUrl + '#' + hashes.join('/');
 }
 
 function makeToggle(toggleId, name, checked) {
@@ -205,5 +226,5 @@ Nav.prototype.setupTopBar = function() {
     }
     topBar.firstElementChild.appendChild(itemEl);
   }
-  this.processHash('', window.location.href);
+  this.processHash(window.location.href);
 }
