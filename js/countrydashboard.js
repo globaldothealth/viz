@@ -13,7 +13,7 @@ CountryDashboard.prototype.init = function() {
   dp.fetchCountryNames().
         then(dp.fetchJhuData.bind(dp)).
         then(dp.loadCountryData.bind(dp)).
-        then(self.showCountryPage);
+        then(self.showCountryPage.bind(self));
 }
 
 CountryDashboard.prototype.showCountryPage = function(data) {

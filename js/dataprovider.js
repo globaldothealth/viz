@@ -25,11 +25,7 @@ let DataProvider = function(baseUrl) {
   /** @private */
   this.countryFeaturesByDay_ = {};
 
-  /** @private */
-  this.provinceFeaturesByDay_ = {};
-
-  /** @private */
-  this.cityFeaturesByDay_ = {};
+  this.atomicFeaturesByDay_ = {};
 
   /**
    * A map from country names to most recent data (case count, etc.), or
@@ -39,13 +35,17 @@ let DataProvider = function(baseUrl) {
   this.latestDataPerCountry_ = null;
 
   /**
-   * @private @const {Array.<number>} The latest global counts, in this order:
+   * @private {Array.<number>} The latest global counts, in this order:
    * confirmed cases, deaths, date of last update.
    */
   this.latestGlobalCounts_ = [];
 
-  /** @private */
-  this.dataSliceFileNames_ = [];
+  /**
+   * An object whose keys are the names of the data slice files, and whose
+   * values are whether the corresponding slice still has been fetched.
+   * @const @private {!Object.<boolean>}
+   */
+  this.dataSliceFileNames_ = {};
 
   /**
     * An object whose keys are ISO-formatted dates, and values are mapping
@@ -145,6 +145,15 @@ DataProvider.prototype.getCountryFeaturesForDay = function(date) {
 };
 
 
+DataProvider.prototype.getAtomicFeaturesForDay = function(date) {
+  return this.atomicFeaturesByDay_[date];
+};
+
+
+DataProvider.prototype.getLatestGlobalCounts = function() {
+  return this.latestGlobalCounts_;
+};
+
 DataProvider.prototype.getLatestAggregateData = function() {
   if (!this.aggregateData_) {
     return null;
@@ -198,19 +207,31 @@ DataProvider.prototype.fetchInitialData = function() {
 };
 
 
+/** @return {!Promise} */
 DataProvider.prototype.fetchDailySlices = function(eachSliceCallback) {
   let dailyFetches = [];
-  for (let i = 0; i < this.dataSliceFileNames_.length; i++) {
+  let fileNames = Object.keys(this.dataSliceFileNames_);
+  for (let i = 0; i < fileNames.length; i++) {
+    const fileName = fileNames[i];
+    if (!!this.dataSliceFileNames_[fileName]) {
+      continue;
+    }
     let thisPromise = this.fetchDailySlice(
-        this.dataSliceFileNames_[i], false /* isNewest */);
-    dailyFetches.push(thisPromise.then(eachSliceCallback));
+      fileName, false /* isNewest */, eachSliceCallback);
+    dailyFetches.push(thisPromise);
   }
-  let self = this;
-  Promise.all(dailyFetches).then(function() { });
+  if (!dailyFetches.length) {
+    eachSliceCallback();
+    return Promise.resolve();
+  }
+  return Promise.all(dailyFetches);
 };
 
 
-/** Loads the location data (geo names from latitude and longitude). */
+/**
+ * Loads the location data (geo names from latitude and longitude).
+ * @return {!Promise}
+ */
 DataProvider.prototype.fetchLocationData = function() {
   return fetch(this.baseUrl_ + 'location_info.data')
     .then(function(response) { return response.text(); })
@@ -224,26 +245,33 @@ DataProvider.prototype.fetchLocationData = function() {
 };
 
 
+/** @return {!Promise} */
 DataProvider.prototype.fetchDataIndex = function() {
   let self = this;
-  return fetch(this.baseUrl_ + '/d/index.txt')
-    .then(function(response) { return response.text(); })
-    .then(function(responseText) {
-      let lines = responseText.split('\n');
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (!!line) {
-          self.dataSliceFileNames_.push(line);
+  return new Promise(function(resolve, reject) {
+    fetch(self.baseUrl_ + '/d/index.txt').then(function(response) {
+        return response.text();
+      }).then(function(responseText) {
+        let lines = responseText.split('\n');
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!!line) {
+            if (!self.dataSliceFileNames_[line]) {
+              self.dataSliceFileNames_[line] = false;
+            }
+          }
         }
-      }
+        resolve();
+      }).
+      catch(function(msg) { console.error(msg); });
     });
 };
 
 
+/** @return {!Promise} */
 DataProvider.prototype.fetchCountryNames = function() {
   let countryCount = Object.keys(this.countries_).length;
   if (!!countryCount) {
-    console.log('Already have countries.');
     return Promise.resolve();
   }
   let self = this;
@@ -275,10 +303,10 @@ DataProvider.prototype.fetchCountryNames = function() {
  * Loads the latest case counts from the scraper.
  * @param forceRefresh Whether to fetch the latest counts even if we have some
  *     numbers locally.
+ * @return {!Promise}
  */
 DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
   if (!forceRefresh && !!this.latestGlobalCounts_.length) {
-    console.log('We already have latest counts.');
     return Promise.resolve();
   }
   const timestamp = (new Date()).getTime();
@@ -290,23 +318,14 @@ DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
       self.latestGlobalCounts_ = [parseInt(counts['caseCount'], 10),
                                   parseInt(counts['deaths'], 10),
                                   counts['date']];
-      const totalCasesEl = document.getElementById('total-cases');
-      const totalDeathsEl = document.getElementById('total-deaths');
-      const lastUpdatedDateEl = document.getElementById('last-updated-date');
-      if (!!totalCasesEl) {
-        totalCasesEl.innerText = self.latestGlobalCounts_[0].toLocaleString();
-      }
-      if (!!totalDeathsEl) {
-        totalDeathsEl.innerText = self.latestGlobalCounts_[1].toLocaleString();
-      }
-      if (!!lastUpdatedDateEl) {
-        lastUpdatedDateEl.innerText = self.latestGlobalCounts_[2];
-      }
     });
 };
 
 
-/** Loads the appropriate country-specific data. */
+/**
+ * Loads the appropriate country-specific data.
+ * @return {!Promise}
+ */
 DataProvider.prototype.loadCountryData = function() {
   const code = document.getElementById('dash').getAttribute('c');
   let self = this;
@@ -316,15 +335,25 @@ DataProvider.prototype.loadCountryData = function() {
 }
 
 
+/** @return {!Promise} */
 DataProvider.prototype.fetchLatestDailySlice = function() {
-  return this.fetchDailySlice(this.dataSliceFileNames_[0], true /* isNewest */);
+  let fileNames = Object.keys(this.dataSliceFileNames_);
+  fileNames.sort();
+  return this.fetchDailySlice(fileNames[fileNames.length - 1],
+                              true /* isNewest */, function() {});
 }
 
 /**
  * Fetches the next daily slice of data we need. If no argument is provided,
  * fetches the latest slice first.
+ * @return {!Promise}
  */
-DataProvider.prototype.fetchDailySlice = function(sliceFileName, isNewest) {
+DataProvider.prototype.fetchDailySlice = function(
+    sliceFileName, isNewest, callback) {
+  if (!!this.dataSliceFileNames_[sliceFileName]) {
+    console.log('Already have ' + sliceFileName);
+    return Promise.resolve();
+  }
   const timestamp = (new Date()).getTime();
   let self = this;
   let url = this.baseUrl_ + 'd/' + sliceFileName;
@@ -332,15 +361,20 @@ DataProvider.prototype.fetchDailySlice = function(sliceFileName, isNewest) {
   if (isNewest) {
     url += '?nocache=' + timestamp;
   }
-  return fetch(url)
-      .then(function(response) {
-          return response.status == 200 ? response.json() : undefined;
-      })
-      .then(function(jsonData) {
-        if (!jsonData) {
-          return;
-        }
-        self.processDailySlice(jsonData, isNewest);
+  return new Promise(function(resolve, reject) {
+    fetch(url).then(function(response) {
+      if (response.status != 200) {
+        reject('Bad response status ' + response.status + ' for ' + url);
+      }
+      return response.json();
+    }).then(function(jsonData) {
+      if (!jsonData) {
+        reject('JSON data is empty');
+      }
+      self.processDailySlice(jsonData, isNewest);
+      callback();
+      resolve();
+    });
   });
 };
 
@@ -349,8 +383,7 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
   let currentDate = jsonData['date'];
   let features = jsonData['features'];
 
-  // Cases grouped by country and province.
-  let provinceFeatures = {};
+  // Cases grouped by country
   let countryFeatures = {};
 
   // "Re-hydrate" the features into objects ingestable by the map.
@@ -369,11 +402,6 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
       console.log('Warning: invalid country code: ' + countryCode);
       console.log('From ' + location);
     }
-    if (!provinceFeatures[location[1]]) {
-      provinceFeatures[location[1]] = {'total': 0, 'new': 0};
-    }
-    provinceFeatures[location[1]]['total'] += feature['properties']['total'];
-    provinceFeatures[location[1]]['new'] += feature['properties']['new'];
     if (!countryFeatures[countryCode]) {
       countryFeatures[countryCode] = {'total': 0, 'new': 0};
     }
@@ -384,14 +412,13 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
   this.dates_.add(currentDate);
 
   this.countryFeaturesByDay_[currentDate] = countryFeatures;
-  this.provinceFeaturesByDay_[currentDate] = provinceFeatures;
-  atomicFeaturesByDay[currentDate] = features;
+  this.atomicFeaturesByDay_[currentDate] = features;
+  this.dataSliceFileNames_[currentDate + '.json'] = true;
 };
 
 
 DataProvider.prototype.fetchJhuData = function() {
   if (!!this.aggregateData_) {
-    console.log('We already have aggregate data');
     return Promise.resolve();
   }
   const timestamp = (new Date()).getTime();

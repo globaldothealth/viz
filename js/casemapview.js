@@ -1,19 +1,30 @@
 class CaseMapView extends View {
 
-constructor(dataProvider) {
+/**
+ * @param {DataProvider} dataProvider
+ * @param {Nav} nav
+ */
+constructor(dataProvider, nav) {
   super(dataProvider);
+
+  /** @private {boolean} */
+  this.historicalData_ = false;
 
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
 
+  /** @private @const {Nav} */
+  this.nav_ = nav;
+
   /** @const @private {DiseaseMap} */
-  this.map_ = new DiseaseMap(this.dataProvider_);
+  this.map_ = new DiseaseMap(this.dataProvider_, this);
 
   /** @const @private {TimeAnimation} */
-  this.timeAnimation_ = new TimeAnimation(this.dataProvider_, this);
+  this.timeAnimation_ = this.historicalData_ ?
+    new TimeAnimation(this.dataProvider_, this) : null;
 
-  /** @const @private {SideBar} */
-  this.sideBar_ = new SideBar(this.dataProvider_, this);
+  /** @private {SideBar} */
+  this.sideBar_ = null;
 }
 
 getId() {
@@ -27,37 +38,48 @@ getTitle() {
 fetchData() {
   let dp = this.dataProvider_;
   let self = this;
-  return new Promise(function(resolve, reject) {
+  let fetchHistoricalData = false;
+  const styleId = 'mapobox-style';
+  if (!document.getElementById(styleId)) {
     let mapBoxStyle = document.createElement('link');
+    mapBoxStyle.setAttribute('id', styleId);
     mapBoxStyle.setAttribute('href', 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css');
     mapBoxStyle.setAttribute('rel', 'stylesheet');
     document.body.appendChild(mapBoxStyle);
-    let mapBoxScript = document.createElement('script');
-    mapBoxScript.src = 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js';
-    mapBoxScript.onload = () => resolve(mapBoxScript);
-    document.body.appendChild(mapBoxScript);
-  }).then(
-      this.dataProvider_.fetchInitialData().
-      then(dp.fetchLatestDailySlice.bind(dp)).
-      then(function() {
-
-      self.onMapReady.bind(self)();
-      // The page is now interactive and showing the latest data. If we need to
-      // focus on a given country, do that now.
-      if (!!initialFlyTo) {
-        self.flyToCountry(initialFlyTo);
-      }
-      self.sideBar_.renderCountryList();
+  }
+  let dataPromise = new Promise(function(resolve, reject) {
+    dp.fetchInitialData.bind(dp)().then(function() {
+      return dp.fetchLatestDailySlice.bind(dp)();
+    }).then(function() {
       // At this point the dates only contain the latest date.
       // Show the latest data when we have that before fetching older data.
       //map.showDataAtDate(self.dataProvider_.getLatestDate());
-      // Give a bit of time for the map to show before fetching other slices.
-      window.setTimeout(function() {
+      if (fetchHistoricalData) {
         dp.fetchDailySlices(
         // Update the time control UI after each daily slice.
-        self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_));
-      }, 2000);
-    }));
+        self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(
+          function() {
+            resolve();
+          }
+        );
+      } else {
+        resolve();
+      }
+    });
+  });
+  let mapPromise = new Promise(function(resolve, reject) {
+    const mapBoxId = 'mapbox';
+    if (!!document.getElementById(mapBoxId)) {
+      console.log('Mapbox script already present');
+      resolve();
+    }
+    let mapBoxScript = document.createElement('script');
+    mapBoxScript.src = 'https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js';
+    mapBoxScript.setAttribute('id', mapBoxId);
+    mapBoxScript.onload = () => resolve();
+    document.body.appendChild(mapBoxScript);
+  });
+  return Promise.all([dataPromise, mapPromise]);
 }
 
 render() {
@@ -66,32 +88,37 @@ render() {
   app.innerHTML = '';
   let sideBarEl = document.createElement('div');
   sideBarEl.setAttribute('id', 'sidebar');
+  this.sideBar_ = new SideBar(this.dataProvider_, this, sideBarEl);
+
   let mapEl = document.createElement('div');
   mapEl.className = 'map-wrapper';
-  mapEl.innerHTML = '<div id="legend"><div class="legend-header">Cases</div><ul class="list-reset"></ul></div><div id="range-slider"></div><div id="map"></div>';
+  mapEl.innerHTML = '<div id="legend"><div class="legend-header">Cases</div><ul class="list-reset"></ul></div><div id="map"></div>';
   app.appendChild(sideBarEl);
   app.appendChild(mapEl);
+  this.onMapReady();
+
   this.sideBar_.render();
-  let self = this;
-  document.getElementById('sidebar-tab').onclick = toggleSideBar;
-  document.getElementById('percapita').addEventListener('change', function(e) {
-    self.sideBar_.updateCountryListCounts();
-  });
-  toggleSideBar();
-  this.timeAnimation_.render();
+  this.sideBar_.renderCountryList();
+  this.sideBar_.toggle();
+  if (!!this.timeAnimation_) {
+    this.timeAnimation_.render();
+  }
+
+  // The page is now interactive and showing the latest data. If we need to
+  // focus on a given country, do that now.
+  if (!!initialFlyTo) {
+    this.flyToCountry(initialFlyTo);
+  }
 }
 
-}
-
-CaseMapView.prototype.init = function() {
-  let ta = this.timeAnimation_;
-  ta.init();
-
+showHistoricalData() {
+  return !!this.historicalData_;
 };
 
+}
+
 CaseMapView.prototype.onMapReady = function() {
-  this.map_.init();
-  this.fetchData();
+  this.map_.init(this.nav_.getConfig('dark'));
 };
 
 /** @param {string} date */
@@ -101,7 +128,7 @@ CaseMapView.prototype.onTimeChanged = function(date) {
 
 
 CaseMapView.prototype.flyToCountry = function(code) {
-  this.map_.flyToCountry(initialFlyTo);
+  this.map_.flyToCountry(code);
 };
 
 CaseMapView.prototype.onMapAnimationEnded = function() {

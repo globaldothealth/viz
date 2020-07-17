@@ -12,11 +12,14 @@ let Viz = function() {
   this.dataProvider_ = new DataProvider(
       'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
 
-  /** @private @const {Object.<View>} */
+  /** @private @const {!Object.<!View>} */
   this.views_ = {};
 
   /** @const @private {Nav} */
   this.nav_ = new Nav(this);
+
+  /** @private {string} */
+  this.currentViewId_ = '';
 };
 
 /** @const */
@@ -26,14 +29,11 @@ Viz.LIVE_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 let locationInfo = {};
 let autoDriveMode = false;
 let twoDMode = false;
-let darkTheme = false;
 let initialFlyTo;
 
 let currentIsoDate;
 let currentDateIndex = 0;
 let currentTouchY = -1;
-
-let atomicFeaturesByDay = {};
 
 function fetchAboutPage() {
   fetch('https://raw.githubusercontent.com/ghdsi/covid-19/master/about.html')
@@ -84,14 +84,12 @@ function handleHideModal() {
 
 Viz.prototype.init = function() {
 
-  this.nav_.setupTopBar();
-
-  this.registerView(new CaseMapView(this.dataProvider_));
+  this.registerView(new CaseMapView(this.dataProvider_, this.nav_));
   this.registerView(new RankView(this.dataProvider_));
   this.registerView(new SyncView(this.dataProvider_));
   this.registerView(new CompletenessView(this.dataProvider_));
 
-  this.nav_.processHash('', window.location.href);
+  this.nav_.setupTopBar();
 
   let self = this;
   window.onhashchange = function(h) {
@@ -103,7 +101,7 @@ Viz.prototype.init = function() {
   window.setTimeout(this.updateData.bind(this), Viz.LIVE_UPDATE_INTERVAL_MS);
 }
 
-/** @param {View} view */
+/** @param {!View} view */
 Viz.prototype.registerView = function(view) {
   this.views_[view.getId()] = view;
 }
@@ -122,17 +120,24 @@ Viz.prototype.updateData = function() {
 };
 
 Viz.prototype.loadView = function(viewId) {
+  if (this.currentViewId_ == viewId) {
+    // Nothing to do.
+    console.log('Same view requested again, aborting.');
+    return;
+  }
   if (this.views_.hasOwnProperty(viewId)) {
-    const view = this.views_[viewId];
-    view.init();
-    view.prepareAndRender();
+    if (!!this.currentViewId_) {
+      this.views_[this.currentViewId_].unload();
+    }
+    this.currentViewId_ = viewId;
+    this.views_[viewId].prepareAndRender();
   }
 }
 
-Viz.prototype.onThemeChanged = function(darkMode) {
-  let views = this.views_.values();
+Viz.prototype.onThemeChanged = function(darkTheme) {
+  let views = Object.values(this.views_);
   for (let i = 0; i < views.length; i++) {
-    views[i].onThemeChanged(darkMode);
+    views[i].onThemeChanged(darkTheme);
   }
 }
 

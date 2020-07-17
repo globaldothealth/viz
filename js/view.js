@@ -5,12 +5,11 @@ class View {
   /** @abstract @return {string} */ getId() { };
 
   /** @abstract @return {string} */ getTitle() { };
+
   prepareAndRender() {
     console.log('Fetching data for ' + this.getId());
     this.fetchData().then(this.render.bind(this));
   };
-
-  /** @abstract */ init() { };
 
   /**
    * Returns the function that should be called to fetch the necessary data.
@@ -20,12 +19,16 @@ class View {
 
   render() {
     document.title = this.getTitle();
-    document.body.className = this.getId();
+    document.body.classList.add(this.getId());
   };
 
   isShown() {
-    return document.body.className == this.getId();
+    return document.body.classList.contains(this.getId());
   }
 
- /** @abstract */ onThemeChanged(darkTheme) { };
+  unload() {
+    document.body.classList.remove(this.getId());
+  }
+
+  /** @abstract */ onThemeChanged(darkTheme) { };
 }

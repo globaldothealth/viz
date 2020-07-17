@@ -15,10 +15,6 @@ getTitle() {
   return 'Completeness';
 };
 
-isDataReady() {
-  return false;
-}
-
 fetchData() {
   let self = this;
   return this.dataProvider_.fetchInitialData().then(
@@ -90,17 +86,4 @@ render() {
 
 }
 
-CompletenessView.prototype.init = function() {
-  this.fetchData();
-};
-
-function completenessInit() {
-  completeness = new CompletenessView(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
-  completeness.init();
-}
-
 CompletenessView.prototype.onThemeChanged = function(darkTheme) { };
-
-// globalThis['completenessInit'] = completenessInit;
-// viz.registerView(this);

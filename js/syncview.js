@@ -17,8 +17,7 @@ getTitle() {
 fetchData() {
   let self = this;
   const dp = this.dataProvider_;
-  return dp.fetchCountryNames().
-      then(dp.fetchJhuData.bind(dp));
+  return dp.fetchCountryNames().then(dp.fetchJhuData.bind(dp));
 }
 
 render() {
@@ -96,21 +95,7 @@ render() {
   new Chart(ctx, cfg);
 }
 
-
 }
 const STARTING_CASE_COUNT = 10000;
 
-SyncView.prototype.init = function() {
-  this.fetchData();
-};
-
 SyncView.prototype.onThemeChanged = function(darkTheme) { };
-
-let sync;
-function syncInit() {
-  sync = new SyncView(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
-  sync.init();
-}
-
-globalThis['syncInit'] = syncInit;

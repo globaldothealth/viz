@@ -1,8 +1,11 @@
 /** @constructor */
-let DiseaseMap = function(dataProvider) {
+let DiseaseMap = function(dataProvider, view) {
 
   /** @private */
   this.mapboxMap_;
+
+  /** @private @const {CaseMapView} */
+  this.view_ = view;
 
   /** @private @type {Object} */
   this.popup_;
@@ -83,11 +86,10 @@ DiseaseMap.prototype.showDataAtLatestDate = function() {
 }
 
 DiseaseMap.prototype.showDataAtDate = function(isodate) {
-  console.log('Showing data at date ' + isodate);
   if (currentIsoDate != isodate) {
     currentIsoDate = isodate;
   }
-  let featuresToShow = atomicFeaturesByDay[isodate];
+  let featuresToShow = this.dataProvider_.getAtomicFeaturesForDay(isodate);
 
   // If the map is ready, show the data. Otherwise it will be shown when
   // the map is finished loading.
@@ -97,62 +99,95 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   }
 };
 
-DiseaseMap.prototype.init = function() {
+DiseaseMap.prototype.init = function(dark) {
   mapboxgl.accessToken = DiseaseMap.MAPBOX_TOKEN;
   this.mapboxMap_ = new mapboxgl.Map({
     'container': 'map',
     'center': [10, 0],
     'zoom': 1,
   }).addControl(new mapboxgl.NavigationControl());
-  this.setStyle(darkTheme);
+
+  this.setStyle(dark);
+
+  let self = this;
+  this.mapboxMap_.on('load', function () {
+    self.setupSource();
+    self.setupLayers();
+    self.loadDataIntoMap();
+    self.attachEvents();
+    if (!twoDMode) {
+      self.mapboxMap_.easeTo({pitch: 55});
+    }
+  });
   this.popup_ = new mapboxgl.Popup({
     'closeButton': false,
     'closeOnClick': true,
     'maxWidth': 'none',
   });
 
-  let self = this;
-  this.mapboxMap_.on('load', function () {
-    self.mapboxMap_.addSource('counts', {
-      'type': 'geojson',
-      'data': DiseaseMap.formatFeatureSet([])
-    });
+  this.showLegend();
+};
 
-    let circleColorForTotals = ['step', ['get', 'total']];
-    // Don't use the last color here (for new cases).
-    for (let i = 0; i < DiseaseMap.COLOR_MAP.length - 1; i++) {
-      let color = DiseaseMap.COLOR_MAP[i];
-      circleColorForTotals.push(color[0]);
-      if (color.length > 2) {
-        circleColorForTotals.push(color[2]);
-      }
+DiseaseMap.prototype.setupSource = function() {
+  const sourceId = 'counts';
+  if (!!this.mapboxMap_.getSource(sourceId)) {
+    return;
+  }
+  this.mapboxMap_.addSource(sourceId, {
+    'type': 'geojson',
+    'data': DiseaseMap.formatFeatureSet([])
+  });
+};
+
+DiseaseMap.prototype.setupLayers = function() {
+  const layerId = 'totals';
+  if (!!this.mapboxMap_.getLayer(layerId)) {
+    return;
+  }
+  let circleColorForTotals = ['step', ['get', 'total']];
+  // Don't use the last color here (for new cases).
+  for (let i = 0; i < DiseaseMap.COLOR_MAP.length - 1; i++) {
+    let color = DiseaseMap.COLOR_MAP[i];
+    circleColorForTotals.push(color[0]);
+    if (color.length > 2) {
+      circleColorForTotals.push(color[2]);
     }
+  }
+  this.addLayer('totals', 'total', circleColorForTotals);
+  //self.addLayer('daily', 'new', 'cornflowerblue');
+};
 
-    self.addLayer('totals', 'total', circleColorForTotals);
-    //self.addLayer('daily', 'new', 'cornflowerblue');
+DiseaseMap.prototype.loadDataIntoMap = function() {
 
-    // If we're not showing any data yet, let's fix that.
-    self.showDataAtLatestDate();
+  // If we're not showing any data yet, let's fix that.
+  this.showDataAtLatestDate();
 
-    self.mapboxMap_.on('mouseenter', 'totals', function (e) {
-      // Change the cursor style as a UI indicator.
-      this.getCanvas().style.cursor = 'pointer';
-    });
+};
 
-    self.mapboxMap_.on('click', 'totals', self.showPopupForEvent.bind(self));
+DiseaseMap.prototype.attachEvents = function() {
+  this.mapboxMap_.on('mouseenter', 'totals', function (e) {
+    // Change the cursor style as a UI indicator.
+    this.getCanvas().style.cursor = 'pointer';
+  });
 
-    self.mapboxMap_.on('mouseleave', 'totals', function () {
-      this.getCanvas().style.cursor = '';
-    });
+  this.mapboxMap_.on('click', 'totals', this.showPopupForEvent.bind(this));
+
+  this.mapboxMap_.on('mouseleave', 'totals', function () {
+    this.getCanvas().style.cursor = '';
+  });
+};
+
+DiseaseMap.prototype.setStyle = function(isDark) {
+  // Not sure why we need to reload the data after a style change.
+  let self = this;
+  this.mapboxMap_.on('styledata', function () {
+    self.setupSource();
+    self.setupLayers();
+    self.loadDataIntoMap();
     if (!twoDMode) {
       self.mapboxMap_.easeTo({pitch: 55});
     }
   });
-  this.showLegend();
-};
-
-
-DiseaseMap.prototype.setStyle = function(isDark) {
   this.mapboxMap_.setStyle(isDark ?
                            DiseaseMap.DARK_THEME : DiseaseMap.LIGHT_THEME);
 }
@@ -236,26 +271,29 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   content.innerHTML = '<h3 class="popup-header"><span>' +
         locationSpan.join(', ') + '</span></h3>';
 
-  let relevantFeaturesByDay = {};
-  const dates = this.dataProvider_.getDates();
-  for (let i = 0; i < dates.length; i++) {
-    const date = dates[i];
-    relevantFeaturesByDay[date] = [];
-    for (let j = 0; j < atomicFeaturesByDay[date].length; j++) {
-      const feature = atomicFeaturesByDay[date][j];
-      if (feature['properties']['geoid'] == geo_id) {
-        relevantFeaturesByDay[date].push(feature);
+  if (this.view_.showHistoricalData()) {
+    let relevantFeaturesByDay = {};
+    const dates = this.dataProvider_.getDates();
+    for (let i = 0; i < dates.length; i++) {
+      const date = dates[i];
+      relevantFeaturesByDay[date] = [];
+      const atomicFeatures = this.dataProvider_.getAtomicFeaturesForDay(date);
+      for (let j = 0; j < atomicFeatures.length; j++) {
+        const feature = atomicFeatures[i][j];
+        if (feature['properties']['geoid'] == geo_id) {
+          relevantFeaturesByDay[date].push(feature);
+        }
       }
     }
-  }
 
-  let container = document.createElement('div');
-  container.classList.add('chart');
-  Graphing.makeCasesGraph(
-      DataProvider.convertGeoJsonFeaturesToGraphData(
-          relevantFeaturesByDay, 'total'), false /* average */, container,
-      countryName);
-  content.appendChild(container);
+    let container = document.createElement('div');
+    container.classList.add('chart');
+    Graphing.makeCasesGraph(
+        DataProvider.convertGeoJsonFeaturesToGraphData(
+            relevantFeaturesByDay, 'total'), false /* average */, container,
+        countryName);
+    content.appendChild(container);
+  }
 
   // Ensure that if the map is zoomed out such that multiple
   // copies of the feature are visible, the popup appears

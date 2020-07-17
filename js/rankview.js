@@ -20,7 +20,6 @@ getTitle() {
 
 fetchData() {
   const dp = this.dataProvider_;
-  let self = this;
   return dp.fetchCountryNames().then(dp.fetchJhuData.bind(dp));
 }
 
@@ -80,7 +79,6 @@ render() {
   toggle.lastChild.onclick = this.onToggleClicked.bind(this);
 }
 
-
 }
 
 RankView.CONTINENT_COLORS = {
@@ -95,17 +93,6 @@ RankView.CONTINENT_COLORS = {
 
 let maxWidth = 0;
 let showDeathCounts = false;
-
-let rank;
-function rankInit() {
-  rank = new RankView(new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/'));
-  rank.init();
-}
-
-RankView.prototype.init = function() {
-  this.fetchData();
-};
 
 RankView.prototype.onToggleClicked = function(e) {
   let toggle = document.getElementById('toggle');
@@ -198,5 +185,3 @@ RankView.prototype.showRankPageAtCurrentDate = function() {
 }
 
 RankView.prototype.onThemeChanged = function(darkTheme) { };
-
-globalThis['rankInit'] = rankInit;

@@ -1,11 +1,24 @@
-/** @constructor */
-let SideBar = function(dataProvider, caseMapView) {
+class SideBar {
+
+constructor(dataProvider, caseMapView, container) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
 
   /** @const @private {CaseMapView} */
   this.caseMapView_ = caseMapView;
-};
+
+  /** @const @private {!Element} */
+  this.element_ = container;
+}
+
+toggle() {
+  const previouslyHidden = document.body.classList.contains('sidebar-hidden');
+  document.getElementById('sidebar-tab-icon').textContent =
+        previouslyHidden ? '◀' : '▶';
+  document.body.classList.toggle('sidebar-hidden');
+}
+
+}
 
 // Filter list of locations
 function filterList() {
@@ -33,13 +46,6 @@ function clearFilter() {
   filterList();
 }
 
-function toggleSideBar() {
-  const previouslyHidden = document.body.classList.contains('sidebar-hidden');
-  document.getElementById('sidebar-tab-icon').textContent =
-        previouslyHidden ? '◀' : '▶';
-  document.body.classList.toggle('sidebar-hidden');
-}
-
 SideBar.prototype.flyToCountry = function(event) {
   let target = event.target;
   while (!target.getAttribute('country')) {
@@ -53,8 +59,20 @@ SideBar.prototype.flyToCountry = function(event) {
 }
 
 SideBar.prototype.render = function() {
-  let container = document.getElementById('sidebar');
-  container.innerHTML = '<div id="sidebar-tab"><span id="sidebar-tab-icon"></span></div><div class="sidebar-header"><img src="img/gh_logo_white.svg" style="width: 7ex; margin-right: 1ex; display: none;" /><h1 class="sidebar-title">COVID-19</h1></div>';
+  this.element_.innerHTML = '<div id="sidebar-tab"><span id="sidebar-tab-icon"></span></div><div class="sidebar-header"><img src="img/gh_logo_white.svg" style="width: 7ex; margin-right: 1ex; display: none;" /><h1 class="sidebar-title">COVID-19</h1></div><div id="latest-global"></div><div id="per-capita-container"><input type="checkbox" id="percapita"><label for="percapita">Per capita</label></div><div id="location-list"></div>';
+  document.getElementById('sidebar-tab').onclick = this.toggle;
+  document.getElementById('percapita').addEventListener('change',
+      this.updateCountryListCounts.bind(this));
+  this.renderLatestCounts();
+};
+
+SideBar.prototype.renderLatestCounts = function() {
+  let latestEl = document.getElementById('latest-global');
+  latestEl.innerHTML = '<span id="total-cases"></span><span class="reported-cases-label">cases</span><br /><span id="total-deaths"></span><span class="total-deaths-label">deaths</span><br /><div class="last-updated-date">Updated <span id="last-updated-date"></span></div>';
+  const latest = this.dataProvider_.getLatestGlobalCounts();
+  document.getElementById('total-cases').innerText = latest[0].toLocaleString();
+  document.getElementById('total-deaths').innerText = latest[1].toLocaleString();
+  document.getElementById('last-updated-date').innerText = latest[2];
 };
 
 SideBar.prototype.renderCountryList = function() {
