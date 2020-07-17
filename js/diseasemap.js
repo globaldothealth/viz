@@ -12,6 +12,9 @@ let DiseaseMap = function(dataProvider, view) {
 
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
+
+  /** @private @const {string} */
+  this.currentStyle_ = '';
 };
 
 DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrYmNndWlzajAxOGMzMG9jeXdna3Vkb3UifQ.9cb47tJBUSP3K6jhlMUExw';
@@ -178,6 +181,10 @@ DiseaseMap.prototype.attachEvents = function() {
 };
 
 DiseaseMap.prototype.setStyle = function(isDark) {
+  let newStyle = isDark ? DiseaseMap.DARK_THEME : DiseaseMap.LIGHT_THEME;
+  if (this.currentStyle_ == newStyle) {
+    return;
+  }
   // Not sure why we need to reload the data after a style change.
   let self = this;
   this.mapboxMap_.on('styledata', function () {
@@ -188,8 +195,7 @@ DiseaseMap.prototype.setStyle = function(isDark) {
       self.mapboxMap_.easeTo({pitch: 55});
     }
   });
-  this.mapboxMap_.setStyle(isDark ?
-                           DiseaseMap.DARK_THEME : DiseaseMap.LIGHT_THEME);
+  this.mapboxMap_.setStyle(newStyle);
 }
 
 DiseaseMap.prototype.addLayer = function(id, featureProperty, circleColor) {

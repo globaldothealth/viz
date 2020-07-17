@@ -40,9 +40,6 @@ constructor(viz) {
   /** @const {!Object.<!NavItem>} */
   this.items_ = {};
 
-  /** @private {boolean} */
-  this.darkTheme_ = false;
-
   /** @private {!Object.<boolean>} */
   this.config_ = {};
 
@@ -79,14 +76,18 @@ navigate(id) {
 toggle(id) {
   console.log('Toggling ' + id);
   this.config_[id] = !!document.getElementById(id).checked;
-  this.onConfigChanged(id);
+  this.onConfigChanged(this.config_);
 }
 
-onConfigChanged(changedId) {
-  if (changedId == 'dark') {
-    this.onThemeChanged(this.config_['dark']);
-  }
+/** @param {!Object} config The new config object. */
+onConfigChanged(config) {
+  let darkRequested = config['dark'];
+  document.body.classList.add(darkRequested ? 'dark' : 'light');
+  document.body.classList.remove(darkRequested ? 'light' : 'dark');
+
+  this.viz_.onConfigChanged(config);
 }
+
 
 getConfig(id) {
   return this.config_[id];
@@ -149,20 +150,12 @@ Nav.prototype.processHash = function(oldUrl, newUrl) {
     }
   }
 
-  // If this is our first load (oldURL is empty), do as if the theme had been
+  // If this is our first load (oldURL is empty), do as if the config had been
   // changed so that the first setup happens.
-  if (!oldUrl || this.darkTheme_ != darkTheme) {
-    this.darkTheme_ = darkTheme;
-    this.onThemeChanged(this.darkTheme_);
+  if (!oldUrl) {
+    this.onConfigChanged(this.config_);
   }
   this.viz_.loadView(viewToLoad);
-}
-
-/** @param {boolean} darkTheme Whether the new theme is dark. */
-Nav.prototype.onThemeChanged = function(darkTheme) {
-  document.body.classList.add(darkTheme ? 'dark' : 'light');
-  document.body.classList.remove(darkTheme ? 'light' : 'dark');
-  this.viz_.onThemeChanged(darkTheme);
 }
 
 function makeToggle(toggleId, name, checked) {

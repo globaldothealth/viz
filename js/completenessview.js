@@ -86,4 +86,4 @@ render() {
 
 }
 
-CompletenessView.prototype.onThemeChanged = function(darkTheme) { };
+CompletenessView.prototype.onConfigChanged = function(config) { };

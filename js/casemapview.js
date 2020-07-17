@@ -142,9 +142,9 @@ CaseMapView.prototype.onMapAnimationEnded = function() {
   }
 }
 
-CaseMapView.prototype.onThemeChanged = function(darkTheme) {
+CaseMapView.prototype.onConfigChanged = function(config) {
   if (!this.isShown()) {
     return;
   }
-  this.map_.setStyle(darkTheme);
+  this.map_.setStyle(config['dark']);
 };

@@ -134,10 +134,10 @@ Viz.prototype.loadView = function(viewId) {
   }
 }
 
-Viz.prototype.onThemeChanged = function(darkTheme) {
+Viz.prototype.onConfigChanged = function(config) {
   let views = Object.values(this.views_);
   for (let i = 0; i < views.length; i++) {
-    views[i].onThemeChanged(darkTheme);
+    views[i].onConfigChanged(config);
   }
 }
 

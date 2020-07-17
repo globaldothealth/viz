@@ -30,5 +30,5 @@ class View {
     document.body.classList.remove(this.getId());
   }
 
-  /** @abstract */ onThemeChanged(darkTheme) { };
+  /** @abstract */ onConfigChanged(config) { };
 }

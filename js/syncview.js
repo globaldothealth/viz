@@ -98,4 +98,4 @@ render() {
 }
 const STARTING_CASE_COUNT = 10000;
 
-SyncView.prototype.onThemeChanged = function(darkTheme) { };
+SyncView.prototype.onConfigChanged = function(config) { };
