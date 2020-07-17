@@ -101,7 +101,7 @@ render() {
   new Chart(ctx, cfg);
 }
 
-onConfigChanged = function(config) { };
+onConfigChanged(config) { };
 
 } // SyncView
 
