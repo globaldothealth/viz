@@ -103,12 +103,6 @@ render() {
   if (!!this.timeAnimation_) {
     this.timeAnimation_.render();
   }
-
-  // The page is now interactive and showing the latest data. If we need to
-  // focus on a given country, do that now.
-  if (!!initialFlyTo) {
-    this.flyToCountry(initialFlyTo);
-  }
 }
 
 showHistoricalData() {

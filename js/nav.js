@@ -44,12 +44,13 @@ constructor(viz) {
   this.config_ = {};
 
   // Config
-  this.registerNavItem('2D Map', '2d', true, false);
+  // TODO: Make this work instantly.
+  // this.registerNavItem('2D Map', '2d', true, false);
   this.registerNavItem('Auto-drive', 'autodrive', true, false);
   this.registerNavItem('Dark', 'dark', true, false);
 
   // Views
-  this.registerNavItem('Case Map', 'casemap', false);
+  this.registerNavItem('Map', 'casemap', false);
   this.registerNavItem('Rank', 'rank', false);
   this.registerNavItem('Sync', 'sync', false);
   this.registerNavItem('Completeness', 'completeness', false);
@@ -69,7 +70,6 @@ registerNavItem(name, id, isToggle, defaultValue) {
 }
 
 navigate(id) {
-  console.log('Navigating to ' + id);
   this.viz_.loadView(id);
   const navIds = Object.keys(this.items_);
   for (let i = 0; i < navIds.length; i++) {
@@ -86,7 +86,6 @@ navigate(id) {
 }
 
 toggle(id) {
-  console.log('Toggling ' + id);
   this.config_[id] = !!document.getElementById(id).checked;
   this.onConfigChanged(this.config_);
 }
@@ -108,7 +107,6 @@ getConfig(id) {
 } // Nav
 
 Nav.prototype.processHash = function(oldUrl, newUrl) {
-  console.log('Old URL is ' + oldUrl);
   let baseUrl = window.location.origin + window.location.pathname;
   if (!baseUrl.endsWith('/')) {
     baseUrl += '/';

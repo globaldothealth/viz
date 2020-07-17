@@ -49,6 +49,14 @@ body.casemap #app {
   padding: 0;
 }
 
+body.completeness #app table {
+  margin: 0 auto;
+}
+
+body.completeness h2 {
+  text-align: center;
+}
+
 body.rank {
   overflow: hidden;
 }

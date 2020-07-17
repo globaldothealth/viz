@@ -121,6 +121,11 @@ DiseaseMap.prototype.init = function(dark) {
     if (!twoDMode) {
       self.mapboxMap_.easeTo({pitch: 55});
     }
+    // The page is now interactive and showing the latest data. If we need to
+    // focus on a given country, do that now.
+    if (!!initialFlyTo) {
+      self.flyToCountry(initialFlyTo);
+    }
   });
   this.popup_ = new mapboxgl.Popup({
     'closeButton': false,
