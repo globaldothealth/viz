@@ -101,7 +101,8 @@ render() {
   new Chart(ctx, cfg);
 }
 
-}
-const STARTING_CASE_COUNT = 1000;
+onConfigChanged = function(config) { };
 
-SyncView.prototype.onConfigChanged = function(config) { };
+} // SyncView
+
+const STARTING_CASE_COUNT = 10000;
