@@ -1,5 +1,3 @@
-let completeness;
-
 class CompletenessView extends View {
 constructor(dataProvider) {
   super(dataProvider);
@@ -83,6 +81,5 @@ render() {
   container.appendChild(list);
 }
 
+onConfigChanged(config) { };
 }
-
-CompletenessView.prototype.onConfigChanged = function(config) { };

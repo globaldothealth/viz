@@ -2,10 +2,12 @@ let Graphing = function() {
 };
 
 Graphing.CURVE_COLORS = [
-  '#4285F4',
-  '#DB4437',
-  '#F4B400',
-  '#0F9D58',
+  '#950fe4',  // purple
+  '#4285F4',  // blue
+  '#0F9D58',  // green
+  '#ebff1c',  // yellow
+  '#F4B400',  // orange
+  '#DB4437',  // red
 ];
 
 
