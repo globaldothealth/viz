@@ -35,6 +35,11 @@ let currentIsoDate;
 let currentDateIndex = 0;
 let currentTouchY = -1;
 
+/** @return {string} */
+Viz.prototype.getCurrentViewId = function() {
+  return this.currentViewId_;
+};
+
 function fetchAboutPage() {
   fetch('https://raw.githubusercontent.com/ghdsi/covid-19/master/about.html')
     .then(function(response) { return response.text(); })
@@ -85,6 +90,7 @@ function handleHideModal() {
 Viz.prototype.init = function() {
 
   this.registerView(new CaseMapView(this.dataProvider_, this.nav_));
+  this.registerView(new HistoricalMapView(this.dataProvider_, this.nav_));
   this.registerView(new RankView(this.dataProvider_));
   this.registerView(new SyncView(this.dataProvider_));
   this.registerView(new CompletenessView(this.dataProvider_));
@@ -94,7 +100,6 @@ Viz.prototype.init = function() {
   let self = this;
   window.onhashchange = function(h) {
     console.log('Hash change ' + h.newURL);
-    self.nav_.processHash(h.oldURL, h.newURL);
   }
 
   // document.getElementById('credit').onclick = fetchAboutPage;
@@ -134,10 +139,10 @@ Viz.prototype.loadView = function(viewId) {
   }
 }
 
-Viz.prototype.onThemeChanged = function(darkTheme) {
+Viz.prototype.onConfigChanged = function(config) {
   let views = Object.values(this.views_);
   for (let i = 0; i < views.length; i++) {
-    views[i].onThemeChanged(darkTheme);
+    views[i].onConfigChanged(config);
   }
 }
 

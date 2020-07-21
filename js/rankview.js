@@ -3,11 +3,17 @@ class RankView extends View {
 constructor(dataProvider) {
   super(dataProvider);
 
-  /** @private @const {DataProvider} */
-  this.dataProvider_ = dataProvider;
-
   /** @private {number} */
   this.maxGraphedValue_ = 0;
+
+  /** @private {boolean} */
+  this.showDeathCounts_ = false;
+
+  /** @private {number} */
+  this.currentDateIndex_ = 0;
+
+  /** @private {number} */
+  this.minDateIndex_ = 0;
 }
 
 getId() {
@@ -16,22 +22,28 @@ getId() {
 
 getTitle() {
   return 'Rank';
-};
+}
 
-fetchData() {
-  const dp = this.dataProvider_;
-  return dp.fetchCountryNames().then(dp.fetchJhuData.bind(dp));
+setEarliestDateIndexWithAggregateData() {
+  let data = this.dataProvider_.getAggregateData();
+  const dates = this.dataProvider_.getDates();
+  let date = dates[this.minDateIndex_];
+  while (!data[date]) {
+    this.minDateIndex_++;
+    date = dates[this.minDateIndex_];
+  }
 }
 
 render() {
   super.render();
+  this.setEarliestDateIndexWithAggregateData();
+  this.currentDateIndex_ = this.minDateIndex_;
   console.log('Rendering ' + this.getId());
-  document.getElementById('app').innerHTML = '<h1>Rank</h1><div style="text-align: center">Scroll to advance. Logarithmic scale.</div><div id="toggle"><div class="active">Cases</div><div>Deaths</div></div><div id="rank_content">Loading...</div><div id="minimap"></div>';
+  document.getElementById('app').innerHTML = '<h1>Rank</h1><h2>Scroll to advance. Logarithmic scale.</h2><div id="toggle"><div class="active">Cases</div><div>Deaths</div></div><div id="rank_content">Loading...</div><div id="minimap"></div>';
   let container = document.getElementById('rank_content');
   container.innerHTML = '';
 
   maxWidth = Math.floor(container.clientWidth);
-  console.log('Max width ' + maxWidth);
 
   let i = 0;
   let countries = this.dataProvider_.getCountries();
@@ -55,7 +67,9 @@ render() {
     i++;
   }
 
-  this.onModeToggled();
+  this.setUpScale();
+  this.showRankPageAtCurrentDate();
+
   let self = this;
   container.onwheel = function(e) {
     self.onRankWheel(e);
@@ -79,6 +93,19 @@ render() {
   toggle.lastChild.onclick = this.onToggleClicked.bind(this);
 }
 
+setUpScale() {
+  const aggregates = this.dataProvider_.getAggregateData();
+  const key = this.showDeathCounts_ ? 'deaths' : 'cum_conf';
+  let maxValue = 0;
+  let dates = Object.keys(aggregates).sort();
+
+  for (let date in aggregates) {
+    for (let country in aggregates[date]) {
+      maxValue = Math.max(maxValue, aggregates[date][country][key]);
+    }
+  }
+  this.maxGraphedValue_ = Math.log10(maxValue);
+}
 }
 
 RankView.CONTINENT_COLORS = {
@@ -92,34 +119,19 @@ RankView.CONTINENT_COLORS = {
 };
 
 let maxWidth = 0;
-let showDeathCounts = false;
 
 RankView.prototype.onToggleClicked = function(e) {
   let toggle = document.getElementById('toggle');
   if (toggle.firstChild == e.target) {
     toggle.firstChild.classList.add('active');
     toggle.lastChild.classList.remove('active');
-    showDeathCounts = false;
+    this.showDeathCounts_ = false;
   } else if (toggle.lastChild == e.target) {
     toggle.firstChild.classList.remove('active');
     toggle.lastChild.classList.add('active');
-    showDeathCounts = true;
+    this.showDeathCounts_ = true;
   }
-  this.onModeToggled();
-}
-
-RankView.prototype.onModeToggled = function() {
-  const aggregates = this.dataProvider_.getAggregateData();
-  const key = showDeathCounts ? 'deaths' : 'cum_conf';
-  let maxValue = 0;
-  let dates = Object.keys(aggregates).sort();
-
-  for (let date in aggregates) {
-    for (let country in aggregates[date]) {
-      maxValue = Math.max(maxValue, aggregates[date][country][key]);
-    }
-  }
-  this.maxGraphedValue_ = Math.log10(maxValue);
+  this.setUpScale();
   this.showRankPageAtCurrentDate();
 }
 
@@ -134,21 +146,21 @@ RankView.prototype.onRankWheel = function(e) {
 }
 
 RankView.prototype.rankAdvance = function(forward, steps) {
-  let newDateIndex = currentDateIndex + (forward ? steps : -steps);
-  newDateIndex = Math.max(newDateIndex, 0);
+  let newDateIndex = this.currentDateIndex_ + (forward ? steps : -steps);
+  newDateIndex = Math.max(newDateIndex, this.minDateIndex_);
   newDateIndex = Math.min(newDateIndex,
                           this.dataProvider_.getDates().length -1);
-  currentDateIndex = newDateIndex;
+  this.currentDateIndex_ = newDateIndex;
   this.showRankPageAtCurrentDate();
 }
 
 RankView.prototype.showRankPageAtCurrentDate = function() {
-  const date = this.dataProvider_.getDates()[currentDateIndex];
+  const date = this.dataProvider_.getDates()[this.currentDateIndex_];
   document.getElementsByTagName('h1')[0].textContent = date;
   const data = this.dataProvider_.getAggregateData()[date];
   const y_step = 33;
   let container = document.getElementById('rank_content');
-  const key = showDeathCounts ? 'deaths' : 'cum_conf';
+  const key = this.showDeathCounts_ ? 'deaths' : 'cum_conf';
   let o = {};
   for (let i = 0; i < data.length; i++) {
     const item = data[i];
@@ -184,4 +196,4 @@ RankView.prototype.showRankPageAtCurrentDate = function() {
   }
 }
 
-RankView.prototype.onThemeChanged = function(darkTheme) { };
+RankView.prototype.onConfigChanged = function(config) { };

@@ -1,10 +1,15 @@
-/** @constructor */
-let DiseaseMap = function(dataProvider, view) {
+class DiseaseMap {
+
+/**
+ * @param {DataProvider} dataProvider
+ * @param {MapView} view
+ */
+constructor(dataProvider, view) {
 
   /** @private */
-  this.mapboxMap_;
+  this.mapboxMap_ = null;
 
-  /** @private @const {CaseMapView} */
+  /** @private @const {MapView} */
   this.view_ = view;
 
   /** @private @type {Object} */
@@ -12,9 +17,13 @@ let DiseaseMap = function(dataProvider, view) {
 
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
-};
 
-DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrYmNndWlzajAxOGMzMG9jeXdna3Vkb3UifQ.9cb47tJBUSP3K6jhlMUExw';
+  /** @private @const {string} */
+  this.currentStyle_ = '';
+}
+}
+
+DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrOGl1NGNldTAyYXYzZnBqcnBmN3RjanAifQ.H377pe4LPPcymeZkUBiBtg';
 
 DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG = 0.4;
 
@@ -118,6 +127,11 @@ DiseaseMap.prototype.init = function(dark) {
     if (!twoDMode) {
       self.mapboxMap_.easeTo({pitch: 55});
     }
+    // The page is now interactive and showing the latest data. If we need to
+    // focus on a given country, do that now.
+    if (!!initialFlyTo) {
+      self.flyToCountry(initialFlyTo);
+    }
   });
   this.popup_ = new mapboxgl.Popup({
     'closeButton': false,
@@ -178,6 +192,10 @@ DiseaseMap.prototype.attachEvents = function() {
 };
 
 DiseaseMap.prototype.setStyle = function(isDark) {
+  let newStyle = isDark ? DiseaseMap.DARK_THEME : DiseaseMap.LIGHT_THEME;
+  if (this.currentStyle_ == newStyle) {
+    return;
+  }
   // Not sure why we need to reload the data after a style change.
   let self = this;
   this.mapboxMap_.on('styledata', function () {
@@ -188,8 +206,7 @@ DiseaseMap.prototype.setStyle = function(isDark) {
       self.mapboxMap_.easeTo({pitch: 55});
     }
   });
-  this.mapboxMap_.setStyle(isDark ?
-                           DiseaseMap.DARK_THEME : DiseaseMap.LIGHT_THEME);
+  this.mapboxMap_.setStyle(newStyle);
 }
 
 DiseaseMap.prototype.addLayer = function(id, featureProperty, circleColor) {
@@ -259,8 +276,10 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   let locationSpan = [];
   for (let i = 0; i < location.length; i++) {
     if (i == location.length - 1 && !!country) {
-      locationSpan.push('<a target="_blank" href="/c/' +
-                        country.getCode() + '/">' + location[i] + '</a>');
+      // TODO: Restore link to country page.
+      // locationSpan.push('<a target="_blank" href="/c/' +
+                        // country.getCode() + '/">' + location[i] + '</a>');
+      locationSpan.push(location[i]);
     } else {
       locationSpan.push(location[i]);
     }
@@ -269,7 +288,7 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
 
   let content = document.createElement('div');
   content.innerHTML = '<h3 class="popup-header"><span>' +
-        locationSpan.join(', ') + '</span></h3>';
+        locationSpan.join(', ') + '</span>: ' + totalCaseCount.toLocaleString() + '</h3>';
 
   if (this.view_.showHistoricalData()) {
     let relevantFeaturesByDay = {};
@@ -279,7 +298,10 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
       relevantFeaturesByDay[date] = [];
       const atomicFeatures = this.dataProvider_.getAtomicFeaturesForDay(date);
       for (let j = 0; j < atomicFeatures.length; j++) {
-        const feature = atomicFeatures[i][j];
+        const feature = atomicFeatures[j];
+        if (!feature) {
+          continue;
+        }
         if (feature['properties']['geoid'] == geo_id) {
           relevantFeaturesByDay[date].push(feature);
         }

@@ -40,21 +40,20 @@ constructor(viz) {
   /** @const {!Object.<!NavItem>} */
   this.items_ = {};
 
-  /** @private {boolean} */
-  this.darkTheme_ = false;
-
   /** @private {!Object.<boolean>} */
   this.config_ = {};
 
   // Config
-  this.registerNavItem('2D Map', '2d', true, false);
+  // TODO: Make this work instantly.
+  // this.registerNavItem('2D Map', '2d', true, false);
   this.registerNavItem('Auto-drive', 'autodrive', true, false);
   this.registerNavItem('Dark', 'dark', true, false);
 
   // Views
-  this.registerNavItem('Case Map', 'casemap', false);
+  this.registerNavItem('Map', 'casemap', false);
+  this.registerNavItem('Historical Map', 'historicalmap', false);
   this.registerNavItem('Rank', 'rank', false);
-  this.registerNavItem('Sync', 'sync', false);
+  this.registerNavItem('Synchronized', 'sync', false);
   this.registerNavItem('Completeness', 'completeness', false);
 }
 
@@ -72,21 +71,37 @@ registerNavItem(name, id, isToggle, defaultValue) {
 }
 
 navigate(id) {
-  console.log('Navigating to ' + id);
   this.viz_.loadView(id);
+  const navIds = Object.keys(this.items_);
+  for (let i = 0; i < navIds.length; i++) {
+    const item = this.items_[navIds[i]];
+    if (!item.isToggle()) {
+      const el = document.getElementById(item.getId());
+      if (item.getId() == id) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    }
+  }
+  this.updateHash();
 }
 
 toggle(id) {
-  console.log('Toggling ' + id);
   this.config_[id] = !!document.getElementById(id).checked;
-  this.onConfigChanged(id);
+  this.onConfigChanged(this.config_);
+  this.updateHash();
 }
 
-onConfigChanged(changedId) {
-  if (changedId == 'dark') {
-    this.onThemeChanged(this.config_['dark']);
-  }
+/** @param {!Object} config The new config object. */
+onConfigChanged(config) {
+  let darkRequested = config['dark'];
+  document.body.classList.add(darkRequested ? 'dark' : 'light');
+  document.body.classList.remove(darkRequested ? 'light' : 'dark');
+
+  this.viz_.onConfigChanged(config);
 }
+
 
 getConfig(id) {
   return this.config_[id];
@@ -94,17 +109,19 @@ getConfig(id) {
 
 } // Nav
 
-Nav.prototype.processHash = function(oldUrl, newUrl) {
-  console.log('Old URL is ' + oldUrl);
+/**
+ * Deserializes the state from the URL. This should only be called at the
+ * start of a session.
+ */
+Nav.prototype.processHash = function(newUrl) {
   let baseUrl = window.location.origin + window.location.pathname;
   if (!baseUrl.endsWith('/')) {
     baseUrl += '/';
   }
-  const oldHashes = !!oldUrl ? oldUrl.substring(baseUrl.length).split('/') : [];
   const newHashes = newUrl.substring(baseUrl.length).split('/');
   let darkTheme = false;
   let viewToLoad = 'casemap';
-  if (newHashes.length > 0 || oldHashes.length > 0) {
+  if (newHashes.length > 0) {
     for (let i = 0; i < newHashes.length; i++) {
       let hashBrown = newHashes[i];
       if (hashBrown.startsWith('#')) {
@@ -149,20 +166,28 @@ Nav.prototype.processHash = function(oldUrl, newUrl) {
     }
   }
 
-  // If this is our first load (oldURL is empty), do as if the theme had been
-  // changed so that the first setup happens.
-  if (!oldUrl || this.darkTheme_ != darkTheme) {
-    this.darkTheme_ = darkTheme;
-    this.onThemeChanged(this.darkTheme_);
-  }
-  this.viz_.loadView(viewToLoad);
+  // Do as if the config had been changed so that the first setup happens.
+  this.onConfigChanged(this.config_);
+  this.navigate(viewToLoad);
 }
 
-/** @param {boolean} darkTheme Whether the new theme is dark. */
-Nav.prototype.onThemeChanged = function(darkTheme) {
-  document.body.classList.add(darkTheme ? 'dark' : 'light');
-  document.body.classList.remove(darkTheme ? 'light' : 'dark');
-  this.viz_.onThemeChanged(darkTheme);
+/** Serializes the state into the URL so that it can be shared or reloaded. */
+Nav.prototype.updateHash = function() {
+  let baseUrl = window.location.origin + window.location.pathname;
+  if (!baseUrl.endsWith('/')) {
+    baseUrl += '/';
+  }
+  let hashes = [this.viz_.getCurrentViewId()];
+  const navIds = Object.keys(this.items_);
+  let configKeys = Object.keys(this.config_);
+  for (let i = 0; i < configKeys.length; i++) {
+    const key = configKeys[i];
+    // Assume that a "true" value means it is non-default.
+    if (this.config_[key]) {
+      hashes.push(key);
+    }
+  }
+  window.location.href = baseUrl + '#' + hashes.join('/');
 }
 
 function makeToggle(toggleId, name, checked) {
@@ -180,23 +205,7 @@ function makeToggle(toggleId, name, checked) {
   return container;
 }
 
-// function onToggle(e) {
-  // let hashes = [];
-  // for (let i = 0; i < Nav.NAV_ITEMS.length; i++) {
-    // const toggleId = Nav.NAV_ITEMS[i][1];
-    // let input = document.getElementById(toggleId);
-    // if (!!input && input.checked) {
-      // hashes.push(toggleId);
-    // }
-  // }
-  // const baseUrl = window.location.origin + window.location.pathname;
-  // const hashList = hashes.join('/');
-  // console.log('Setting URL to '+ baseUrl + (!!hashList ? '#' + hashList : ''));
-  // window.location.href = baseUrl + (!!hashList ? '#' + hashList : '');
-// };
-
 Nav.prototype.setupTopBar = function() {
-  this.processHash('', window.location.href);
   const baseUrl = window.location.origin + '/';
   let topBar = document.getElementById('topbar');
   topBar.innerHTML = '<ul></ul>';
@@ -212,33 +221,11 @@ Nav.prototype.setupTopBar = function() {
       itemEl.onclick = this.toggle.bind(this, item.getId());
     } else {
       itemEl = document.createElement('li');
+      itemEl.setAttribute('id', navIds[i]);
       itemEl.textContent = item.getName();
       itemEl.onclick = this.navigate.bind(this, item.getId());
     }
     topBar.firstElementChild.appendChild(itemEl);
   }
-    // const toggleId = Nav.TOGGLES[i][1];
-    // // TODO: make a proper map
-    // let checked = false;
-    // if (i == 0 && twoDMode) {
-      // checked = true;
-    // }
-    // if (i == 1 && autoDriveMode) {
-      // checked = true;
-    // }
-    // if (i == 2 && this.darkTheme_) {
-      // checked = true;
-    // }
-  // }
-
-  // for (let i = 0; i < LINKS.length; i++) {
-    // const url = window.location.href;
-    // const target = LINKS[i][1];
-    // if (url.startsWith(target) && url.length - target.length < 2) {
-      // item.classList.add('active');
-    // }
-    // item.onclick = function() {
-      // window.location.replace(LINKS[i][1]);
-    // }
-  // }
+  this.processHash(window.location.href);
 }
