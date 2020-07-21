@@ -14,8 +14,9 @@ getTitle() {
 };
 
 fetchData() {
+  let superPromise = super.fetchData();
   let self = this;
-  return this.dataProvider_.fetchInitialData().then(
+  return superPromise.then(
     // We only need the latest daily slice for the data completeness page.
     self.dataProvider_.fetchLatestDailySlice.bind(self.dataProvider_));
 }

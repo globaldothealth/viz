@@ -26,6 +26,7 @@ fetchData() {
   let dp = this.dataProvider_;
   let self = this;
   let fetchHistoricalData = false;
+  let superPromise = super.fetchData();
   const styleId = 'mapobox-style';
   if (!document.getElementById(styleId)) {
     let mapBoxStyle = document.createElement('link');
@@ -35,7 +36,7 @@ fetchData() {
     document.body.appendChild(mapBoxStyle);
   }
   let dataPromise = new Promise(function(resolve, reject) {
-    dp.fetchInitialData.bind(dp)().then(function() {
+    superPromise.then(function() {
       return dp.fetchLatestDailySlice.bind(dp)();
     }).then(function() {
       // At this point the dates only contain the latest date.
