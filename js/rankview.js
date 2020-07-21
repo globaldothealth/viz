@@ -1,7 +1,10 @@
 class RankView extends View {
 
-constructor(dataProvider) {
+constructor(dataProvider, nav) {
   super(dataProvider);
+
+  /** @private @const {Nav} */
+  this.nav_ = nav;
 
   /** @private {number} */
   this.maxGraphedValue_ = 0;
@@ -106,6 +109,16 @@ setUpScale() {
   }
   this.maxGraphedValue_ = Math.log10(maxValue);
 }
+
+onConfigChanged(config) {
+  if (!this.isShown()) {
+    return;
+  }
+  if (this.nav_.getConfig('autodrive')) {
+    this.rankAdvance(true, 1);
+  }
+}
+
 }
 
 RankView.CONTINENT_COLORS = {
@@ -152,6 +165,12 @@ RankView.prototype.rankAdvance = function(forward, steps) {
                           this.dataProvider_.getDates().length -1);
   this.currentDateIndex_ = newDateIndex;
   this.showRankPageAtCurrentDate();
+  let self = this;
+  if (this.nav_.getConfig('autodrive')) {
+    window.setTimeout(function() {
+      self.rankAdvance.bind(self)(true, 1);
+    }, 200);
+  }
 }
 
 RankView.prototype.showRankPageAtCurrentDate = function() {
@@ -195,5 +214,3 @@ RankView.prototype.showRankPageAtCurrentDate = function() {
     const item = data[i];
   }
 }
-
-RankView.prototype.onConfigChanged = function(config) { };
