@@ -12,12 +12,6 @@ getTitle() {
   return 'Synchronized';
 };
 
-fetchData() {
-  let self = this;
-  const dp = this.dataProvider_;
-  return dp.fetchCountryNames().then(dp.fetchJhuData.bind(dp));
-}
-
 render() {
   super.render();
   const aggregates = this.dataProvider_.getAggregateData();

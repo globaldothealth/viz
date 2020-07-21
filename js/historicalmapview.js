@@ -19,15 +19,29 @@ getTitle() {
   return 'Historical Map';
 };
 
-
 render() {
   super.render();
   this.timeAnimation_.render();
+
+  let self = this;
+
+  // For the historical map, we also want to get data from the past, but
+  // we do this after we're done rendering the main map.
+  window.setTimeout(function() {
+    self.dataProvider_.fetchDailySlices(
+      // Update the time control UI after each daily slice.
+      self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_));
+  }, 2000);
 }
 
 showHistoricalData() {
   return true;
-};
+}
+
+/** @param {string} date */
+onTimeChanged(date) {
+  this.map_.showDataAtDate(date);
+}
 
 onMapAnimationEnded() {
   let self = this;

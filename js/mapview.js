@@ -42,17 +42,6 @@ fetchData() {
     superPromise.then(function() {
       return dp.fetchLatestDailySlice.bind(dp)();
     }).then(function() {
-      // At this point the dates only contain the latest date.
-      // Show the latest data when we have that before fetching older data.
-      //map.showDataAtDate(self.dataProvider_.getLatestDate());
-      // if (fetchHistoricalData) {
-        // dp.fetchDailySlices(
-        // // Update the time control UI after each daily slice.
-        // // self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(
-          // function() {
-            // resolve();
-          // }
-        // );
       // } else {
         resolve();
       // }

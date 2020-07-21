@@ -17,8 +17,3 @@ getTitle() {
 }
 
 }
-
-/** @param {string} date */
-CaseMapView.prototype.onTimeChanged = function(date) {
-  this.map_.showDataAtDate(date);
-};
