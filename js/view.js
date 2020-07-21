@@ -1,6 +1,9 @@
 /** @abstract */
 class View {
-  constructor(dataProvider) {};
+  constructor(dataProvider) {
+    /** @protected @const {DataProvider} */
+    this.dataProvider_ = dataProvider;
+  };
 
   /** @abstract @return {string} */ getId() { };
 
@@ -12,7 +15,8 @@ class View {
   };
 
   /**
-   * Returns the function that should be called to fetch the necessary data.
+   * Returns a promise to fetch the necessary data. Subclasses can build
+   * upon it to chain promises.
    * @abstract @return {!Promise}
    */
   fetchData() { };

@@ -3,9 +3,6 @@ class RankView extends View {
 constructor(dataProvider) {
   super(dataProvider);
 
-  /** @private @const {DataProvider} */
-  this.dataProvider_ = dataProvider;
-
   /** @private {number} */
   this.maxGraphedValue_ = 0;
 }

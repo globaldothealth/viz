@@ -8,9 +8,6 @@ class MapView extends View {
 constructor(dataProvider, nav) {
   super(dataProvider);
 
-  /** @protected @const {DataProvider} */
-  this.dataProvider_ = dataProvider;
-
   /** @private @const {Nav} */
   this.nav_ = nav;
 

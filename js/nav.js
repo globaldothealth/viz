@@ -51,6 +51,7 @@ constructor(viz) {
 
   // Views
   this.registerNavItem('Map', 'casemap', false);
+  this.registerNavItem('Historical Map', 'historicalmap', false);
   this.registerNavItem('Rank', 'rank', false);
   this.registerNavItem('Synchronized', 'sync', false);
   this.registerNavItem('Completeness', 'completeness', false);

@@ -2,8 +2,6 @@ class SyncView extends View {
 
 constructor(dataProvider) {
   super(dataProvider);
-  /** @private @const {DataProvider} */
-  this.dataProvider_ = dataProvider;
 }
 
 getId() {
