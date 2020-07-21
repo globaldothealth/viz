@@ -3,14 +3,18 @@ class DiseaseMap {
 /**
  * @param {DataProvider} dataProvider
  * @param {MapView} view
+ * @param {Nav} nav
  */
-constructor(dataProvider, view) {
+constructor(dataProvider, view, nav) {
 
   /** @private */
   this.mapboxMap_ = null;
 
   /** @private @const {MapView} */
   this.view_ = view;
+
+  /** @private @const {Nav} */
+  this.nav_ = nav;
 
   /** @private @type {Object} */
   this.popup_;
@@ -129,8 +133,8 @@ DiseaseMap.prototype.init = function(dark) {
     }
     // The page is now interactive and showing the latest data. If we need to
     // focus on a given country, do that now.
-    if (!!initialFlyTo) {
-      self.flyToCountry(initialFlyTo);
+    if (!!self.nav_.getConfig('focus')) {
+      self.flyToCountry.bind(self)(self.nav_.getConfig('focus'));
     }
   });
   this.popup_ = new mapboxgl.Popup({
@@ -246,6 +250,8 @@ DiseaseMap.prototype.flyToCountry = function(code) {
   const country = this.dataProvider_.getCountry(code);
   const dest = country.getMainBoundingBox();
   this.mapboxMap_.fitBounds([[dest[0], dest[1]], [dest[2], dest[3]]]);
+  this.nav_.setConfig('focus', code);
+  this.nav_.updateHash();
 };
 
 DiseaseMap.prototype.showPopupForEvent = function(e) {

@@ -12,7 +12,7 @@ constructor(dataProvider, nav) {
   this.nav_ = nav;
 
   /** @const @protected {DiseaseMap} */
-  this.map_ = new DiseaseMap(this.dataProvider_, this);
+  this.map_ = new DiseaseMap(this.dataProvider_, this, this.nav_);
 
   /** @private {SideBar} */
   this.sideBar_ = null;
