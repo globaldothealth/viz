@@ -163,6 +163,9 @@ RankView.prototype.onRankWheel = function(e) {
 }
 
 RankView.prototype.rankAdvance = function(forward, steps) {
+  if (!this.isShown()) {
+    return;
+  }
   let newDateIndex = this.currentDateIndex_ + (forward ? steps : -steps);
   const maxDateIndex = this.dataProvider_.getDates().length -1;
   newDateIndex = Math.max(newDateIndex, this.minDateIndex_);
