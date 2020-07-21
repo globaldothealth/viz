@@ -16,6 +16,9 @@ constructor(dataProvider, nav) {
 
   /** @private {SideBar} */
   this.sideBar_ = null;
+
+  /** @private {boolean} */
+  this.firstRender_ = true;
 }
 
 showHistoricalData() {
@@ -79,7 +82,7 @@ render() {
   this.sideBar_ = new SideBar(this.dataProvider_, this, sideBarEl);
 
   let mapEl = document.createElement('div');
-  mapEl.className = 'map-wrapper';
+  mapEl.setAttribute('id', 'map-wrapper');
   mapEl.innerHTML = '<div id="legend"><div class="legend-header">Cases</div><ul class="list-reset"></ul></div><div id="map"></div>';
   app.appendChild(sideBarEl);
   app.appendChild(mapEl);
@@ -87,7 +90,10 @@ render() {
 
   this.sideBar_.render();
   this.sideBar_.renderCountryList();
-  this.sideBar_.toggle();
+  if (this.firstRender_) {
+    this.sideBar_.toggle();
+  }
+  this.firstRender_ = false;
 }
 
 onMapReady() {
