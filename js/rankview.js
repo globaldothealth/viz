@@ -31,7 +31,6 @@ render() {
   container.innerHTML = '';
 
   maxWidth = Math.floor(container.clientWidth);
-  console.log('Max width ' + maxWidth);
 
   let i = 0;
   let countries = this.dataProvider_.getCountries();
