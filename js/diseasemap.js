@@ -1,10 +1,15 @@
-/** @constructor */
-let DiseaseMap = function(dataProvider, view) {
+class DiseaseMap {
+
+/**
+ * @param {DataProvider} dataProvider
+ * @param {MapView} view
+ */
+constructor(dataProvider, view) {
 
   /** @private */
-  this.mapboxMap_;
+  this.mapboxMap_ = null;
 
-  /** @private @const {CaseMapView} */
+  /** @private @const {MapView} */
   this.view_ = view;
 
   /** @private @type {Object} */
@@ -15,9 +20,10 @@ let DiseaseMap = function(dataProvider, view) {
 
   /** @private @const {string} */
   this.currentStyle_ = '';
-};
+}
+}
 
-DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrOGl1NGNldTAyYXYzZnBqcnBmN3RjanAifQ.H377pe4LPPcymeZkUBiBtg';
+DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrYmNndWlzajAxOGMzMG9jeXdna3Vkb3UifQ.9cb47tJBUSP3K6jhlMUExw';
 
 DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG = 0.4;
 
