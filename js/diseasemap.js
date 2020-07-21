@@ -296,7 +296,10 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
       relevantFeaturesByDay[date] = [];
       const atomicFeatures = this.dataProvider_.getAtomicFeaturesForDay(date);
       for (let j = 0; j < atomicFeatures.length; j++) {
-        const feature = atomicFeatures[i][j];
+        const feature = atomicFeatures[j];
+        if (!feature) {
+          continue;
+        }
         if (feature['properties']['geoid'] == geo_id) {
           relevantFeaturesByDay[date].push(feature);
         }

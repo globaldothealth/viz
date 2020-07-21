@@ -436,7 +436,3 @@ DataProvider.prototype.fetchJhuData = function() {
       }
     });
 }
-
-
-DataProvider.prototype.getCompletenessData = function(callback) {
-}
