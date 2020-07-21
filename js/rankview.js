@@ -94,6 +94,10 @@ render() {
   // Assume only two modes here.
   toggle.firstChild.onclick = this.onToggleClicked.bind(this);
   toggle.lastChild.onclick = this.onToggleClicked.bind(this);
+
+  if (this.nav_.getConfig('autodrive')) {
+    this.rankAdvance(true, 1);
+  }
 }
 
 setUpScale() {
@@ -160,16 +164,25 @@ RankView.prototype.onRankWheel = function(e) {
 
 RankView.prototype.rankAdvance = function(forward, steps) {
   let newDateIndex = this.currentDateIndex_ + (forward ? steps : -steps);
+  const maxDateIndex = this.dataProvider_.getDates().length -1;
   newDateIndex = Math.max(newDateIndex, this.minDateIndex_);
-  newDateIndex = Math.min(newDateIndex,
-                          this.dataProvider_.getDates().length -1);
+  let autodriveLatency = 100;
+  if (newDateIndex >= maxDateIndex) {
+      newDateIndex = maxDateIndex;
+  }
   this.currentDateIndex_ = newDateIndex;
   this.showRankPageAtCurrentDate();
+  if (this.currentDateIndex_ == maxDateIndex && this.nav_.getConfig('autodrive')) {
+    // We're in autodrive mode and reached the end. Start over after a short
+    // wait.
+    this.currentDateIndex_ = this.minDateIndex_;
+    autodriveLatency = 2000;
+  }
   let self = this;
   if (this.nav_.getConfig('autodrive')) {
     window.setTimeout(function() {
       self.rankAdvance.bind(self)(true, 1);
-    }, 200);
+    }, autodriveLatency);
   }
 }
 

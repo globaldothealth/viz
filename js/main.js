@@ -27,7 +27,6 @@ Viz.LIVE_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
 // Globals
 let locationInfo = {};
-let autoDriveMode = false;
 let twoDMode = false;
 let initialFlyTo;
 

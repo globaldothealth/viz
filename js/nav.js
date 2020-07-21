@@ -142,22 +142,9 @@ Nav.prototype.processHash = function(newUrl) {
       }
 
       if (navItem.isToggle()) {
-        if (hashBrown == '2d') {
-          twoDMode = true;
-          continue;
-        }
-        if (hashBrown == 'autodrive') {
-          autoDriveMode = true;
-          document.body.classList.add('autodrive');
-          continue;
-        }
-
-        if (hashBrown == 'dark') {
-          darkTheme = true;
-          continue;
-        }
-
-        // TODO
+        document.getElementById(navItem.getId()).checked = true;
+        this.config_[navItem.getId()] = true;
+        continue;
       } else {
         // This is a view. If several views are specified, last one wins.
         viewToLoad = hashBrown;

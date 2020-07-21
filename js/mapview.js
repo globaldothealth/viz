@@ -8,7 +8,7 @@ class MapView extends View {
 constructor(dataProvider, nav) {
   super(dataProvider);
 
-  /** @private @const {Nav} */
+  /** @protected @const {Nav} */
   this.nav_ = nav;
 
   /** @const @protected {DiseaseMap} */
