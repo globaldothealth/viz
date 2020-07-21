@@ -276,8 +276,10 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   let locationSpan = [];
   for (let i = 0; i < location.length; i++) {
     if (i == location.length - 1 && !!country) {
-      locationSpan.push('<a target="_blank" href="/c/' +
-                        country.getCode() + '/">' + location[i] + '</a>');
+      // TODO: Restore link to country page.
+      // locationSpan.push('<a target="_blank" href="/c/' +
+                        // country.getCode() + '/">' + location[i] + '</a>');
+      locationSpan.push(location[i]);
     } else {
       locationSpan.push(location[i]);
     }
@@ -286,7 +288,7 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
 
   let content = document.createElement('div');
   content.innerHTML = '<h3 class="popup-header"><span>' +
-        locationSpan.join(', ') + '</span></h3>';
+        locationSpan.join(', ') + '</span>: ' + totalCaseCount.toLocaleString() + '</h3>';
 
   if (this.view_.showHistoricalData()) {
     let relevantFeaturesByDay = {};

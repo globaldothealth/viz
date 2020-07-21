@@ -31,7 +31,7 @@ render() {
     self.dataProvider_.fetchDailySlices(
       // Update the time control UI after each daily slice.
       self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_));
-  }, 2000);
+  }, 3500);
 }
 
 showHistoricalData() {
