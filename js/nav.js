@@ -217,6 +217,7 @@ Nav.prototype.setupTopBar = function() {
     } else {
       itemEl = document.createElement('li');
       itemEl.setAttribute('id', navIds[i]);
+      itemEl.classList.add('navlink');
       itemEl.textContent = item.getName();
       itemEl.onclick = this.navigate.bind(this, item.getId());
     }

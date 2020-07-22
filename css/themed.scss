@@ -1,8 +1,6 @@
 @import './variables.scss';
 
-.light #topbar {
-  background-color: $sidebar-bgcolor-light;
-}
+/* Body */
 
 body.light {
   background-color: $body-bgcolor-light;
@@ -14,13 +12,25 @@ body.dark {
   color: $text-color-dark;
 }
 
-// .light canvas {
-  // background-color: $body-bgcolor-light;
-// }
+/* Top bar */
 
-// .dark canvas {
-  // background-color: $body-bgcolor-dark;
-// }
+.light #topbar {
+  background-color: $sidebar-bgcolor-light;
+  border-bottom-color: $topbar-nav-border-color-light;
+}
+
+.light #topbar li.navlink {
+  border-left-color: $topbar-nav-border-color-light;
+}
+
+.dark #topbar {
+  background-color: $sidebar-bgcolor-dark;
+  border-bottom-color: $topbar-nav-border-color-dark;
+}
+
+.dark #topbar li.navlink {
+  border-left-color: $topbar-nav-border-color-dark;
+}
 
 .light #legend {
   color: #333;
