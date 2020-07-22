@@ -22,7 +22,7 @@ constructor(dataProvider, view, nav) {
   /** @private @const {DataProvider} */
   this.dataProvider_ = dataProvider;
 
-  /** @private @const {string} */
+  /** @private {string} */
   this.currentStyle_ = '';
 
   /**
