@@ -24,6 +24,18 @@ constructor(dataProvider, view, nav) {
 
   /** @private @const {string} */
   this.currentStyle_ = '';
+
+  /**
+   * Whether this maps needs a render. This is true before the first render, but
+   * also after the map has been replaced by another view and will need
+   * re-rendering when being shown again.
+   * @private {boolean}
+   */
+  this.needsRender_ = true;
+}
+
+onUnload() {
+  this.needsRender_ = true;
 }
 }
 
@@ -136,6 +148,7 @@ DiseaseMap.prototype.init = function(dark) {
     if (!!self.nav_.getConfig('focus')) {
       self.flyToCountry.bind(self)(self.nav_.getConfig('focus'));
     }
+    self.needsRender_ = false;
   });
   this.popup_ = new mapboxgl.Popup({
     'closeButton': false,
@@ -197,7 +210,7 @@ DiseaseMap.prototype.attachEvents = function() {
 
 DiseaseMap.prototype.setStyle = function(isDark) {
   let newStyle = isDark ? DiseaseMap.DARK_THEME : DiseaseMap.LIGHT_THEME;
-  if (this.currentStyle_ == newStyle) {
+  if (this.currentStyle_ == newStyle && !this.needsRender_) {
     return;
   }
   // Not sure why we need to reload the data after a style change.
@@ -211,6 +224,7 @@ DiseaseMap.prototype.setStyle = function(isDark) {
     }
   });
   this.mapboxMap_.setStyle(newStyle);
+  this.currentStyle_ = newStyle;
 }
 
 DiseaseMap.prototype.addLayer = function(id, featureProperty, circleColor) {
@@ -251,7 +265,6 @@ DiseaseMap.prototype.flyToCountry = function(code) {
   const dest = country.getMainBoundingBox();
   this.mapboxMap_.fitBounds([[dest[0], dest[1]], [dest[2], dest[3]]]);
   this.nav_.setConfig('focus', code);
-  this.nav_.updateHash();
 };
 
 DiseaseMap.prototype.showPopupForEvent = function(e) {

@@ -48,6 +48,7 @@ constructor(viz) {
   // this.registerNavItem('2D Map', '2d', true, false);
   this.registerNavItem('Auto-drive', 'autodrive', true, false);
   this.registerNavItem('Dark', 'dark', true, false);
+  this.registerNavItem('Fullscreen', 'fullscreen', true, false);
 
   // Views
   this.registerNavItem('Map', 'casemap', false);
@@ -95,10 +96,8 @@ toggle(id) {
 
 /** @param {!Object} config The new config object. */
 onConfigChanged(config) {
-  let darkRequested = config['dark'];
-  document.body.classList.add(darkRequested ? 'dark' : 'light');
-  document.body.classList.remove(darkRequested ? 'light' : 'dark');
-
+  this.updateHash();
+  this.updateToggles();
   this.viz_.onConfigChanged(config);
 }
 
@@ -109,6 +108,14 @@ getConfig(id) {
 
 setConfig(id, value) {
   this.config_[id] = value;
+  this.onConfigChanged(this.config_);
+}
+
+updateToggles() {
+  let keys = Object.keys(this.config_);
+  for (let i = 0; i < keys.length; i++) {
+    document.getElementById(keys[i]).checked = this.config_[keys[i]];
+  }
 }
 
 } // Nav
@@ -134,7 +141,7 @@ Nav.prototype.processHash = function(newUrl) {
 
       // Handle a country code.
       if (hashBrown.length == 2 && hashBrown.toUpperCase() == hashBrown) {
-        this.setConfig('focus', hashBrown);
+        this.config_['focus'] = hashBrown;
         continue;
       }
 
@@ -147,7 +154,7 @@ Nav.prototype.processHash = function(newUrl) {
 
       if (navItem.isToggle()) {
         document.getElementById(navItem.getId()).checked = true;
-        this.setConfig(navItem.getId(), true);
+        this.config_[navItem.getId()] = true;
         continue;
       } else {
         // This is a view. If several views are specified, last one wins.

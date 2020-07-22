@@ -23,7 +23,7 @@ constructor(dataProvider, nav) {
 
 showHistoricalData() {
   return false;
-};
+}
 
 fetchData() {
   let dp = this.dataProvider_;
@@ -100,4 +100,8 @@ flyToCountry(code) {
   this.map_.flyToCountry(code);
 }
 
+unload() {
+  super.unload();
+  this.map_.onUnload();
+}
 }
