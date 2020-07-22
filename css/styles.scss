@@ -209,6 +209,11 @@ input[type=text] {
   z-index: 4;
 }
 
+.fullscreen #topbar,
+.fullscreen #sidebar {
+  display: none;
+}
+
 #topbar ul {
   display: flex;
   flex-direction: row;
