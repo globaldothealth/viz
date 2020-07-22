@@ -1,4 +1,6 @@
 .toggle {
+  display: flex;
+  align-items: center;
   margin: 0 3ex;
 }
 
@@ -6,7 +8,6 @@
   position: relative;
   display: inline-block;
   height: 17px;
-  vertical-align: middle;
   width: 35px;
 }
 

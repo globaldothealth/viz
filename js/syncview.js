@@ -50,16 +50,22 @@ render() {
     labels.push('D + ' + i);
   }
   let i = 0;
+  let maxValue = 0;
   for (let code in curves) {
     const country = this.dataProvider_.getCountry(code);
     if (!country) {
       continue;
     }
     const name = country.getName();
+    const population = country.getPopulation();
+    if (!population) {
+      continue;
+    }
     let thisData = [];
       for (let j = 0; j < curves[code].length; j++) {
         const caseCount = curves[code][j][1];
-        const percentage = (caseCount / country.getPopulation() * 1000).toFixed(2);
+        const percentage = (caseCount / population * 100).toFixed(3);
+        maxValue = Math.max(maxValue, percentage);
         thisData.push(percentage);
     }
     const color = Graphing.CURVE_COLORS[i % Graphing.CURVE_COLORS.length];
@@ -70,7 +76,8 @@ render() {
   }
 
   let container = document.getElementById('app');
-  container.innerHTML = '<h1>Synchronized</h1><h2>D = day of the ' +
+  container.innerHTML = '<h1>Synchronized</h1>' +
+      '<h2>Confirmed cases in % of population. D = day of the ' +
       STARTING_CASE_COUNT + '<sup>th</sup> case</h2>';
   let canvas = document.createElement('canvas');
   canvas.setAttribute('width', container.clientWidth + 'px');
@@ -80,10 +87,13 @@ render() {
   let cfg = Graphing.CHART_CONFIG;
   cfg['options']['tooltips']['mode'] = 'nearest';
   cfg['options']['tooltips']['callbacks'] = {'label': function(item, data) {
-    return data['datasets'][item['datasetIndex']]['label'] + ': ' + item['yLabel'] + ' ‰';
+    return data['datasets'][item['datasetIndex']]['label'] + ': ' + item['yLabel'] + ' %';
   }};
   cfg['options']['scales']['xAxes'][0]['type'] = undefined;
   cfg['options']['scales']['xAxes'][0]['time'] = {};
+  if (!cfg['options']['scales']['yAxes'][0]['ticks']) {
+    cfg['options']['scales']['yAxes'][0]['ticks'] = {};
+  }
 
   cfg['data'] = {
     'labels': labels,

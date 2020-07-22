@@ -199,9 +199,10 @@ input[type=text] {
 }
 
 #topbar {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
   font-size: 90%;
   left: 0;
-  padding: 1ex 0;
   position: fixed;
   right: 0;
   top: 0;
@@ -225,6 +226,12 @@ input[type=text] {
   padding: 0 5px;
   text-align: center;
   vertical-align: middle;
+}
+
+#topbar li.navlink {
+  border-left-style: solid;
+  border-left-width: 1px;
+  padding: 1ex 0;
 }
 
 #topbar li.active {

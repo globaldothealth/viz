@@ -102,9 +102,13 @@ onConfigChanged(config) {
   this.viz_.onConfigChanged(config);
 }
 
-
+/** @param {string} id */
 getConfig(id) {
   return this.config_[id];
+}
+
+setConfig(id, value) {
+  this.config_[id] = value;
 }
 
 } // Nav
@@ -130,7 +134,7 @@ Nav.prototype.processHash = function(newUrl) {
 
       // Handle a country code.
       if (hashBrown.length == 2 && hashBrown.toUpperCase() == hashBrown) {
-        initialFlyTo = hashBrown;
+        this.setConfig('focus', hashBrown);
         continue;
       }
 
@@ -142,22 +146,9 @@ Nav.prototype.processHash = function(newUrl) {
       }
 
       if (navItem.isToggle()) {
-        if (hashBrown == '2d') {
-          twoDMode = true;
-          continue;
-        }
-        if (hashBrown == 'autodrive') {
-          autoDriveMode = true;
-          document.body.classList.add('autodrive');
-          continue;
-        }
-
-        if (hashBrown == 'dark') {
-          darkTheme = true;
-          continue;
-        }
-
-        // TODO
+        document.getElementById(navItem.getId()).checked = true;
+        this.setConfig(navItem.getId(), true);
+        continue;
       } else {
         // This is a view. If several views are specified, last one wins.
         viewToLoad = hashBrown;
@@ -182,9 +173,13 @@ Nav.prototype.updateHash = function() {
   let configKeys = Object.keys(this.config_);
   for (let i = 0; i < configKeys.length; i++) {
     const key = configKeys[i];
-    // Assume that a "true" value means it is non-default.
-    if (this.config_[key]) {
-      hashes.push(key);
+    if (key == 'focus') {
+      hashes.push(this.config_[key]);
+    } else {
+      // Assume that a "true" value means it is non-default.
+      if (this.config_[key]) {
+        hashes.push(key);
+      }
     }
   }
   window.location.href = baseUrl + '#' + hashes.join('/');
@@ -222,6 +217,7 @@ Nav.prototype.setupTopBar = function() {
     } else {
       itemEl = document.createElement('li');
       itemEl.setAttribute('id', navIds[i]);
+      itemEl.classList.add('navlink');
       itemEl.textContent = item.getName();
       itemEl.onclick = this.navigate.bind(this, item.getId());
     }

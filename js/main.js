@@ -27,9 +27,7 @@ Viz.LIVE_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
 // Globals
 let locationInfo = {};
-let autoDriveMode = false;
 let twoDMode = false;
-let initialFlyTo;
 
 let currentIsoDate;
 let currentDateIndex = 0;
@@ -91,7 +89,7 @@ Viz.prototype.init = function() {
 
   this.registerView(new CaseMapView(this.dataProvider_, this.nav_));
   this.registerView(new HistoricalMapView(this.dataProvider_, this.nav_));
-  this.registerView(new RankView(this.dataProvider_));
+  this.registerView(new RankView(this.dataProvider_, this.nav_));
   this.registerView(new SyncView(this.dataProvider_));
   this.registerView(new CompletenessView(this.dataProvider_));
 

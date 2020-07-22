@@ -46,7 +46,7 @@ onTimeChanged(date) {
 onMapAnimationEnded() {
   let self = this;
   let ta = this.timeAnimation_;
-  if (autoDriveMode) {
+  if (this.nav_.getConfig('autodrive')) {
     // Let the last frame last for a few seconds before restarting.
     setTimeout(function() {
       ta.toggleMapAnimation(self.onMapAnimationEnded.bind(self));
