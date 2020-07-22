@@ -39,7 +39,7 @@ onUnload() {
 }
 }
 
-DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrOGl1NGNldTAyYXYzZnBqcnBmN3RjanAifQ.H377pe4LPPcymeZkUBiBtg';
+DiseaseMap.MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrYmNndWlzajAxOGMzMG9jeXdna3Vkb3UifQ.9cb47tJBUSP3K6jhlMUExw';
 
 DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG = 0.4;
 
@@ -138,17 +138,14 @@ DiseaseMap.prototype.init = function(dark) {
   this.mapboxMap_.on('load', function () {
     self.setupSource();
     self.setupLayers();
-    self.loadDataIntoMap();
+    self.showDataAtLatestDate();
     self.attachEvents();
     if (!twoDMode) {
       self.mapboxMap_.easeTo({pitch: 55});
     }
-    // The page is now interactive and showing the latest data. If we need to
-    // focus on a given country, do that now.
     if (!!self.nav_.getConfig('focus')) {
-      self.flyToCountry.bind(self)(self.nav_.getConfig('focus'));
+      self.flyToCountry(self.nav_.getConfig('focus'));
     }
-    self.needsRender_ = false;
   });
   this.popup_ = new mapboxgl.Popup({
     'closeButton': false,
@@ -188,13 +185,6 @@ DiseaseMap.prototype.setupLayers = function() {
   //self.addLayer('daily', 'new', 'cornflowerblue');
 };
 
-DiseaseMap.prototype.loadDataIntoMap = function() {
-
-  // If we're not showing any data yet, let's fix that.
-  this.showDataAtLatestDate();
-
-};
-
 DiseaseMap.prototype.attachEvents = function() {
   this.mapboxMap_.on('mouseenter', 'totals', function (e) {
     // Change the cursor style as a UI indicator.
@@ -214,11 +204,12 @@ DiseaseMap.prototype.setStyle = function(isDark) {
     return;
   }
   // Not sure why we need to reload the data after a style change.
+  this.needsRender_ = false;
   let self = this;
   this.mapboxMap_.on('styledata', function () {
     self.setupSource();
     self.setupLayers();
-    self.loadDataIntoMap();
+    self.showDataAtLatestDate();
     if (!twoDMode) {
       self.mapboxMap_.easeTo({pitch: 55});
     }

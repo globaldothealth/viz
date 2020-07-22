@@ -114,7 +114,10 @@ setConfig(id, value) {
 updateToggles() {
   let keys = Object.keys(this.config_);
   for (let i = 0; i < keys.length; i++) {
-    document.getElementById(keys[i]).checked = this.config_[keys[i]];
+    let el = document.getElementById(keys[i]);
+    if (!!el) {
+      el.checked = this.config_[keys[i]];
+    }
   }
 }
 

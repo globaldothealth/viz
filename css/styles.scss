@@ -210,7 +210,8 @@ input[type=text] {
 }
 
 .fullscreen #topbar,
-.fullscreen #sidebar {
+.fullscreen #sidebar,
+.fullscreen .mapboxgl-control-container {
   display: none;
 }
 
