@@ -87,6 +87,7 @@ function handleHideModal() {
 Viz.prototype.init = function() {
 
   this.registerView(new CaseMapView(this.dataProvider_, this.nav_));
+  this.registerView(new CompletenessMapView(this.dataProvider_, this.nav_));
   this.registerView(new HistoricalMapView(this.dataProvider_, this.nav_));
   this.registerView(new RankView(this.dataProvider_, this.nav_));
   this.registerView(new SyncView(this.dataProvider_));

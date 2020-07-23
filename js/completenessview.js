@@ -4,11 +4,11 @@ constructor(dataProvider) {
 }
 
 getId() {
-  return 'completeness';
+  return 'completenesstext';
 }
 
 getTitle() {
-  return 'Completeness';
+  return 'Completeness Text';
 };
 
 fetchData() {

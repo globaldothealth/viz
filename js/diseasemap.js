@@ -124,15 +124,15 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   }
 };
 
-DiseaseMap.prototype.init = function(dark) {
+DiseaseMap.prototype.init = function(isDark) {
   mapboxgl.accessToken = DiseaseMap.MAPBOX_TOKEN;
   this.mapboxMap_ = new mapboxgl.Map({
     'container': 'map',
     'center': [10, 0],
-    'zoom': 1,
+    'zoom': 2.5,
   }).addControl(new mapboxgl.NavigationControl());
 
-  this.setStyle(dark);
+  this.setStyle(isDark);
 
   let self = this;
   this.mapboxMap_.on('load', function () {
