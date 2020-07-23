@@ -45,30 +45,35 @@ constructor(viz) {
 
   // Config
   // TODO: Make this work instantly.
-  // this.registerNavItem('2D Map', '2d', true, false);
-  this.registerNavItem('Auto-drive', 'autodrive', true, false);
-  this.registerNavItem('Dark', 'dark', true, false);
-  this.registerNavItem('Fullscreen', 'fullscreen', true, false);
+  // this.registerToggle('2D Map', '2d', false);
+  this.registerToggle('Auto-drive', 'autodrive', false);
+  this.registerToggle('Dark', 'dark', false);
+  this.registerToggle('Fullscreen', 'fullscreen', false);
 
   // Views
-  this.registerNavItem('Map', 'casemap', false);
-  this.registerNavItem('Completeness', 'completeness', false);
-  this.registerNavItem('Historical Map', 'historicalmap', false);
-  this.registerNavItem('Rank', 'rank', false);
-  this.registerNavItem('Synchronized', 'sync', false);
+  this.registerNavItem('Map', 'casemap');
+  this.registerNavItem('Completeness', 'completeness');
+  this.registerNavItem('Historical Map', 'historicalmap');
+  this.registerNavItem('Rank', 'rank');
+  this.registerNavItem('Synchronized', 'sync');
 }
 
 /**
  * @param {string} name
  * @param {string} id
- * @param {boolean} isToggle
- * @param {boolean=} defaultValue
+ * @param {boolean} defaultValue
  */
-registerNavItem(name, id, isToggle, defaultValue) {
-  if (isToggle) {
-    this.config_[id] = !!defaultValue;
-  }
-  this.items_[id] = new NavItem(name, id, isToggle, defaultValue);
+registerToggle(name, id, defaultValue) {
+  this.config_[id] = !!defaultValue;
+  this.items_[id] = new NavItem(name, id, true, defaultValue);
+}
+
+/**
+ * @param {string} name
+ * @param {string} id
+ */
+registerNavItem(name, id) {
+  this.items_[id] = new NavItem(name, id, false, undefined);
 }
 
 navigate(id) {

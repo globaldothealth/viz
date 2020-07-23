@@ -26,6 +26,7 @@ def compile_js(quiet=False):
         "--js js/countrydashboard.js "
         "--js js/mapview.js "
         "--js js/casemapview.js "
+        "--js js/completenessmapview.js "
         "--js js/historicalmapview.js "
         "--js js/rankview.js "
         "--js js/syncview.js "
