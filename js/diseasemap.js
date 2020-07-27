@@ -170,8 +170,8 @@ DiseaseMap.prototype.setupLayers = function() {
   }
   let circleColorForTotals = ['step', ['get', 'total']];
   // Don't use the last color here (for new cases).
-  for (let i = 0; i < MapDataSource.CASE_MAP_COLORS.length - 1; i++) {
-    let color = MapDataSource.CASE_MAP_COLORS[i];
+  for (let i = 0; i < CaseMapDataSource.COLORS.length - 1; i++) {
+    let color = CaseMapDataSource.COLORS[i];
     circleColorForTotals.push(color[0]);
     if (color.length > 2) {
       circleColorForTotals.push(color[2]);

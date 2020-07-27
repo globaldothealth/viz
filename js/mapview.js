@@ -3,16 +3,17 @@ class MapView extends View {
 
 /**
  * @param {DataProvider} dataProvider
+ * @param {MapDataSource} dataSource
  * @param {Nav} nav
  */
-constructor(dataProvider, nav) {
+constructor(dataProvider, dataSource, nav) {
   super(dataProvider);
 
   /** @protected @const {Nav} */
   this.nav_ = nav;
 
   /** @const @protected {DiseaseMap} */
-  this.map_ = new DiseaseMap(this.dataProvider_, new MapDataSource(), this, this.nav_);
+  this.map_ = new DiseaseMap(this.dataProvider_, dataSource, this, this.nav_);
 
   /** @private {SideBar} */
   this.sideBar_ = null;
