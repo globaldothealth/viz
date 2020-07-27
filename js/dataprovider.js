@@ -1,3 +1,8 @@
+/**
+ * The data provider is responsible for fetching data from the server, and for
+ * keeping it in memory. Only one instance of it is meant to exist in the
+ * application's life time.
+ */
 
 /** @constructor */
 let DataProvider = function(baseUrl) {

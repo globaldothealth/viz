@@ -42,7 +42,7 @@ body {
   width: 100%;
 }
 
-body.casemap #app, body.historicalmap #app {
+body.casemap #app, body.historicalmap #app, body.completeness #app {
   /* For the map, occupy the whole viewport. */
   margin: 0;
   padding: 0;

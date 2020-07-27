@@ -2,13 +2,17 @@ class DiseaseMap {
 
 /**
  * @param {DataProvider} dataProvider
+ * @param {MapDataSource} dataSource
  * @param {MapView} view
  * @param {Nav} nav
  */
-constructor(dataProvider, view, nav) {
+constructor(dataProvider, dataSource, view, nav) {
 
   /** @private */
   this.mapboxMap_ = null;
+
+  /** @private @const {!MapDataSource} */
+  this.dataSource_ = dataSource;
 
   /** @private @const {MapView} */
   this.view_ = view;
@@ -45,16 +49,6 @@ DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG = 0.4;
 
 DiseaseMap.LIGHT_THEME = 'mapbox://styles/healthmap/ckc1y3lbr1upr1jq6pwfcb96k';
 DiseaseMap.DARK_THEME = 'mapbox://styles/healthmap/ck7o47dgs1tmb1ilh5b1ro1vn';
-
-/** @const */
-DiseaseMap.COLOR_MAP = [
-  ['#67009e', '< 10', 10],
-  ['#921694', '11–100', 100],
-  ['#d34d60', '101–500', 500],
-  ['#fb9533', '501–2000', 2000],
-  ['#edf91c', '> 2000'],
-  ['cornflowerblue', 'New'],
-];
 
 /**
  * Takes an array of features, and bundles them in a way that the map API
@@ -129,6 +123,8 @@ DiseaseMap.prototype.init = function(isDark) {
   this.mapboxMap_ = new mapboxgl.Map({
     'container': 'map',
     'center': [10, 0],
+    'minZoom': 1.5,
+    'renderWorldCopies': false,
     'zoom': 2.5,
   }).addControl(new mapboxgl.NavigationControl());
 
@@ -174,8 +170,8 @@ DiseaseMap.prototype.setupLayers = function() {
   }
   let circleColorForTotals = ['step', ['get', 'total']];
   // Don't use the last color here (for new cases).
-  for (let i = 0; i < DiseaseMap.COLOR_MAP.length - 1; i++) {
-    let color = DiseaseMap.COLOR_MAP[i];
+  for (let i = 0; i < MapDataSource.CASE_MAP_COLORS.length - 1; i++) {
+    let color = MapDataSource.CASE_MAP_COLORS[i];
     circleColorForTotals.push(color[0]);
     if (color.length > 2) {
       circleColorForTotals.push(color[2]);
@@ -343,17 +339,9 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
 
 DiseaseMap.prototype.showLegend = function() {
   let list = document.getElementById('legend').getElementsByTagName('ul')[0];
-  for (let i = 0; i < DiseaseMap.COLOR_MAP.length; i++) {
-    let color = DiseaseMap.COLOR_MAP[i];
-    let item = document.createElement('li');
-    let circle = document.createElement('span');
-    circle.className = 'circle';
-    circle.style.backgroundColor = color[0];
-    let label = document.createElement('span');
-    label.className = 'label';
-    label.textContent = color[1];
-    item.appendChild(circle);
-    item.appendChild(label);
-    list.appendChild(item);
+  list.innerHTML = '';
+  let items = this.dataSource_.getLegendItems();
+  for (let i = 0; i < items.length; i++) {
+    list.appendChild(items[i]);
   }
 };

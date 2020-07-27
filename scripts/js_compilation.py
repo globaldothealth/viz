@@ -16,6 +16,7 @@ def compile_js(quiet=False):
         "--js js/view.js "
         "--js js/completenessview.js "
         "--js js/country.js "
+        "--js js/mapdatasource.js "
         "--js js/dataprovider.js "
         "--js js/diseasemap.js "
         "--js js/graphing.js "
