@@ -94,7 +94,7 @@ MapDataSource.formatFeature = function(inFeature, threeD) {
     'type': featureType,
     'coordinates': featureCoords,
   };
-  if (!twoDMode) {
+  if (threeD) {
     feature['properties']['height'] = 10 * Math.sqrt(100000 * feature['properties']['total']);
   }
   return feature;

@@ -95,9 +95,8 @@ DiseaseMap.prototype.init = function(isDark) {
     self.setupLayers();
     self.showDataAtLatestDate();
     self.attachEvents();
-    if (!twoDMode) {
-      self.mapboxMap_.easeTo({pitch: 55});
-    }
+    // TODO: Don't do this in 2D mode.
+    self.mapboxMap_.easeTo({pitch: 55});
     if (!!self.nav_.getConfig('focus')) {
       self.flyToCountry(self.nav_.getConfig('focus'));
     }
@@ -161,9 +160,8 @@ DiseaseMap.prototype.setStyle = function(isDark) {
     self.setupSource();
     self.setupLayers();
     self.showDataAtLatestDate();
-    if (!twoDMode) {
-      self.mapboxMap_.easeTo({pitch: 55});
-    }
+    // TODO: Don't do this in 2D mode.
+    self.mapboxMap_.easeTo({pitch: 55});
   });
   this.mapboxMap_.setStyle(newStyle);
   this.currentStyle_ = newStyle;
