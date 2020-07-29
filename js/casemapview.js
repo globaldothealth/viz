@@ -5,7 +5,7 @@ class CaseMapView extends MapView {
  * @param {Nav} nav
  */
 constructor(dataProvider, nav) {
-  super(dataProvider, new CaseMapDataSource(), nav);
+  super(dataProvider, new CaseMapDataSource(dataProvider), nav);
 }
 
 getId() {

@@ -1,6 +1,12 @@
 class MapDataSource {
 
-constructor() {}
+/**
+ * @param {DataProvider} dataProvider
+ */
+constructor(dataProvider) {
+  /** @protected @const {DataProvider} */
+  this.dataProvider_ = dataProvider;
+}
 
 getFeatureSet() {
   return MapDataSource.formatFeatureSet([]);

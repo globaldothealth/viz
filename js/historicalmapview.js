@@ -5,7 +5,7 @@ class HistoricalMapView extends MapView {
  * @param {Nav} nav
  */
 constructor(dataProvider, nav) {
-  super(dataProvider, nav);
+  super(dataProvider, new CaseMapDataSource(dataProvider), nav);
 
   /** @const @private {TimeAnimation} */
   this.timeAnimation_ = new TimeAnimation(this.dataProvider_, this);

@@ -2,7 +2,7 @@ class DiseaseMap {
 
 /**
  * @param {DataProvider} dataProvider
- * @param {MapDataSource} dataSource
+ * @param {!MapDataSource} dataSource
  * @param {MapView} view
  * @param {Nav} nav
  */
@@ -99,13 +99,12 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   if (currentIsoDate != isodate) {
     currentIsoDate = isodate;
   }
-  let featuresToShow = this.dataProvider_.getAtomicFeaturesForDay(isodate);
 
   // If the map is ready, show the data. Otherwise it will be shown when
   // the map is finished loading.
   let source = this.mapboxMap_.getSource('counts');
   if (!!source) {
-    source.setData(MapDataSource.formatFeatureSet(featuresToShow));
+    source.setData(this.dataSource_.getFeatureSet());
   }
 };
 

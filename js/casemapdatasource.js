@@ -3,8 +3,17 @@
  */
 class CaseMapDataSource extends MapDataSource {
 
-constructor() {
-  super();
+/**
+ * @param {DataProvider} dataProvider
+ */
+constructor(dataProvider) {
+  super(dataProvider);
+}
+
+getFeatureSet() {
+  const latestDate = this.dataProvider_.getLatestDate();
+  let featuresToShow = this.dataProvider_.getAtomicFeaturesForDay(latestDate);
+  return MapDataSource.formatFeatureSet(featuresToShow);
 }
 
 getLegendTitle() {

@@ -3,7 +3,7 @@ class MapView extends View {
 
 /**
  * @param {DataProvider} dataProvider
- * @param {MapDataSource} dataSource
+ * @param {!MapDataSource} dataSource
  * @param {Nav} nav
  */
 constructor(dataProvider, dataSource, nav) {
