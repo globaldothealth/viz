@@ -57,44 +57,6 @@ DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG = 0.4;
 DiseaseMap.LIGHT_THEME = 'mapbox://styles/healthmap/ckc1y3lbr1upr1jq6pwfcb96k';
 DiseaseMap.DARK_THEME = 'mapbox://styles/healthmap/ck7o47dgs1tmb1ilh5b1ro1vn';
 
-/** Tweaks the given object to make it ingestable as a feature by the map API. */
-DiseaseMap.formatFeature = function(feature) {
-  feature.type = 'Feature';
-  if (!feature['properties']) {
-    // This feature is missing key data, adding a placeholder.
-    feature['properties'] = {'geoid': '0|0'};
-  }
-  // If the 'new' property is absent, assume 0.
-  if (isNaN(feature['properties']['new'])) {
-    feature['properties']['new'] = 0;
-  }
-  let coords = feature['properties']['geoid'].split('|');
-  const featureType = twoDMode ? 'Point' : 'Polygon';
-  const lat = parseFloat(coords[0]);
-  const lng = parseFloat(coords[1]);
-  // Flip latitude and longitude.
-  let featureCoords = [lng, lat];
-  if (!twoDMode) {
-    const half = DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG / 2;
-    featureCoords = [[
-      [lng + half, lat + half],
-      [lng - half, lat + half],
-      [lng - half, lat - half],
-      [lng + half, lat - half],
-      [lng + half, lat + half],
-    ]];
-  }
-  feature['geometry'] = {
-    'type': featureType,
-    'coordinates': featureCoords,
-  };
-  if (!twoDMode) {
-    feature['properties']['height'] = 10 * Math.sqrt(100000 * feature['properties']['total']);
-  }
-  return feature;
-};
-
-
 DiseaseMap.prototype.showDataAtLatestDate = function() {
   if (!this.dataProvider_.getDates().length) {
     return;

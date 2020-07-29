@@ -38,6 +38,8 @@ getPaint() {
 }
 
 getFeatureSet() {
+  // This is where the features stored in our local data store need to be
+  // "re-hydrated" into features ingestible by the map.
   return MapDataSource.formatFeatureSet([]);
 }
 
@@ -57,4 +59,43 @@ getLegendItems() {
  */
 MapDataSource.formatFeatureSet = function(features) {
   return {'type': 'FeatureCollection', 'features': features};
+};
+
+/** Tweaks the given object to make it ingestable as a feature by the map API. */
+MapDataSource.formatFeature = function(inFeature, threeD) {
+  // Make a deep copy.
+  let feature = JSON.parse(JSON.stringify(inFeature));
+  feature.type = 'Feature';
+  if (!feature['properties']) {
+    // This feature is missing key data, adding a placeholder.
+    feature['properties'] = {'geoid': '0|0'};
+  }
+  // If the 'new' property is absent, assume 0.
+  if (isNaN(feature['properties']['new'])) {
+    feature['properties']['new'] = 0;
+  }
+  let coords = feature['properties']['geoid'].split('|');
+  const featureType = threeD ? 'Polygon' : 'Point';
+  const lat = parseFloat(coords[0]);
+  const lng = parseFloat(coords[1]);
+  // Flip latitude and longitude.
+  let featureCoords = [lng, lat];
+  if (threeD) {
+    const half = DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG / 2;
+    featureCoords = [[
+      [lng + half, lat + half],
+      [lng - half, lat + half],
+      [lng - half, lat - half],
+      [lng + half, lat - half],
+      [lng + half, lat + half],
+    ]];
+  }
+  feature['geometry'] = {
+    'type': featureType,
+    'coordinates': featureCoords,
+  };
+  if (!twoDMode) {
+    feature['properties']['height'] = 10 * Math.sqrt(100000 * feature['properties']['total']);
+  }
+  return feature;
 };

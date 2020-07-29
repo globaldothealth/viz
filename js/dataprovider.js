@@ -393,7 +393,7 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
 
   // "Re-hydrate" the features into objects ingestable by the map.
   for (let i = 0; i < features.length; i++) {
-    let feature = DiseaseMap.formatFeature(features[i]);
+    let feature = features[i];
 
     // If we don't know where this is, discard.
     if (!locationInfo[feature['properties']['geoid']]) {

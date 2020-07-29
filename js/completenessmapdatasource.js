@@ -9,8 +9,11 @@ constructor(dataProvider) {
 
 getFeatureSet() {
   const latestDate = this.dataProvider_.getLatestDate();
-  let featuresToShow = this.dataProvider_.getAtomicFeaturesForDay(latestDate);
-  return MapDataSource.formatFeatureSet(featuresToShow);
+  let dehydratedFeatures = this.dataProvider_.getAtomicFeaturesForDay(latestDate);
+  // Make a deep copy.
+  let features = JSON.parse(JSON.stringify(dehydratedFeatures));
+  return MapDataSource.formatFeatureSet(features.map(
+      f => MapDataSource.formatFeature(f, true /* 3D */)));
 }
 
 getLegendTitle() {

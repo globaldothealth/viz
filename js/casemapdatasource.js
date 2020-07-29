@@ -31,8 +31,9 @@ getPaint() {
 
 getFeatureSet() {
   const latestDate = this.dataProvider_.getLatestDate();
-  let featuresToShow = this.dataProvider_.getAtomicFeaturesForDay(latestDate);
-  return MapDataSource.formatFeatureSet(featuresToShow);
+  let dehydratedFeatures = this.dataProvider_.getAtomicFeaturesForDay(latestDate);
+  return MapDataSource.formatFeatureSet(dehydratedFeatures.map(
+      f => MapDataSource.formatFeature(f, true /* 3D */)));
 }
 
 getLegendTitle() {
