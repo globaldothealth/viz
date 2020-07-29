@@ -36,6 +36,9 @@ constructor(dataProvider, dataSource, view, nav) {
    * @private {boolean}
    */
   this.needsRender_ = true;
+
+  /** @private @string */
+  this.sourceId_ = 'counts';
 }
 
 onUnload() {
@@ -102,7 +105,7 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
 
   // If the map is ready, show the data. Otherwise it will be shown when
   // the map is finished loading.
-  let source = this.mapboxMap_.getSource('counts');
+  let source = this.mapboxMap_.getSource(this.sourceId_);
   if (!!source) {
     source.setData(this.dataSource_.getFeatureSet());
   }
@@ -143,11 +146,10 @@ DiseaseMap.prototype.init = function(isDark) {
 };
 
 DiseaseMap.prototype.setupSource = function() {
-  const sourceId = 'counts';
-  if (!!this.mapboxMap_.getSource(sourceId)) {
+  if (!!this.mapboxMap_.getSource(this.sourceId_)) {
     return;
   }
-  this.mapboxMap_.addSource(sourceId, {
+  this.mapboxMap_.addSource(this.sourceId_, {
     'type': 'geojson',
     'data': MapDataSource.formatFeatureSet([])
   });
@@ -227,7 +229,7 @@ DiseaseMap.prototype.addLayer = function(id, featureProperty, circleColor) {
   this.mapboxMap_.addLayer({
     'id': id,
     'type': type,
-    'source': 'counts',
+    'source': this.sourceId_,
     'paint': paint
   });
 };
