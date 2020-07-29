@@ -18,6 +18,7 @@ def compile_js(quiet=False):
         "--js js/country.js "
         "--js js/mapdatasource.js "
         "--js js/casemapdatasource.js "
+        "--js js/historicalmapdatasource.js "
         "--js js/completenessmapdatasource.js "
         "--js js/dataprovider.js "
         "--js js/diseasemap.js "

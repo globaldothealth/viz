@@ -1,6 +1,4 @@
-/**
- * A data source for maps showing case counts.
- */
+/** A data source for maps showing case counts. */
 class CaseMapDataSource extends MapDataSource {
 
 /**
@@ -8,6 +6,27 @@ class CaseMapDataSource extends MapDataSource {
  */
 constructor(dataProvider) {
   super(dataProvider);
+}
+
+getType() {
+  return 'fill-extrusion';
+}
+
+getPaint() {
+  let colors = ['step', ['get', 'total']];
+  // Don't use the last color here (for new cases).
+  for (let i = 0; i < CaseMapDataSource.COLORS.length - 1; i++) {
+    let color = CaseMapDataSource.COLORS[i];
+    colors.push(color[0]);
+    if (color.length > 2) {
+      colors.push(color[2]);
+    }
+  }
+  return {
+    'fill-extrusion-height': ['get', 'height'],
+    'fill-extrusion-color': colors,
+    'fill-extrusion-opacity': 0.8,
+  };
 }
 
 getFeatureSet() {

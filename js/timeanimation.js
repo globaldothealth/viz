@@ -52,7 +52,7 @@ TimeAnimation.prototype.updateTimeControl = function() {
   let rangeSliderEl = document.getElementById('range-slider');
   if (!!rangeSliderEl) {
     // We might have switched to another view by now.
-    rangeSlider.style.display = 'flex';
+    rangeSliderEl.style.display = 'flex';
   }
   this.timeControl_.min = 0;
   this.timeControl_.max = dateCount - 1;

@@ -37,8 +37,12 @@ constructor(dataProvider, dataSource, view, nav) {
    */
   this.needsRender_ = true;
 
+  // TODO: We might need to support several sources and several layers here.
   /** @private @string */
   this.sourceId_ = 'counts';
+
+  /** @private @string */
+  this.layerId_ = 'totals';
 }
 
 onUnload() {
@@ -156,21 +160,18 @@ DiseaseMap.prototype.setupSource = function() {
 };
 
 DiseaseMap.prototype.setupLayers = function() {
-  const layerId = 'totals';
-  if (!!this.mapboxMap_.getLayer(layerId)) {
+  if (!!this.mapboxMap_.getLayer(this.layerId_)) {
     return;
   }
-  let circleColorForTotals = ['step', ['get', 'total']];
-  // Don't use the last color here (for new cases).
-  for (let i = 0; i < CaseMapDataSource.COLORS.length - 1; i++) {
-    let color = CaseMapDataSource.COLORS[i];
-    circleColorForTotals.push(color[0]);
-    if (color.length > 2) {
-      circleColorForTotals.push(color[2]);
-    }
-  }
-  this.addLayer('totals', 'total', circleColorForTotals);
-  //self.addLayer('daily', 'new', 'cornflowerblue');
+
+  this.mapboxMap_.addLayer({
+    'id': this.layerId_,
+    'type': this.dataSource_.getType(),
+    'source': this.sourceId_,
+    'paint': this.dataSource_.getPaint(),
+  });
+  // TODO: we might want to restore the 'new' layer.
+  // self.addLayer('daily', 'new', 'cornflowerblue');
 };
 
 DiseaseMap.prototype.attachEvents = function() {
@@ -206,32 +207,7 @@ DiseaseMap.prototype.setStyle = function(isDark) {
   this.currentStyle_ = newStyle;
 }
 
-DiseaseMap.prototype.addLayer = function(id, featureProperty, circleColor) {
-  const type = twoDMode ? 'circle ' : 'fill-extrusion';
-  // const type = threeDMode ? 'fill' : 'circle';
-  let paint = {
-    'circle-radius': [
-      'case', ['<', 0, ['number', ['get', featureProperty]]],
-      ['*', ['log10', ['sqrt', ['get', featureProperty]]], 5],
-      0],
-    'circle-color': circleColor,
-    'circle-opacity': 0.6,
-  };
-  if (!twoDMode) {
-    paint = {
-      // 'fill-extrusion-base': 0,
-      'fill-extrusion-height': ['get', 'height'],
-      'fill-extrusion-color': circleColor,
-      'fill-extrusion-opacity': 0.8,
-    };
-  }
-
-  this.mapboxMap_.addLayer({
-    'id': id,
-    'type': type,
-    'source': this.sourceId_,
-    'paint': paint
-  });
+DiseaseMap.prototype.addLayer = function(id) {
 };
 
 
