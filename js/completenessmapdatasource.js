@@ -9,9 +9,22 @@ constructor(dataProvider) {
 
 getFeatureSet() {
   const latestDate = this.dataProvider_.getLatestDate();
-  let dehydratedFeatures = this.dataProvider_.getAtomicFeaturesForDay(latestDate);
-  // Make a deep copy.
-  let features = JSON.parse(JSON.stringify(dehydratedFeatures));
+  // This is a map from country code to the corresponding feature.
+  let dehydratedFeatures = this.dataProvider_.getCountryFeaturesForDay(latestDate);
+  let features = [];
+  let codes = Object.keys(dehydratedFeatures);
+  for (let i = 0; i < codes.length; i++) {
+    let code = codes[i];
+    const country = this.dataProvider_.getCountry(code);
+    const centroid = country.getCentroid();
+    const geoId = [centroid[1], centroid[0]].join('|');
+    let feature = {
+      'properties': {
+      'geoid': geoId, 'total': dehydratedFeatures[code]['total']
+      }
+    };
+    features.push(feature);
+  }
   return MapDataSource.formatFeatureSet(features.map(
       f => MapDataSource.formatFeature(f, true /* 3D */)));
 }
@@ -28,8 +41,7 @@ getLegendItems() {
   let gradientSide = document.createElement('div');
   const gradientStops = CompletenessMapDataSource.COLORS.join(',');
   gradientSide.style.width = '15px';
-  gradientSide.style.backgroundImage = 'linear-gradient(' +
-      gradientStops + ')';
+  gradientSide.style.backgroundImage = 'linear-gradient(' + gradientStops + ')';
 
   let textSide = document.createElement('div');
   textSide.style.display = 'flex';
