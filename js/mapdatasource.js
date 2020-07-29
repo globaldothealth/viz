@@ -45,6 +45,11 @@ getHeightForFeature(feature) {
   return 0;
 }
 
+/** Returns the size (in x and y) of the map artifact shown for this feature. */
+getSizeForFeature(feature) {
+  return 0.3;
+}
+
 getFeatureSet() {
   // This is where the features stored in our local data store need to be
   // "re-hydrated" into features ingestible by the map.
@@ -87,7 +92,7 @@ formatFeature(inFeature, threeD) {
   // Flip latitude and longitude.
   let featureCoords = [lng, lat];
   if (threeD) {
-    const half = DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG / 2;
+    const half = this.getSizeForFeature(inFeature) / 2;
     featureCoords = [[
       [lng + half, lat + half],
       [lng - half, lat + half],
