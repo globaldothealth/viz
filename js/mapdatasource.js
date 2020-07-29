@@ -37,10 +37,18 @@ getPaint() {
   };
 }
 
+/**
+ * Returns the height to display for the given feature. This is only useful for
+ * a 3D map.
+ */
+getHeightForFeature(feature) {
+  return 0;
+}
+
 getFeatureSet() {
   // This is where the features stored in our local data store need to be
   // "re-hydrated" into features ingestible by the map.
-  return MapDataSource.formatFeatureSet([]);
+  return this.formatFeatureSet([]);
 }
 
 getLegendTitle() {
@@ -50,19 +58,17 @@ getLegendTitle() {
 getLegendItems() {
    return [];
 }
-}
-
 
 /**
  * Takes an array of features, and bundles them in a way that the map API
  * can ingest.
  */
-MapDataSource.formatFeatureSet = function(features) {
+formatFeatureSet(features) {
   return {'type': 'FeatureCollection', 'features': features};
-};
+}
 
 /** Tweaks the given object to make it ingestable as a feature by the map API. */
-MapDataSource.formatFeature = function(inFeature, threeD) {
+formatFeature(inFeature, threeD) {
   // Make a deep copy.
   let feature = JSON.parse(JSON.stringify(inFeature));
   feature.type = 'Feature';
@@ -95,7 +101,8 @@ MapDataSource.formatFeature = function(inFeature, threeD) {
     'coordinates': featureCoords,
   };
   if (threeD) {
-    feature['properties']['height'] = 10 * Math.sqrt(100000 * feature['properties']['total']);
+    feature['properties']['height'] = this.getHeightForFeature(inFeature);
   }
   return feature;
-};
+}
+}

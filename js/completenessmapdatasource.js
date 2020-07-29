@@ -11,6 +11,10 @@ getType() {
   return 'fill-extrusion';
 }
 
+getHeightForFeature(feature) {
+  return 10 * Math.sqrt(100000 * feature['properties']['aggregatetotal']);
+}
+
 getFeatureSet() {
   const latestDate = this.dataProvider_.getLatestDate();
   const latestDateForAggregate = this.dataProvider_.getLatestDateWithAggregateData();
@@ -41,8 +45,8 @@ getFeatureSet() {
     console.log(feature);
     features.push(feature);
   }
-  return MapDataSource.formatFeatureSet(features.map(
-      f => MapDataSource.formatFeature(f, true /* 3D */)));
+  return this.formatFeatureSet(features.map(
+      f => this.formatFeature(f, true /* 3D */)));
 }
 
 getPaint() {

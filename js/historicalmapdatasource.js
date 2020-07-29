@@ -3,7 +3,7 @@ class HistoricalMapDataSource extends CaseMapDataSource {
 
 getFeatureSet() {
   let dehydratedFeatures = this.dataProvider_.getAtomicFeaturesForDay(currentIsoDate);
-  return MapDataSource.formatFeatureSet(dehydratedFeatures.map(
-      f => MapDataSource.formatFeature(f, true /* 3D */)));
+  return this.formatFeatureSet(dehydratedFeatures.map(
+      f => this.formatFeature(f, true /* 3D */)));
 }
 }

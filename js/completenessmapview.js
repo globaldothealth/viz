@@ -13,7 +13,7 @@ getType() {
 }
 
 getFeatureSet() {
-  return MapDataSource.formatFeatureSet([]);
+  return this.dataSource_.formatFeatureSet([]);
 }
 
 getId() {

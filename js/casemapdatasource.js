@@ -29,11 +29,15 @@ getPaint() {
   };
 }
 
+getHeightForFeature(feature) {
+  return 10 * Math.sqrt(100000 * feature['properties']['total']);
+}
+
 getFeatureSet() {
   const latestDate = this.dataProvider_.getLatestDate();
   let dehydratedFeatures = this.dataProvider_.getAtomicFeaturesForDay(latestDate);
-  return MapDataSource.formatFeatureSet(dehydratedFeatures.map(
-      f => MapDataSource.formatFeature(f, true /* 3D */)));
+  return this.formatFeatureSet(dehydratedFeatures.map(
+      f => this.formatFeature(f, true /* 3D */)));
 }
 
 getLegendTitle() {

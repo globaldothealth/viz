@@ -120,7 +120,7 @@ DiseaseMap.prototype.setupSource = function() {
   }
   this.mapboxMap_.addSource(this.sourceId_, {
     'type': 'geojson',
-    'data': MapDataSource.formatFeatureSet([])
+    'data': this.dataSource_.formatFeatureSet([])
   });
 };
 
