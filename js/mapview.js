@@ -3,16 +3,17 @@ class MapView extends View {
 
 /**
  * @param {DataProvider} dataProvider
+ * @param {!MapDataSource} dataSource
  * @param {Nav} nav
  */
-constructor(dataProvider, nav) {
+constructor(dataProvider, dataSource, nav) {
   super(dataProvider);
 
   /** @protected @const {Nav} */
   this.nav_ = nav;
 
   /** @const @protected {DiseaseMap} */
-  this.map_ = new DiseaseMap(this.dataProvider_, this, this.nav_);
+  this.map_ = new DiseaseMap(this.dataProvider_, dataSource, this, this.nav_);
 
   /** @private {SideBar} */
   this.sideBar_ = null;
@@ -23,7 +24,7 @@ constructor(dataProvider, nav) {
 
 showHistoricalData() {
   return false;
-};
+}
 
 fetchData() {
   let dp = this.dataProvider_;
@@ -72,7 +73,7 @@ render() {
 
   let mapEl = document.createElement('div');
   mapEl.setAttribute('id', 'map-wrapper');
-  mapEl.innerHTML = '<div id="legend"><div class="legend-header">Cases</div><ul class="list-reset"></ul></div><div id="map"></div>';
+  mapEl.innerHTML = '<div id="legend"><div id="legend-header"></div><ul class="list-reset"></ul></div><div id="map"></div>';
   app.appendChild(sideBarEl);
   app.appendChild(mapEl);
   this.onMapReady();
@@ -100,4 +101,8 @@ flyToCountry(code) {
   this.map_.flyToCountry(code);
 }
 
+unload() {
+  super.unload();
+  this.map_.onUnload();
+}
 }

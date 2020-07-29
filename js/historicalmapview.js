@@ -5,7 +5,7 @@ class HistoricalMapView extends MapView {
  * @param {Nav} nav
  */
 constructor(dataProvider, nav) {
-  super(dataProvider, nav);
+  super(dataProvider, new HistoricalMapDataSource(dataProvider), nav);
 
   /** @const @private {TimeAnimation} */
   this.timeAnimation_ = new TimeAnimation(this.dataProvider_, this);
@@ -28,10 +28,16 @@ render() {
   // For the historical map, we also want to get data from the past, but
   // we do this after we're done rendering the main map.
   window.setTimeout(function() {
+    document.head.title = 'Loading...';
     self.dataProvider_.fetchDailySlices(
       // Update the time control UI after each daily slice.
-      self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_));
-  }, 3500);
+      self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(function() {
+        document.head.title = self.getTitle();
+        if (self.nav_.getConfig('autodrive')) {
+          self.toggleAnimation();
+        }
+      });
+  }, 1000);
 }
 
 showHistoricalData() {
@@ -41,6 +47,18 @@ showHistoricalData() {
 /** @param {string} date */
 onTimeChanged(date) {
   this.map_.showDataAtDate(date);
+}
+
+toggleAnimation() {
+  let self = this;
+  this.timeAnimation_.toggleMapAnimation(function() {
+    // Start again when we're done, if we're still in autodrive.
+    window.setTimeout(function() {
+      if (self.nav_.getConfig('autodrive')) {
+        self.toggleAnimation();
+      }
+    }, 2000);
+  });
 }
 
 onMapAnimationEnded() {

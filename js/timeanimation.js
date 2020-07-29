@@ -49,7 +49,11 @@ TimeAnimation.prototype.updateTimeControl = function() {
   if (dateCount < 2 || !this.timeControl_) {
     return;
   }
-  document.getElementById('range-slider').style.display = 'flex';
+  let rangeSliderEl = document.getElementById('range-slider');
+  if (!!rangeSliderEl) {
+    // We might have switched to another view by now.
+    rangeSliderEl.style.display = 'flex';
+  }
   this.timeControl_.min = 0;
   this.timeControl_.max = dateCount - 1;
   // Keep the slider at max value.
@@ -58,7 +62,10 @@ TimeAnimation.prototype.updateTimeControl = function() {
 }
 
 TimeAnimation.prototype.setTimeControlLabel = function(index) {
-  document.getElementById('date').innerText = this.dataProvider_.getDates()[index];
+  let dateEl = document.getElementById('date');
+  if (!!dateEl) {
+    dateEl.innerText = this.dataProvider_.getDates()[index];
+  }
 }
 
 TimeAnimation.prototype.toggleMapAnimation = function(animationEndedCallback) {

@@ -25,6 +25,7 @@ class View {
 
   render() {
     document.title = this.getTitle();
+    console.log('Rendering "' + document.title + '"');
     document.body.classList.add(this.getId());
   }
 

@@ -45,29 +45,35 @@ constructor(viz) {
 
   // Config
   // TODO: Make this work instantly.
-  // this.registerNavItem('2D Map', '2d', true, false);
-  this.registerNavItem('Auto-drive', 'autodrive', true, false);
-  this.registerNavItem('Dark', 'dark', true, false);
+  // this.registerToggle('2D Map', '2d', false);
+  this.registerToggle('Auto-drive', 'autodrive', false);
+  this.registerToggle('Dark', 'dark', false);
+  this.registerToggle('Fullscreen', 'fullscreen', false);
 
   // Views
-  this.registerNavItem('Map', 'casemap', false);
-  this.registerNavItem('Historical Map', 'historicalmap', false);
-  this.registerNavItem('Rank', 'rank', false);
-  this.registerNavItem('Synchronized', 'sync', false);
-  this.registerNavItem('Completeness', 'completeness', false);
+  this.registerNavItem('Map', 'casemap');
+  this.registerNavItem('Completeness Map', 'completeness');
+  this.registerNavItem('Historical Map', 'historicalmap');
+  this.registerNavItem('Rank', 'rank');
+  this.registerNavItem('Synchronized', 'sync');
 }
 
 /**
  * @param {string} name
  * @param {string} id
- * @param {boolean} isToggle
- * @param {boolean=} defaultValue
+ * @param {boolean} defaultValue
  */
-registerNavItem(name, id, isToggle, defaultValue) {
-  if (isToggle) {
-    this.config_[id] = !!defaultValue;
-  }
-  this.items_[id] = new NavItem(name, id, isToggle, defaultValue);
+registerToggle(name, id, defaultValue) {
+  this.config_[id] = !!defaultValue;
+  this.items_[id] = new NavItem(name, id, true, defaultValue);
+}
+
+/**
+ * @param {string} name
+ * @param {string} id
+ */
+registerNavItem(name, id) {
+  this.items_[id] = new NavItem(name, id, false, undefined);
 }
 
 navigate(id) {
@@ -95,10 +101,8 @@ toggle(id) {
 
 /** @param {!Object} config The new config object. */
 onConfigChanged(config) {
-  let darkRequested = config['dark'];
-  document.body.classList.add(darkRequested ? 'dark' : 'light');
-  document.body.classList.remove(darkRequested ? 'light' : 'dark');
-
+  this.updateHash();
+  this.updateToggles();
   this.viz_.onConfigChanged(config);
 }
 
@@ -109,6 +113,17 @@ getConfig(id) {
 
 setConfig(id, value) {
   this.config_[id] = value;
+  this.onConfigChanged(this.config_);
+}
+
+updateToggles() {
+  let keys = Object.keys(this.config_);
+  for (let i = 0; i < keys.length; i++) {
+    let el = document.getElementById(keys[i]);
+    if (!!el) {
+      el.checked = this.config_[keys[i]];
+    }
+  }
 }
 
 } // Nav
@@ -134,7 +149,7 @@ Nav.prototype.processHash = function(newUrl) {
 
       // Handle a country code.
       if (hashBrown.length == 2 && hashBrown.toUpperCase() == hashBrown) {
-        this.setConfig('focus', hashBrown);
+        this.config_['focus'] = hashBrown;
         continue;
       }
 
@@ -147,7 +162,7 @@ Nav.prototype.processHash = function(newUrl) {
 
       if (navItem.isToggle()) {
         document.getElementById(navItem.getId()).checked = true;
-        this.setConfig(navItem.getId(), true);
+        this.config_[navItem.getId()] = true;
         continue;
       } else {
         // This is a view. If several views are specified, last one wins.

@@ -5,9 +5,9 @@ function bootstrap() {
   viz.init();
 }
 
-/** @constructor */
-let Viz = function() {
+class Viz {
 
+constructor() {
   /** @const @private {DataProvider} */
   this.dataProvider_ = new DataProvider(
       'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
@@ -20,14 +20,22 @@ let Viz = function() {
 
   /** @private {string} */
   this.currentViewId_ = '';
-};
+}
+
+onKeyDown(event) {
+  event = event || window.event;
+  if (event.code.toLowerCase() == 'escape') {
+    this.nav_.setConfig('fullscreen', false);
+  }
+}
+
+}
 
 /** @const */
 Viz.LIVE_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 
 // Globals
 let locationInfo = {};
-let twoDMode = false;
 
 let currentIsoDate;
 let currentDateIndex = 0;
@@ -75,19 +83,10 @@ function handleHideModal() {
   }, 400);
 }
 
-// function showDataAtDate(iso_date) {
-  // map.showDataAtDate(iso_date);
-// }
-
-// Viz.prototype.onAllDataFetched = function() {
-  // if (autoDriveMode) {
-    // this.timeAnimation_.toggleMapAnimation(this.onMapAnimationEnded.bind(this));
-  // }
-// }
-
 Viz.prototype.init = function() {
 
   this.registerView(new CaseMapView(this.dataProvider_, this.nav_));
+  this.registerView(new CompletenessMapView(this.dataProvider_, this.nav_));
   this.registerView(new HistoricalMapView(this.dataProvider_, this.nav_));
   this.registerView(new RankView(this.dataProvider_, this.nav_));
   this.registerView(new SyncView(this.dataProvider_));
@@ -101,6 +100,7 @@ Viz.prototype.init = function() {
   }
 
   // document.getElementById('credit').onclick = fetchAboutPage;
+  document.onkeydown = this.onKeyDown.bind(this);
   window.setTimeout(this.updateData.bind(this), Viz.LIVE_UPDATE_INTERVAL_MS);
 }
 
@@ -142,6 +142,11 @@ Viz.prototype.onConfigChanged = function(config) {
   for (let i = 0; i < views.length; i++) {
     views[i].onConfigChanged(config);
   }
+  let darkRequested = config['dark'];
+  document.body.classList.add(darkRequested ? 'dark' : 'light');
+  document.body.classList.remove(darkRequested ? 'light' : 'dark');
+
+  document.body.classList.toggle('fullscreen', !!config['fullscreen']);
 }
 
 // Exports
