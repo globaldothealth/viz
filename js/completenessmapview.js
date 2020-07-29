@@ -5,7 +5,7 @@ class CompletenessMapView extends MapView {
  * @param {Nav} nav
  */
 constructor(dataProvider, nav) {
-  super(dataProvider, new MapDataSource(), nav);
+  super(dataProvider, new CompletenessMapDataSource(), nav);
 }
 
 getId() {

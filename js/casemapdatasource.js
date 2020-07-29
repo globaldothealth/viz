@@ -7,6 +7,10 @@ constructor() {
   super();
 }
 
+getLegendTitle() {
+  return 'Cases';
+}
+
 getLegendItems() {
   let items = [];
   for (let i = 0; i < CaseMapDataSource.COLORS.length; i++) {
@@ -24,7 +28,7 @@ getLegendItems() {
   }
   return items;
 }
-}
+}  // CaseMapDataSource
 
 /** @const */
 CaseMapDataSource.COLORS = [

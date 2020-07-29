@@ -50,15 +50,6 @@ DiseaseMap.THREE_D_FEATURE_SIZE_IN_LATLNG = 0.4;
 DiseaseMap.LIGHT_THEME = 'mapbox://styles/healthmap/ckc1y3lbr1upr1jq6pwfcb96k';
 DiseaseMap.DARK_THEME = 'mapbox://styles/healthmap/ck7o47dgs1tmb1ilh5b1ro1vn';
 
-/**
- * Takes an array of features, and bundles them in a way that the map API
- * can ingest.
- */
-DiseaseMap.formatFeatureSet = function(features) {
-  return {'type': 'FeatureCollection', 'features': features};
-};
-
-
 /** Tweaks the given object to make it ingestable as a feature by the map API. */
 DiseaseMap.formatFeature = function(feature) {
   feature.type = 'Feature';
@@ -114,7 +105,7 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   // the map is finished loading.
   let source = this.mapboxMap_.getSource('counts');
   if (!!source) {
-    source.setData(DiseaseMap.formatFeatureSet(featuresToShow));
+    source.setData(MapDataSource.formatFeatureSet(featuresToShow));
   }
 };
 
@@ -159,7 +150,7 @@ DiseaseMap.prototype.setupSource = function() {
   }
   this.mapboxMap_.addSource(sourceId, {
     'type': 'geojson',
-    'data': DiseaseMap.formatFeatureSet([])
+    'data': MapDataSource.formatFeatureSet([])
   });
 };
 
@@ -338,6 +329,8 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
 }
 
 DiseaseMap.prototype.showLegend = function() {
+  document.getElementById('legend-header').textContent =
+      this.dataSource_.getLegendTitle();
   let list = document.getElementById('legend').getElementsByTagName('ul')[0];
   list.innerHTML = '';
   let items = this.dataSource_.getLegendItems();
