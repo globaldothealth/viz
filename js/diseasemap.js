@@ -45,6 +45,13 @@ constructor(dataProvider, dataSource, view, nav) {
   this.layerId_ = 'totals';
 }
 
+loadData() {
+  this.setupSource();
+  this.setupLayers();
+  this.showDataAtLatestDate();
+  this.attachEvents();
+}
+
 onUnload() {
   this.needsRender_ = true;
 }
@@ -91,10 +98,7 @@ DiseaseMap.prototype.init = function(isDark) {
 
   let self = this;
   this.mapboxMap_.on('load', function () {
-    self.setupSource();
-    self.setupLayers();
-    self.showDataAtLatestDate();
-    self.attachEvents();
+    self.loadData();
     // TODO: Don't do this in 2D mode.
     self.mapboxMap_.easeTo({pitch: 55});
     if (!!self.nav_.getConfig('focus')) {
@@ -136,14 +140,14 @@ DiseaseMap.prototype.setupLayers = function() {
 };
 
 DiseaseMap.prototype.attachEvents = function() {
-  this.mapboxMap_.on('mouseenter', 'totals', function (e) {
+  this.mapboxMap_.on('mouseenter', this.layerId_, function (e) {
     // Change the cursor style as a UI indicator.
     this.getCanvas().style.cursor = 'pointer';
   });
 
-  this.mapboxMap_.on('click', 'totals', this.showPopupForEvent.bind(this));
+  this.mapboxMap_.on('click', this.layerId_, this.showPopupForEvent.bind(this));
 
-  this.mapboxMap_.on('mouseleave', 'totals', function () {
+  this.mapboxMap_.on('mouseleave', this.layerId_, function () {
     this.getCanvas().style.cursor = '';
   });
 };
@@ -153,22 +157,17 @@ DiseaseMap.prototype.setStyle = function(isDark) {
   if (this.currentStyle_ == newStyle && !this.needsRender_) {
     return;
   }
-  // Not sure why we need to reload the data after a style change.
   this.needsRender_ = false;
   let self = this;
+  // Not sure why we need to reload the data after a style change.
   this.mapboxMap_.on('styledata', function () {
-    self.setupSource();
-    self.setupLayers();
-    self.showDataAtLatestDate();
+    self.loadData();
     // TODO: Don't do this in 2D mode.
     self.mapboxMap_.easeTo({pitch: 55});
   });
   this.mapboxMap_.setStyle(newStyle);
   this.currentStyle_ = newStyle;
 }
-
-DiseaseMap.prototype.addLayer = function(id) {
-};
 
 
 /**
@@ -251,12 +250,13 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
     content.appendChild(container);
   }
 
+  // Restore this if we decide to render multiple "world copies" again.
   // Ensure that if the map is zoomed out such that multiple
   // copies of the feature are visible, the popup appears
   // over the copy being pointed to.
-  while (Math.abs(e['lngLat']['lng'] - lng) > 180) {
-    lng += e['lngLat']['lng'] > lng ? 360 : -360;
-  }
+  // while (Math.abs(e['lngLat']['lng'] - lng) > 180) {
+    // lng += e['lngLat']['lng'] > lng ? 360 : -360;
+  // }
   this.popup_.setLngLat([lng, lat]).setDOMContent(content);
   this.popup_.addTo(this.mapboxMap_);
   let self = this;
