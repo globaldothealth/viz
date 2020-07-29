@@ -12,16 +12,12 @@ getType() {
   return 'fill-extrusion';
 }
 
-getFeatureSet() {
-  return this.dataSource_.formatFeatureSet([]);
-}
-
 getId() {
   return 'completeness';
 }
 
 getTitle() {
-  return 'Completeness';
+  return 'Completeness Map';
 }
 
 }

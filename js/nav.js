@@ -52,7 +52,7 @@ constructor(viz) {
 
   // Views
   this.registerNavItem('Map', 'casemap');
-  this.registerNavItem('Completeness', 'completeness');
+  this.registerNavItem('Completeness Map', 'completeness');
   this.registerNavItem('Historical Map', 'historicalmap');
   this.registerNavItem('Rank', 'rank');
   this.registerNavItem('Synchronized', 'sync');
