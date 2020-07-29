@@ -7,26 +7,59 @@ constructor(dataProvider) {
   super(dataProvider);
 }
 
+getType() {
+  return 'fill-extrusion';
+}
+
 getFeatureSet() {
   const latestDate = this.dataProvider_.getLatestDate();
+  const latestDateForAggregate = this.dataProvider_.getLatestDateWithAggregateData();
   // This is a map from country code to the corresponding feature.
   let dehydratedFeatures = this.dataProvider_.getCountryFeaturesForDay(latestDate);
+  const aggregates = this.dataProvider_.getAggregateData()[latestDateForAggregate];
+  console.log(aggregates);
   let features = [];
   let codes = Object.keys(dehydratedFeatures);
-  for (let i = 0; i < codes.length; i++) {
-    let code = codes[i];
+  for (let i = 0; i < aggregates.length; i++) {
+    let aggregate = aggregates[i];
+    let code = aggregate['code'];
+    const aggregateCaseCount = aggregate['cum_conf'];
+    let individualCaseCount = 0;
+    if (!!dehydratedFeatures[code]) {
+      individualCaseCount = dehydratedFeatures[code]['total'];
+    }
     const country = this.dataProvider_.getCountry(code);
     const centroid = country.getCentroid();
     const geoId = [centroid[1], centroid[0]].join('|');
     let feature = {
       'properties': {
-      'geoid': geoId, 'total': dehydratedFeatures[code]['total']
+        'geoid': geoId,
+        'individualtotal': individualCaseCount,
+        'aggregatetotal': aggregateCaseCount
       }
     };
+    console.log(feature);
     features.push(feature);
   }
   return MapDataSource.formatFeatureSet(features.map(
       f => MapDataSource.formatFeature(f, true /* 3D */)));
+}
+
+getPaint() {
+  let colors = ['step', ['get', 'total']];
+  // Don't use the last color here (for new cases).
+  for (let i = 0; i < CaseMapDataSource.COLORS.length - 1; i++) {
+    let color = CaseMapDataSource.COLORS[i];
+    colors.push(color[0]);
+    if (color.length > 2) {
+      colors.push(color[2]);
+    }
+  }
+  return {
+    'fill-extrusion-height': ['get', 'height'],
+    'fill-extrusion-color': colors,
+    'fill-extrusion-opacity': 0.8,
+  };
 }
 
 getLegendTitle() {
