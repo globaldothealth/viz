@@ -100,7 +100,7 @@ DiseaseMap.prototype.init = function(isDark) {
     // TODO: Don't do this in 2D mode.
     self.mapboxMap_.easeTo({pitch: 55});
     if (!!self.nav_.getConfig('focus')) {
-      self.flyToCountry(self.nav_.getConfig('focus'));
+      self.flyToCountry(/** @type {string} */ (self.nav_.getConfig('focus')));
     }
   });
   this.popup_ = new mapboxgl.Popup({
