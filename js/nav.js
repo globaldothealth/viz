@@ -1,10 +1,15 @@
+/**
+ * Represents a single item in the navigation bar, either a toggle (a boolean
+ * preference) or a destination view.
+ */
 class NavItem {
 
 /**
  * @param {string} name
  * @param {string} id
- * @param {boolean} isToggle
- * @param {boolean=} defaultValue
+ * @param {boolean} isToggle Whether this is a boolean preference.
+ * @param {boolean=} defaultValue The default value for the boolean preference,
+ *     if applicable.
  */
 constructor(name, id, isToggle, defaultValue) {
 
@@ -31,6 +36,10 @@ getDefaultValue() { return this.defaultValue_; }
 
 } // NavItem
 
+/**
+ * The navigation bar. Handles navigation between views as well as configuration
+ * changes.
+ */
 class Nav {
 
 constructor(viz) {
@@ -40,7 +49,7 @@ constructor(viz) {
   /** @const {!Object.<!NavItem>} */
   this.items_ = {};
 
-  /** @private {!Object.<boolean>} */
+  /** @private {!Object.<boolean|string>} */
   this.config_ = {};
 
   // Config
@@ -76,6 +85,10 @@ registerNavItem(name, id) {
   this.items_[id] = new NavItem(name, id, false, undefined);
 }
 
+/**
+ * Navigates to and loads the view with the given id.
+ * @param {string} id
+ */
 navigate(id) {
   this.viz_.loadView(id);
   const navIds = Object.keys(this.items_);
@@ -93,6 +106,7 @@ navigate(id) {
   this.updateHash();
 }
 
+/** Toggles the boolean pref with the given ID. */
 toggle(id) {
   this.config_[id] = !!document.getElementById(id).checked;
   this.onConfigChanged(this.config_);
@@ -106,16 +120,24 @@ onConfigChanged(config) {
   this.viz_.onConfigChanged(config);
 }
 
-/** @param {string} id */
+/**
+ * @param {string} id
+ * @return {boolean|string} The value of the preference with the given ID.
+ */
 getConfig(id) {
   return this.config_[id];
 }
 
+/**
+ * @param {string} id
+ * @param {boolean|string} value
+ */
 setConfig(id, value) {
   this.config_[id] = value;
   this.onConfigChanged(this.config_);
 }
 
+/** Updates the toggle views to reflect the current config values. */
 updateToggles() {
   let keys = Object.keys(this.config_);
   for (let i = 0; i < keys.length; i++) {
@@ -200,7 +222,13 @@ Nav.prototype.updateHash = function() {
   window.location.href = baseUrl + '#' + hashes.join('/');
 }
 
-function makeToggle(toggleId, name, checked) {
+/**
+ * @param {string} toggleId The unique ID for this toggle.
+ * @param {string} name The displayed name for this toggle.
+ * @param {boolean} checked Whether the toggle is initially checked.
+ * @return {!Element} The rendered toggle element to add to the DOM.
+ */
+Nav.prototype.makeToggle = function(toggleId, name, checked) {
   let container = document.createElement('div');
   container.classList.add('toggle');
   let labelEl = document.createElement('label');
@@ -215,6 +243,7 @@ function makeToggle(toggleId, name, checked) {
   return container;
 }
 
+/** Initializes and renders the navigation bar. */
 Nav.prototype.setupTopBar = function() {
   const baseUrl = window.location.origin + '/';
   let topBar = document.getElementById('topbar');
@@ -227,7 +256,7 @@ Nav.prototype.setupTopBar = function() {
     if (item.isToggle()) {
       let checked = item.getDefaultValue();
       // TODO: Get potentially non-default value
-      itemEl = makeToggle(item.getId(), item.getName(), checked);
+      itemEl = this.makeToggle(item.getId(), item.getName(), checked);
       itemEl.onclick = this.toggle.bind(this, item.getId());
     } else {
       itemEl = document.createElement('li');

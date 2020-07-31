@@ -1,5 +1,7 @@
-/** @constructor */
-let Country = function(code, name, continent, population, boundingBoxes) {
+/** Represents a country and its characteristics. */
+class Country {
+
+constructor(code, name, continent, population, boundingBoxes) {
 
   /**
    * This country's two-letter iso code.
@@ -41,7 +43,9 @@ let Country = function(code, name, continent, population, boundingBoxes) {
    * @private
    */
   this.boundingBoxes_ = boundingBoxes;
-};
+}
+
+}  // Country
 
 /** @return {string} */
 Country.prototype.getName = function() {
