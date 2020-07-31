@@ -228,7 +228,7 @@ Nav.prototype.updateHash = function() {
  * @param {boolean} checked Whether the toggle is initially checked.
  * @return {!Element} The rendered toggle element to add to the DOM.
  */
-function makeToggle(toggleId, name, checked) {
+Nav.prototype.makeToggle = function(toggleId, name, checked) {
   let container = document.createElement('div');
   container.classList.add('toggle');
   let labelEl = document.createElement('label');
@@ -256,7 +256,7 @@ Nav.prototype.setupTopBar = function() {
     if (item.isToggle()) {
       let checked = item.getDefaultValue();
       // TODO: Get potentially non-default value
-      itemEl = makeToggle(item.getId(), item.getName(), checked);
+      itemEl = this.makeToggle(item.getId(), item.getName(), checked);
       itemEl.onclick = this.toggle.bind(this, item.getId());
     } else {
       itemEl = document.createElement('li');

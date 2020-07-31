@@ -3,9 +3,10 @@
  * keeping it in memory. Only one instance of it is meant to exist in the
  * application's life time.
  */
+class DataProvider {
 
-/** @constructor */
-let DataProvider = function(baseUrl) {
+/** @param baseUrl The URL to get data from. */
+constructor(baseUrl) {
   /** @const @private {string} */
   this.baseUrl_ = baseUrl;
 
@@ -60,7 +61,8 @@ let DataProvider = function(baseUrl) {
     * @private
     */
   this.aggregateData_;
-};
+}
+}  // DataProvider
 
 /**
  * This takes an Object whose keys are date string, and values are arrays of
@@ -120,10 +122,14 @@ DataProvider.convertGeoJsonFeaturesToGraphData = function(datesToFeatures, prop)
   return o;
 }
 
-
+/**
+  * @return {string} The latest date for which non-empty aggregate data is
+  *     available, or the empty string if no aggregate data has been fetched
+  *     yet.
+  */
 DataProvider.prototype.getLatestDateWithAggregateData = function() {
   if (!this.aggregateData_) {
-    return null;
+    return "";
   }
   let dates = Object.keys(this.aggregateData_);
   return dates.sort()[dates.length - 1];
@@ -200,6 +206,10 @@ DataProvider.prototype.getCountries = function() {
   return this.countries_;
 };
 
+/**
+ * @return {!Promise} A promise to return all the necessary basic data needed
+ *     for most views.
+ */
 DataProvider.prototype.fetchInitialData = function() {
   const self = this;
   return Promise.all([
@@ -212,7 +222,11 @@ DataProvider.prototype.fetchInitialData = function() {
 };
 
 
-/** @return {!Promise} */
+/**
+ * @param {Function} eachSliceCallback A function to call after each daily slice
+ *     has been retrieved.
+ * @return {!Promise} A promise to fetch all available daily slices.
+ */
 DataProvider.prototype.fetchDailySlices = function(eachSliceCallback) {
   let dailyFetches = [];
   let fileNames = Object.keys(this.dataSliceFileNames_);
