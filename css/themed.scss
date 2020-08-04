@@ -19,7 +19,7 @@ body.dark {
   border-bottom-color: $topbar-nav-border-color-light;
 }
 
-.light #topbar li.navlink {
+.light #topbar div.navlink {
   border-left-color: $topbar-nav-border-color-light;
 }
 
@@ -28,7 +28,7 @@ body.dark {
   border-bottom-color: $topbar-nav-border-color-dark;
 }
 
-.dark #topbar li.navlink {
+.dark #topbar div.navlink {
   border-left-color: $topbar-nav-border-color-dark;
 }
 
