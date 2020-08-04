@@ -59,12 +59,7 @@ constructor(viz) {
   this.registerToggle('Dark', 'dark', false);
   this.registerToggle('Fullscreen', 'fullscreen', false);
 
-  // Views
-  this.registerNavItem('Map', 'casemap');
-  this.registerNavItem('Completeness Map', 'completeness');
-  this.registerNavItem('Historical Map', 'historicalmap');
-  this.registerNavItem('Rank', 'rank');
-  this.registerNavItem('Synchronized', 'sync');
+  // Views are registered in main.js
 }
 
 /**
