@@ -87,6 +87,7 @@ Viz.prototype.init = function() {
 
   this.registerView(new CaseMapView(this.dataProvider_, this.nav_));
   this.registerView(new CompletenessMapView(this.dataProvider_, this.nav_));
+  this.registerView(new FreshnessMapView(this.dataProvider_, this.nav_));
   this.registerView(new HistoricalMapView(this.dataProvider_, this.nav_));
   this.registerView(new RankView(this.dataProvider_, this.nav_));
   this.registerView(new SyncView(this.dataProvider_));
@@ -107,6 +108,7 @@ Viz.prototype.init = function() {
 /** @param {!View} view */
 Viz.prototype.registerView = function(view) {
   this.views_[view.getId()] = view;
+  this.nav_.registerNavItem(view.getTitle(), view.getId());
 }
 
 Viz.prototype.updateData = function() {

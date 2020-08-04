@@ -59,12 +59,7 @@ constructor(viz) {
   this.registerToggle('Dark', 'dark', false);
   this.registerToggle('Fullscreen', 'fullscreen', false);
 
-  // Views
-  this.registerNavItem('Map', 'casemap');
-  this.registerNavItem('Completeness Map', 'completeness');
-  this.registerNavItem('Historical Map', 'historicalmap');
-  this.registerNavItem('Rank', 'rank');
-  this.registerNavItem('Synchronized', 'sync');
+  // Views are registered in main.js
 }
 
 /**
@@ -247,7 +242,6 @@ Nav.prototype.makeToggle = function(toggleId, name, checked) {
 Nav.prototype.setupTopBar = function() {
   const baseUrl = window.location.origin + '/';
   let topBar = document.getElementById('topbar');
-  topBar.innerHTML = '<ul></ul>';
 
   const navIds = Object.keys(this.items_);
   for (let i = 0; i < navIds.length; i++) {
@@ -259,13 +253,13 @@ Nav.prototype.setupTopBar = function() {
       itemEl = this.makeToggle(item.getId(), item.getName(), checked);
       itemEl.onclick = this.toggle.bind(this, item.getId());
     } else {
-      itemEl = document.createElement('li');
+      itemEl = document.createElement('div');
       itemEl.setAttribute('id', navIds[i]);
       itemEl.classList.add('navlink');
       itemEl.textContent = item.getName();
       itemEl.onclick = this.navigate.bind(this, item.getId());
     }
-    topBar.firstElementChild.appendChild(itemEl);
+    topBar.appendChild(itemEl);
   }
   this.processHash(window.location.href);
 }

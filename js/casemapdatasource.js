@@ -14,8 +14,7 @@ getType() {
 
 getPaint() {
   let colors = ['step', ['get', 'total']];
-  // Don't use the last color here (for new cases).
-  for (let i = 0; i < CaseMapDataSource.COLORS.length - 1; i++) {
+  for (let i = 0; i < CaseMapDataSource.COLORS.length; i++) {
     let color = CaseMapDataSource.COLORS[i];
     colors.push(color[0]);
     if (color.length > 2) {
@@ -70,5 +69,5 @@ CaseMapDataSource.COLORS = [
   ['#d34d60', '101–500', 500],
   ['#fb9533', '501–2000', 2000],
   ['#edf91c', '> 2000'],
-  ['cornflowerblue', 'New'],
+  // ['cornflowerblue', 'New'],
 ];

@@ -42,7 +42,7 @@ body {
   width: 100%;
 }
 
-body.casemap #app, body.historicalmap #app, body.completeness #app {
+body.casemap #app, body.historicalmap #app, body.completeness #app, body.freshness #app {
   /* For the map, occupy the whole viewport. */
   margin: 0;
   padding: 0;
@@ -201,11 +201,17 @@ input[type=text] {
 #topbar {
   border-bottom-style: solid;
   border-bottom-width: 1px;
+  display: flex;
+  flex-direction: row;
   font-size: 90%;
+  justify-content: space-between;
   left: 0;
+  margin: 0;
+  padding: 0;
   position: fixed;
   right: 0;
   top: 0;
+  width: 100%;
   z-index: 4;
 }
 
@@ -215,32 +221,20 @@ input[type=text] {
   display: none;
 }
 
-#topbar ul {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-
-#topbar li {
+#topbar div {
   cursor: pointer;
-  display: inline-block;
   flex-grow: 1;
-  list-item-style: none;
-  padding: 0 5px;
   text-align: center;
-  vertical-align: middle;
+  // vertical-align: middle;
 }
 
-#topbar li.navlink {
+#topbar .navlink {
   border-left-style: solid;
   border-left-width: 1px;
-  padding: 1ex 0;
+  padding: 1ex 5px;
 }
 
-#topbar li.active {
+#topbar div.active {
   color: cornflowerblue;
 }
 

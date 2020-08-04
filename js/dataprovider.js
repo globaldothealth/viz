@@ -57,10 +57,14 @@ constructor(baseUrl) {
     * An object whose keys are ISO-formatted dates, and values are mapping
     * between country codes and aggregated data (total case count, deaths,
     * etc.). This is null if and only if the data is absent.
-    * @type {Object}
-    * @private
+    * @private {Object}
     */
   this.aggregateData_;
+
+  /**
+    * @private {Object}
+   */
+  this.freshnessData_;
 }
 }  // DataProvider
 
@@ -174,7 +178,11 @@ DataProvider.prototype.getLatestAggregateData = function() {
 
 DataProvider.prototype.getAggregateData = function() {
   return this.aggregateData_;
-}
+};
+
+DataProvider.prototype.getFreshnessData = function() {
+  return this.freshnessData_;
+};
 
 /** @return {Array.<string>} */
 DataProvider.prototype.getDates = function() {
@@ -288,6 +296,21 @@ DataProvider.prototype.fetchDataIndex = function() {
 
 
 /** @return {!Promise} */
+DataProvider.prototype.fetchFreshnessData = function() {
+  if (!!this.freshnessData_ && !!this.freshnessData_.length) {
+    console.log('Freshness data already loaded.');
+    return Promise.resolve();
+  }
+  const timestamp = (new Date()).getTime();
+  let self = this;
+  return fetch(this.baseUrl_ + '/freshness.json?nocache=' + timestamp)
+    .then(function(response) { return response.json(); })
+    .then(function(jsonData) {
+      self.freshnessData_ = jsonData;
+    });
+};
+
+/** @return {!Promise} */
 DataProvider.prototype.fetchCountryNames = function() {
   let countryCount = Object.keys(this.countries_).length;
   if (!!countryCount) {
@@ -330,7 +353,7 @@ DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
   }
   const timestamp = (new Date()).getTime();
   let self = this;
-  return fetch(this.baseUrl_ + 'latestCounts.json?nocache=' + timestamp)
+  return fetch(this.baseUrl_ + 'globals.json?nocache=' + timestamp)
     .then(function(response) { return response.json(); })
     .then(function(jsonData) {
       const counts = jsonData[0];

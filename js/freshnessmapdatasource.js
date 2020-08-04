@@ -1,4 +1,4 @@
-class CompletenessMapDataSource extends MapDataSource {
+class FreshnessMapDataSource extends MapDataSource {
 
 /**
  * @param {DataProvider} dataProvider
@@ -7,7 +7,7 @@ constructor(dataProvider) {
   super(dataProvider);
 
   /** @private @const */
-  this.colorScale_ = CompletenessMapDataSource.initializeColorScale();
+  this.colorScale_ = FreshnessMapDataSource.initializeColorScale();
 }
 
 getType() {
@@ -15,7 +15,7 @@ getType() {
 }
 
 getHeightForFeature(feature) {
-  return 10 * Math.sqrt(100000 * feature['properties']['aggregatetotal']);
+  return 10 * Math.sqrt(100000 * feature['properties']['individualtotal']);
 }
 
 getSizeForFeature(feature) {
@@ -25,7 +25,7 @@ getSizeForFeature(feature) {
 }
 
 getPaint() {
-  let colors = ['step', ['get', 'completeness']];
+  let colors = ['step', ['get', 'age']];
   for (let i = 0; i < this.colorScale_.length; i++) {
     let color = this.colorScale_[i];
     // Push the color, then the value stop.
@@ -42,32 +42,36 @@ getPaint() {
 }
 
 getFeatureSet() {
+  const data = this.dataProvider_.getFreshnessData();
+
+  let features = [];
+  let codes = Object.keys(data);
   const latestDate = this.dataProvider_.getLatestDate();
-  const latestDateForAggregate = this.dataProvider_.getLatestDateWithAggregateData();
   // This is a map from country code to the corresponding feature.
   let dehydratedFeatures = this.dataProvider_.getCountryFeaturesForDay(latestDate);
-  const aggregates = this.dataProvider_.getAggregateData()[latestDateForAggregate];
-  let features = [];
-  let codes = Object.keys(dehydratedFeatures);
-  for (let i = 0; i < aggregates.length; i++) {
-    let aggregate = aggregates[i];
-    const code = aggregate['code'];
-    const aggregateCaseCount = aggregate['cum_conf'];
+
+  const today = new Date();
+  const dayInMs = 1000 * 60 * 60 * 24;
+  for (let i = 0; i < codes.length; i++) {
+    const code = codes[i];
+    const dateParts = data[code].split('-');
+    const date = new Date(
+      parseInt(dateParts[0], 10),
+      parseInt(dateParts[1], 10) - 1,
+      parseInt(dateParts[2], 10));
     let individualCaseCount = 0;
     if (!!dehydratedFeatures[code]) {
       individualCaseCount = dehydratedFeatures[code]['total'];
     }
+    const age = Math.floor(Math.abs(today - date) / dayInMs);
     const country = this.dataProvider_.getCountry(code);
     const centroid = country.getCentroid();
     const geoId = [centroid[1], centroid[0]].join('|');
-    let percent = Math.floor(
-        Math.min(100, (individualCaseCount / aggregateCaseCount) * 100));
     let feature = {
       'properties': {
         'geoid': geoId,
+        'age': age,
         'individualtotal': individualCaseCount,
-        'aggregatetotal': aggregateCaseCount,
-        'completeness': percent
       }
     };
     features.push(feature);
@@ -77,7 +81,7 @@ getFeatureSet() {
 }
 
 getLegendTitle() {
-  return 'Completeness';
+  return 'Data freshness';
 }
 
 getLegendItems() {
@@ -97,8 +101,8 @@ getLegendItems() {
   let textSideTop = document.createElement('div');
   let textSideMiddle = document.createElement('div');
   let textSideBottom = document.createElement('div');
-  textSideTop.textContent = '100%';
-  textSideBottom.textContent = '0%';
+  textSideTop.textContent = '< 1 day';
+  textSideBottom.textContent = '> 100 days';
   textSideMiddle.style.flexGrow = 1;
   textSide.appendChild(textSideTop);
   textSide.appendChild(textSideMiddle);
@@ -109,19 +113,20 @@ getLegendItems() {
 
   return [gradientLegendItem];
 }
-}  // CompletenessMapDataSource
 
-CompletenessMapDataSource.initializeColorScale = function() {
+}  // FreshnessDataSource
+
+FreshnessMapDataSource.initializeColorScale = function() {
   // These RGB values correspond to the hex colors below. We use a mid-point
   // because blending just two colors doesn't look very nice.
-  const complete = [11, 179, 0];  // green
+  const recent = [11, 179, 0];  // green
   const mid = [255, 169, 0];  // orange
-  const incomplete = [255, 0, 0];  // red
+  const old = [255, 0, 0];  // red
   const stops = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  return MapDataSource.makeColorScale(complete, mid, incomplete, stops);
+  return MapDataSource.makeColorScale(old, mid, recent, stops);
 }
 
-CompletenessMapDataSource.COLORS = [
+FreshnessMapDataSource.COLORS = [
   '#0bb300',  // green
   '#ffa900',  // orange
   '#ff0000',  // red
