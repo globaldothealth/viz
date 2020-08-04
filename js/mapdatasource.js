@@ -118,7 +118,6 @@ MapDataSource.makeColorScale = function(topColor, midColor, bottomColor, numeric
   const count = numericalScale.length - 1;
   for (let i = 0; i < numericalScale.length; i++) {
     // Blend two color stops, either the first two or the last two.
-    console.log("i = " + i);
     let ratio = i * 2 / count;
     let first = bottomColor;
     let second = midColor;
@@ -127,7 +126,6 @@ MapDataSource.makeColorScale = function(topColor, midColor, bottomColor, numeric
       first = midColor;
       second = topColor;
     }
-    console.log("ratio = " + ratio);
     const rgb = [
       Math.floor(first[0] * (1 - ratio) + second[0] * ratio),
       Math.floor(first[1] * (1 - ratio) + second[1] * ratio),

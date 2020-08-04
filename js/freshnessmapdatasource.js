@@ -5,6 +5,9 @@ class FreshnessMapDataSource extends MapDataSource {
  */
 constructor(dataProvider) {
   super(dataProvider);
+
+  /** @private @const */
+  this.colorScale_ = FreshnessMapDataSource.initializeColorScale();
 }
 
 getType() {
@@ -22,15 +25,15 @@ getSizeForFeature(feature) {
 }
 
 getPaint() {
-  let colors = ['step', ['get', 'completeness']];
-  // for (let i = 0; i < this.colorScale_.length; i++) {
-    // let color = this.colorScale_[i];
-    // // Push the color, then the value stop.
-    // colors.push(color[0]);
-    // if (i < this.colorScale_.length - 1) {
-      // colors.push(color[1]);
-    // }
-  // }
+  let colors = ['step', ['get', 'age']];
+  for (let i = 0; i < this.colorScale_.length; i++) {
+    let color = this.colorScale_[i];
+    // Push the color, then the value stop.
+    colors.push(color[0]);
+    if (i < this.colorScale_.length - 1) {
+      colors.push(color[1]);
+    }
+  }
   return {
     'fill-extrusion-height': ['get', 'height'],
     'fill-extrusion-color': colors,
@@ -112,6 +115,16 @@ getLegendItems() {
 }
 
 }  // FreshnessDataSource
+
+FreshnessMapDataSource.initializeColorScale = function() {
+  // These RGB values correspond to the hex colors below. We use a mid-point
+  // because blending just two colors doesn't look very nice.
+  const recent = [11, 179, 0];  // green
+  const mid = [255, 169, 0];  // orange
+  const old = [255, 0, 0];  // red
+  const stops = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+  return MapDataSource.makeColorScale(old, mid, recent, stops);
+}
 
 FreshnessMapDataSource.COLORS = [
   '#0bb300',  // green
