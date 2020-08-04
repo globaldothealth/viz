@@ -42,7 +42,7 @@ body {
   width: 100%;
 }
 
-body.casemap #app, body.historicalmap #app, body.completeness #app {
+body.casemap #app, body.historicalmap #app, body.completeness #app, body.freshness #app {
   /* For the map, occupy the whole viewport. */
   margin: 0;
   padding: 0;
@@ -234,7 +234,7 @@ input[type=text] {
   padding: 1ex 5px;
 }
 
-#topbar li.active {
+#topbar div.active {
   color: cornflowerblue;
 }
 
