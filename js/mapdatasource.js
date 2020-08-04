@@ -110,4 +110,31 @@ formatFeature(inFeature, threeD) {
   }
   return feature;
 }
+
+}  // MapDataSource
+
+MapDataSource.makeColorScale = function(topColor, midColor, bottomColor, numericalScale) {
+  let scale = [];
+  const count = numericalScale.length - 1;
+  for (let i = 0; i < numericalScale.length; i++) {
+    // Blend two color stops, either the first two or the last two.
+    console.log("i = " + i);
+    let ratio = i * 2 / count;
+    let first = bottomColor;
+    let second = midColor;
+    if (i > count / 2) {
+      ratio = (i - count / 2) * 2 / count;
+      first = midColor;
+      second = topColor;
+    }
+    console.log("ratio = " + ratio);
+    const rgb = [
+      Math.floor(first[0] * (1 - ratio) + second[0] * ratio),
+      Math.floor(first[1] * (1 - ratio) + second[1] * ratio),
+      Math.floor(first[2] * (1 - ratio) + second[2] * ratio),
+    ];
+    scale.push(['rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', 1)',
+                numericalScale[i]]);
+  }
+  return scale;
 }

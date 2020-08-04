@@ -51,7 +51,7 @@ getFeatureSet() {
   let codes = Object.keys(dehydratedFeatures);
   for (let i = 0; i < aggregates.length; i++) {
     let aggregate = aggregates[i];
-    let code = aggregate['code'];
+    const code = aggregate['code'];
     const aggregateCaseCount = aggregate['cum_conf'];
     let individualCaseCount = 0;
     if (!!dehydratedFeatures[code]) {
@@ -117,26 +117,8 @@ CompletenessMapDataSource.initializeColorScale = function() {
   const complete = [11, 179, 0];  // green
   const mid = [255, 169, 0];  // orange
   const incomplete = [255, 0, 0];  // red
-
-  let scale = [];
-  for (let i = 0; i <= 100; i += 10) {
-    // Blend two color stops, either the first two or the last two.
-    let ratio = i * 2 / 100;
-    let first = incomplete;
-    let second = mid;
-    if (i > 50) {
-      ratio = (i - 50) * 2 / 100;
-      first = mid;
-      second = complete;
-    }
-    const rgb = [
-      Math.floor(first[0] * (1 - ratio) + second[0] * ratio),
-      Math.floor(first[1] * (1 - ratio) + second[1] * ratio),
-      Math.floor(first[2] * (1 - ratio) + second[2] * ratio),
-    ];
-    scale.push(['rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', 1)', i]);
-  }
-  return scale;
+  const stops = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+  return MapDataSource.makeColorScale(complete, mid, incomplete, stops);
 }
 
 CompletenessMapDataSource.COLORS = [
