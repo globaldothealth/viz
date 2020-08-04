@@ -330,7 +330,7 @@ DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
   }
   const timestamp = (new Date()).getTime();
   let self = this;
-  return fetch(this.baseUrl_ + 'latestCounts.json?nocache=' + timestamp)
+  return fetch(this.baseUrl_ + 'globals.json?nocache=' + timestamp)
     .then(function(response) { return response.json(); })
     .then(function(jsonData) {
       const counts = jsonData[0];

@@ -70,5 +70,5 @@ CaseMapDataSource.COLORS = [
   ['#d34d60', '101–500', 500],
   ['#fb9533', '501–2000', 2000],
   ['#edf91c', '> 2000'],
-  ['cornflowerblue', 'New'],
+  // ['cornflowerblue', 'New'],
 ];
