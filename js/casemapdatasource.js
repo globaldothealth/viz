@@ -14,8 +14,7 @@ getType() {
 
 getPaint() {
   let colors = ['step', ['get', 'total']];
-  // Don't use the last color here (for new cases).
-  for (let i = 0; i < CaseMapDataSource.COLORS.length - 1; i++) {
+  for (let i = 0; i < CaseMapDataSource.COLORS.length; i++) {
     let color = CaseMapDataSource.COLORS[i];
     colors.push(color[0]);
     if (color.length > 2) {
