@@ -39,7 +39,7 @@ setEarliestDateIndexWithAggregateData() {
 
 makeViewToggle(id, firstLabel, secondLabel, callback) {
   let toggleEl = document.createElement('div');
-  toggleEl.innerHTML = '<div id="' + id + '">' +
+  toggleEl.innerHTML = '<div id="' + id + '" class="inview-toggle">' +
       '<div class="active">' + firstLabel + '</div>' +
       '<div>' + secondLabel + '</div></div>';
   toggleEl.onclick = callback;
@@ -52,7 +52,7 @@ render() {
   this.currentDateIndex_ = this.minDateIndex_;
   const container = document.getElementById('app');
   container.innerHTML = '<h1>Rank</h1><h2>Scroll to advance.</h2>';
-  container.appendChild(this.makeViewToggle('toggle', 'Cases', 'Deaths',
+  container.appendChild(this.makeViewToggle('cases-deaths', 'Cases', 'Deaths',
       this.onToggleClicked.bind(this)));
   const contents = document.createElement('div');
   contents.setAttribute('id', 'rank_content');
@@ -108,7 +108,7 @@ render() {
     currentTouchY = -1;
   }
 
-  let toggle = document.getElementById('toggle');
+  let toggle = document.getElementById('cases-deaths');
   // Assume only two modes here.
   toggle.firstChild.onclick = this.onToggleClicked.bind(this);
   toggle.lastChild.onclick = this.onToggleClicked.bind(this);
@@ -156,7 +156,7 @@ RankView.CONTINENT_COLORS = {
 let maxWidth = 0;
 
 RankView.prototype.onToggleClicked = function(e) {
-  let toggle = document.getElementById('toggle');
+  let toggle = document.getElementById('cases-deaths');
   if (toggle.firstChild == e.target) {
     toggle.firstChild.classList.add('active');
     toggle.lastChild.classList.remove('active');

@@ -73,12 +73,12 @@ body.rank {
   overflow: hidden;
 }
 
-body.rank #toggle {
+body.rank .inview-toggle {
   margin: 2ex;
   text-align: center;
 }
 
-body.rank #toggle div {
+body.rank .inview-toggle div {
   border: 1px solid #999;
   cursor: pointer;
   display: inline-block;
@@ -86,7 +86,7 @@ body.rank #toggle div {
   width: 10ex;
 }
 
-body.rank #toggle div.active {
+body.rank .inview-toggle div.active {
   color: black;
   background: cornflowerblue;
 }
