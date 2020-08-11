@@ -37,15 +37,34 @@ setEarliestDateIndexWithAggregateData() {
   }
 }
 
+makeViewToggle(id, firstLabel, secondLabel, callback) {
+  let toggleEl = document.createElement('div');
+  toggleEl.innerHTML = '<div id="' + id + '">' +
+      '<div class="active">' + firstLabel + '</div>' +
+      '<div>' + secondLabel + '</div></div>';
+  toggleEl.onclick = callback;
+  return toggleEl;
+}
+
 render() {
   super.render();
   this.setEarliestDateIndexWithAggregateData();
   this.currentDateIndex_ = this.minDateIndex_;
-  document.getElementById('app').innerHTML = '<h1>Rank</h1><h2>Scroll to advance. Logarithmic scale.</h2><div id="toggle"><div class="active">Cases</div><div>Deaths</div></div><div id="rank_content">Loading...</div><div id="minimap"></div>';
-  let container = document.getElementById('rank_content');
-  container.innerHTML = '';
+  const container = document.getElementById('app');
+  container.innerHTML = '<h1>Rank</h1><h2>Scroll to advance.</h2>';
+  container.appendChild(this.makeViewToggle('toggle', 'Cases', 'Deaths',
+      this.onToggleClicked.bind(this)));
+  const contents = document.createElement('div');
+  contents.setAttribute('id', 'rank_content');
+  contents.textContent = 'Loading...';
+  const miniMap = document.createElement('div');
+  miniMap.setAttribute('id', 'minimap');
+  contents.innerHTML = '';
 
-  maxWidth = Math.floor(container.clientWidth);
+  container.appendChild(contents);
+  container.appendChild(miniMap);
+
+  maxWidth = Math.floor(contents.clientWidth);
 
   let i = 0;
   let countries = this.dataProvider_.getCountries();
@@ -65,7 +84,7 @@ render() {
     startSpan.style.backgroundColor = color;
     el.appendChild(endSpan);
     el.appendChild(startSpan);
-    container.appendChild(el);
+    contents.appendChild(el);
     i++;
   }
 
@@ -73,18 +92,18 @@ render() {
   this.showRankPageAtCurrentDate();
 
   let self = this;
-  container.onwheel = function(e) {
+  contents.onwheel = function(e) {
     self.onRankWheel(e);
   };
-  container.ontouchmove = function(e) {
+  contents.ontouchmove = function(e) {
     e.preventDefault();
     self.onRankTouchMove(e['touches'][0].clientY - currentTouchY)
   };
-  container.ontouchstart = function(e) {
+  contents.ontouchstart = function(e) {
     e.preventDefault();
     currentTouchY = e['touches'][0].clientY;
   }
-  container.ontouchend = function(e) {
+  contents.ontouchend = function(e) {
     e.preventDefault();
     currentTouchY = -1;
   }
