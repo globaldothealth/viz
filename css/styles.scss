@@ -42,16 +42,6 @@ body {
   width: 100%;
 }
 
-body.casemap #app, body.historicalmap #app, body.completeness #app, body.freshness #app {
-  /* For the map, occupy the whole viewport. */
-  margin: 0;
-  padding: 0;
-}
-
-body.completeness #app table {
-  margin: 2ex auto 0 auto;
-}
-
 h1 {
   font-size: 180%;
   margin: 1ex;
@@ -68,6 +58,22 @@ h2 {
 h1, h2 {
   text-align: center;
 }
+
+/* Completeness text view */
+
+body.completeness #app table {
+  margin: 2ex auto 0 auto;
+}
+
+/* Map views */
+
+body.casemap #app, body.historicalmap #app, body.completeness #app, body.freshness #app {
+  /* For the map, occupy the whole viewport. */
+  margin: 0;
+  padding: 0;
+}
+
+/* Rank view */
 
 body.rank {
   overflow: hidden;
@@ -139,6 +145,12 @@ body.rank #minimap {
   width: 198px;
 }
 
+/* Sync view */
+
+body.sync #filters {
+  height: 100px;
+}
+
 a, a:visited {
   color: #666;
   transition: all .3s ease;
@@ -204,8 +216,6 @@ input[type=text] {
 }
 
 #topbar {
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
   display: flex;
   flex-direction: row;
   font-size: 90%;
@@ -237,10 +247,6 @@ input[type=text] {
   border-left-style: solid;
   border-left-width: 1px;
   padding: 1ex 5px;
-}
-
-#topbar div.active {
-  color: cornflowerblue;
 }
 
 #sidebar {

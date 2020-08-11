@@ -15,23 +15,32 @@ body.dark {
 /* Top bar */
 
 .light #topbar {
-  background-color: $sidebar-bgcolor-light;
+  background-color: $topbar-bgcolor-light;
   border-bottom-color: $topbar-nav-border-color-light;
+  color: $topbar-text-color-light;
 }
 
 .light #topbar div.navlink {
   border-left-color: $topbar-nav-border-color-light;
 }
 
+.light #topbar div.active {
+  border-bottom: 2px solid $topbar-nav-active-border-color-light;
+}
+
 .dark #topbar {
-  background-color: $sidebar-bgcolor-dark;
+  background-color: $topbar-bgcolor-dark;
   border-bottom-color: $topbar-nav-border-color-dark;
+  color: $topbar-text-color-dark;
 }
 
 .dark #topbar div.navlink {
   border-left-color: $topbar-nav-border-color-dark;
 }
 
+.dark #topbar div.active {
+  border-bottom-color: $topbar-nav-active-border-color-dark;
+}
 .light #legend {
   color: #333;
   background-color: rgba(255,255,255,.8);

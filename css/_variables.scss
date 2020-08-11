@@ -9,8 +9,16 @@ $text-color-dark: #fff;
 $sidebar-bgcolor-light: rgba(255, 255, 255, .8);
 $sidebar-bgcolor-dark: rgba(59, 59, 59, .8);
 
-$topbar-nav-border-color-light: rgba(0, 0, 0, 0.2);
+$topbar-bgcolor-light: #007aec;
+$topbar-text-color-light: #fff;
+$topbar-bgcolor-dark: $sidebar-bgcolor-dark;
+$topbar-text-color-dark: $text-color-dark;
+
+$topbar-nav-border-color-light: $topbar-bgcolor-light;
 $topbar-nav-border-color-dark: rgba(255, 255, 255, 0.2);
+
+$topbar-nav-active-border-color-light: $topbar-text-color-light;
+$topbar-nav-active-border-color-dark: rgba(255, 255, 255, 0.2);
 
 $legend-group-10: #67009E;
 $legend-group-100: #921694;

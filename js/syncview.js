@@ -78,7 +78,7 @@ render() {
   let container = document.getElementById('app');
   container.innerHTML = '<h1>Synchronized</h1>' +
       '<h2>Confirmed cases in % of population. D = day of the ' +
-      STARTING_CASE_COUNT + '<sup>th</sup> case</h2>';
+      STARTING_CASE_COUNT + '<sup>th</sup> case</h2><div id="filters"></div>';
   let canvas = document.createElement('canvas');
   canvas.setAttribute('width', container.clientWidth + 'px');
   canvas.setAttribute('height', Math.floor(0.8 * container.clientHeight) + 'px');
