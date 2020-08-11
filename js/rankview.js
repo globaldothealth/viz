@@ -12,6 +12,9 @@ constructor(dataProvider, nav) {
   /** @private {boolean} */
   this.showDeathCounts_ = false;
 
+  /** @private {boolean} */
+  this.logScale_ = true;
+
   /** @private {number} */
   this.currentDateIndex_ = 0;
 
@@ -39,9 +42,10 @@ setEarliestDateIndexWithAggregateData() {
 
 makeViewToggle(id, firstLabel, secondLabel, callback) {
   let toggleEl = document.createElement('div');
-  toggleEl.innerHTML = '<div id="' + id + '" class="inview-toggle">' +
-      '<div class="active">' + firstLabel + '</div>' +
-      '<div>' + secondLabel + '</div></div>';
+  toggleEl.classList.add('inview-toggle');
+  toggleEl.setAttribute('id', id);
+  toggleEl.innerHTML = '<div class="active">' + firstLabel + '</div>' +
+      '<div>' + secondLabel + '</div>';
   toggleEl.onclick = callback;
   return toggleEl;
 }
@@ -52,8 +56,13 @@ render() {
   this.currentDateIndex_ = this.minDateIndex_;
   const container = document.getElementById('app');
   container.innerHTML = '<h1>Rank</h1><h2>Scroll to advance.</h2>';
-  container.appendChild(this.makeViewToggle('cases-deaths', 'Cases', 'Deaths',
+  const toggles = document.createElement('div');
+  toggles.classList.add('toggles');
+  toggles.appendChild(this.makeViewToggle('cases-deaths', 'Cases', 'Deaths',
       this.onToggleClicked.bind(this)));
+  toggles.appendChild(this.makeViewToggle('log-linear', 'Logarithmic scale', 'Linear scale',
+      this.onToggleClicked.bind(this)));
+  container.appendChild(toggles);
   const contents = document.createElement('div');
   contents.setAttribute('id', 'rank_content');
   contents.textContent = 'Loading...';
@@ -129,7 +138,11 @@ setUpScale() {
       maxValue = Math.max(maxValue, aggregates[date][country][key]);
     }
   }
-  this.maxGraphedValue_ = Math.log10(maxValue);
+  if (this.logScale_) {
+    this.maxGraphedValue_ = Math.log10(maxValue);
+  } else {
+    this.maxGraphedValue_ = maxValue;
+  }
 }
 
 onConfigChanged(config) {
@@ -156,15 +169,30 @@ RankView.CONTINENT_COLORS = {
 let maxWidth = 0;
 
 RankView.prototype.onToggleClicked = function(e) {
-  let toggle = document.getElementById('cases-deaths');
+  let toggle = e.target;
+  while (!toggle.classList || !toggle.classList.contains('inview-toggle')) {
+    toggle = toggle.parentNode;
+  }
+  if (!toggle) {
+    // This click probably wasn't for us.
+    return;
+  }
   if (toggle.firstChild == e.target) {
     toggle.firstChild.classList.add('active');
     toggle.lastChild.classList.remove('active');
-    this.showDeathCounts_ = false;
+    if (toggle.getAttribute('id') == 'cases-deaths') {
+      this.showDeathCounts_ = false;
+    } else {
+      this.logScale_ = true;
+    }
   } else if (toggle.lastChild == e.target) {
     toggle.firstChild.classList.remove('active');
     toggle.lastChild.classList.add('active');
-    this.showDeathCounts_ = true;
+    if (toggle.getAttribute('id') == 'cases-deaths') {
+      this.showDeathCounts_ = true;
+    } else {
+      this.logScale_ = false;
+    }
   }
   this.setUpScale();
   this.showRankPageAtCurrentDate();
@@ -239,8 +267,11 @@ RankView.prototype.showRankPageAtCurrentDate = function() {
     b.getElementsByClassName('end')[0].textContent = case_count.toLocaleString();
     b.style.display = 'block';
     b.style.top = y + 'px';
-    const displayedWidth = Math.floor(
-        maxWidth * Math.log10(case_count) / this.maxGraphedValue_);
+    let base = Math.log10(case_count);
+    if (!this.logScale_) {
+      base = case_count;
+    }
+    const displayedWidth = Math.floor(maxWidth * base / this.maxGraphedValue_);
     b.style.width = displayedWidth + 'px';
     y += 37;
   }
