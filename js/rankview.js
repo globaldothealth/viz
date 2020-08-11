@@ -12,6 +12,9 @@ constructor(dataProvider, nav) {
   /** @private {boolean} */
   this.showDeathCounts_ = false;
 
+  /** @private {boolean} */
+  this.logScale_ = true;
+
   /** @private {number} */
   this.currentDateIndex_ = 0;
 
@@ -37,15 +40,40 @@ setEarliestDateIndexWithAggregateData() {
   }
 }
 
+makeViewToggle(id, firstLabel, secondLabel, callback) {
+  let toggleEl = document.createElement('div');
+  toggleEl.classList.add('inview-toggle');
+  toggleEl.setAttribute('id', id);
+  toggleEl.innerHTML = '<div class="active">' + firstLabel + '</div>' +
+      '<div>' + secondLabel + '</div>';
+  toggleEl.onclick = callback;
+  return toggleEl;
+}
+
 render() {
   super.render();
   this.setEarliestDateIndexWithAggregateData();
   this.currentDateIndex_ = this.minDateIndex_;
-  document.getElementById('app').innerHTML = '<h1>Rank</h1><h2>Scroll to advance. Logarithmic scale.</h2><div id="toggle"><div class="active">Cases</div><div>Deaths</div></div><div id="rank_content">Loading...</div><div id="minimap"></div>';
-  let container = document.getElementById('rank_content');
-  container.innerHTML = '';
+  const container = document.getElementById('app');
+  container.innerHTML = '<h1>Rank</h1><h2>Scroll to advance.</h2>';
+  const toggles = document.createElement('div');
+  toggles.classList.add('toggles');
+  toggles.appendChild(this.makeViewToggle('cases-deaths', 'Cases', 'Deaths',
+      this.onToggleClicked.bind(this)));
+  toggles.appendChild(this.makeViewToggle('log-linear', 'Logarithmic scale', 'Linear scale',
+      this.onToggleClicked.bind(this)));
+  container.appendChild(toggles);
+  const contents = document.createElement('div');
+  contents.setAttribute('id', 'rank_content');
+  contents.textContent = 'Loading...';
+  const miniMap = document.createElement('div');
+  miniMap.setAttribute('id', 'minimap');
+  contents.innerHTML = '';
 
-  maxWidth = Math.floor(container.clientWidth);
+  container.appendChild(contents);
+  container.appendChild(miniMap);
+
+  maxWidth = Math.floor(contents.clientWidth);
 
   let i = 0;
   let countries = this.dataProvider_.getCountries();
@@ -65,7 +93,7 @@ render() {
     startSpan.style.backgroundColor = color;
     el.appendChild(endSpan);
     el.appendChild(startSpan);
-    container.appendChild(el);
+    contents.appendChild(el);
     i++;
   }
 
@@ -73,23 +101,23 @@ render() {
   this.showRankPageAtCurrentDate();
 
   let self = this;
-  container.onwheel = function(e) {
+  contents.onwheel = function(e) {
     self.onRankWheel(e);
   };
-  container.ontouchmove = function(e) {
+  contents.ontouchmove = function(e) {
     e.preventDefault();
     self.onRankTouchMove(e['touches'][0].clientY - currentTouchY)
   };
-  container.ontouchstart = function(e) {
+  contents.ontouchstart = function(e) {
     e.preventDefault();
     currentTouchY = e['touches'][0].clientY;
   }
-  container.ontouchend = function(e) {
+  contents.ontouchend = function(e) {
     e.preventDefault();
     currentTouchY = -1;
   }
 
-  let toggle = document.getElementById('toggle');
+  let toggle = document.getElementById('cases-deaths');
   // Assume only two modes here.
   toggle.firstChild.onclick = this.onToggleClicked.bind(this);
   toggle.lastChild.onclick = this.onToggleClicked.bind(this);
@@ -110,7 +138,11 @@ setUpScale() {
       maxValue = Math.max(maxValue, aggregates[date][country][key]);
     }
   }
-  this.maxGraphedValue_ = Math.log10(maxValue);
+  if (this.logScale_) {
+    this.maxGraphedValue_ = Math.log10(maxValue);
+  } else {
+    this.maxGraphedValue_ = maxValue;
+  }
 }
 
 onConfigChanged(config) {
@@ -137,15 +169,30 @@ RankView.CONTINENT_COLORS = {
 let maxWidth = 0;
 
 RankView.prototype.onToggleClicked = function(e) {
-  let toggle = document.getElementById('toggle');
+  let toggle = e.target;
+  while (!toggle.classList || !toggle.classList.contains('inview-toggle')) {
+    toggle = toggle.parentNode;
+  }
+  if (!toggle) {
+    // This click probably wasn't for us.
+    return;
+  }
   if (toggle.firstChild == e.target) {
     toggle.firstChild.classList.add('active');
     toggle.lastChild.classList.remove('active');
-    this.showDeathCounts_ = false;
+    if (toggle.getAttribute('id') == 'cases-deaths') {
+      this.showDeathCounts_ = false;
+    } else {
+      this.logScale_ = true;
+    }
   } else if (toggle.lastChild == e.target) {
     toggle.firstChild.classList.remove('active');
     toggle.lastChild.classList.add('active');
-    this.showDeathCounts_ = true;
+    if (toggle.getAttribute('id') == 'cases-deaths') {
+      this.showDeathCounts_ = true;
+    } else {
+      this.logScale_ = false;
+    }
   }
   this.setUpScale();
   this.showRankPageAtCurrentDate();
@@ -220,8 +267,11 @@ RankView.prototype.showRankPageAtCurrentDate = function() {
     b.getElementsByClassName('end')[0].textContent = case_count.toLocaleString();
     b.style.display = 'block';
     b.style.top = y + 'px';
-    const displayedWidth = Math.floor(
-        maxWidth * Math.log10(case_count) / this.maxGraphedValue_);
+    let base = Math.log10(case_count);
+    if (!this.logScale_) {
+      base = case_count;
+    }
+    const displayedWidth = Math.floor(maxWidth * base / this.maxGraphedValue_);
     b.style.width = displayedWidth + 'px';
     y += 37;
   }
