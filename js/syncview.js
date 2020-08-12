@@ -101,14 +101,26 @@ prepareGraphData() {
   return [labels, dataToPlot];
 }
 
+filterGraphData(data) {
+  return data;
+}
+
+renderFilters() {
+  let container = document.getElementById('filters');
+  container.innerHTML = 'Only show the <input size="3" value="10" /> most ' +
+    '<select><option selected>affected</option>' +
+    '<option>populous</option></select> ' +
+    'countries';
+}
+
 render() {
   super.render();
 
   let container = document.getElementById('app');
-  container.innerHTML = '<h1>Synchronized</h1>' +
-      '<h2>Confirmed cases in % of population. D = day of the ' +
-      STARTING_CASE_COUNT + '<sup>th</sup> case</h2><div id="filters"></div>';
-  const graphData = this.prepareGraphData();
+  container.innerHTML = '<h2>Confirmed cases in % of population. D = day of the ' +
+      STARTING_CASE_COUNT.toLocaleString() + '<sup>th</sup> case</h2><div id="filters"></div>';
+  this.renderFilters();
+  const graphData = this.filterGraphData(this.prepareGraphData());
   this.renderGraph(container, graphData[0], graphData[1]);
 }
 

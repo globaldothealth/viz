@@ -147,8 +147,15 @@ body.rank #minimap {
 
 /* Sync view */
 
+body.sync h2 {
+  margin: 2ex 0;
+}
+
 body.sync #filters {
-  height: 100px;
+  /* Hide for now */
+  display: none;
+  margin: 2ex 0;
+  text-align: center;
 }
 
 a, a:visited {
