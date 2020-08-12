@@ -10,8 +10,10 @@ $sidebar-bgcolor-light: rgba(255, 255, 255, .8);
 $sidebar-bgcolor-dark: rgba(59, 59, 59, .8);
 
 $topbar-bgcolor-light: #007aec;
-$topbar-text-color-light: #fff;
 $topbar-bgcolor-dark: $sidebar-bgcolor-dark;
+$topbar-hover-bgcolor-light: #1484ed;
+$topbar-hover-bgcolor-dark: rgba(45, 45, 45, .8);
+$topbar-text-color-light: #fff;
 $topbar-text-color-dark: $text-color-dark;
 
 $topbar-nav-border-color-light: $topbar-bgcolor-light;

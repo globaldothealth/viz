@@ -24,6 +24,10 @@ body.dark {
   border-left-color: $topbar-nav-border-color-light;
 }
 
+.light #topbar div.navlink:hover {
+  background-color: $topbar-hover-bgcolor-light;
+}
+
 .light #topbar div.active {
   border-bottom: 2px solid $topbar-nav-active-border-color-light;
 }
@@ -36,6 +40,10 @@ body.dark {
 
 .dark #topbar div.navlink {
   border-left-color: $topbar-nav-border-color-dark;
+}
+
+.dark #topbar div.navlink:hover {
+  background-color: $topbar-hover-bgcolor-dark;
 }
 
 .dark #topbar div.active {
