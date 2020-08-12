@@ -12,8 +12,32 @@ getTitle() {
   return 'Synchronized';
 };
 
-render() {
-  super.render();
+renderGraph(container, labels, dataToPlot) {
+  let canvas = document.createElement('canvas');
+  canvas.setAttribute('width', container.clientWidth + 'px');
+  canvas.setAttribute('height', Math.floor(0.8 * container.clientHeight) + 'px');
+  container.appendChild(canvas);
+  let ctx = canvas.getContext('2d');
+  let cfg = Graphing.CHART_CONFIG;
+  cfg['options']['tooltips']['mode'] = 'nearest';
+  cfg['options']['tooltips']['callbacks'] = {'label': function(item, data) {
+    return data['datasets'][item['datasetIndex']]['label'] + ': ' + item['yLabel'] + ' %';
+  }};
+  cfg['options']['scales']['xAxes'][0]['type'] = undefined;
+  cfg['options']['scales']['xAxes'][0]['time'] = {};
+  if (!cfg['options']['scales']['yAxes'][0]['ticks']) {
+    cfg['options']['scales']['yAxes'][0]['ticks'] = {};
+  }
+
+  cfg['data'] = {
+    'labels': labels,
+    'datasets': dataToPlot,
+  }
+
+  new Chart(ctx, cfg);
+}
+
+prepareGraphData() {
   const aggregates = this.dataProvider_.getAggregateData();
   let dates = Object.keys(aggregates);
   // Sort in chronological order.
@@ -74,33 +98,18 @@ render() {
       'backgroundColor': 'transparent'});
     i++;
   }
+  return [labels, dataToPlot];
+}
+
+render() {
+  super.render();
 
   let container = document.getElementById('app');
   container.innerHTML = '<h1>Synchronized</h1>' +
       '<h2>Confirmed cases in % of population. D = day of the ' +
       STARTING_CASE_COUNT + '<sup>th</sup> case</h2><div id="filters"></div>';
-  let canvas = document.createElement('canvas');
-  canvas.setAttribute('width', container.clientWidth + 'px');
-  canvas.setAttribute('height', Math.floor(0.8 * container.clientHeight) + 'px');
-  container.appendChild(canvas);
-  let ctx = canvas.getContext('2d');
-  let cfg = Graphing.CHART_CONFIG;
-  cfg['options']['tooltips']['mode'] = 'nearest';
-  cfg['options']['tooltips']['callbacks'] = {'label': function(item, data) {
-    return data['datasets'][item['datasetIndex']]['label'] + ': ' + item['yLabel'] + ' %';
-  }};
-  cfg['options']['scales']['xAxes'][0]['type'] = undefined;
-  cfg['options']['scales']['xAxes'][0]['time'] = {};
-  if (!cfg['options']['scales']['yAxes'][0]['ticks']) {
-    cfg['options']['scales']['yAxes'][0]['ticks'] = {};
-  }
-
-  cfg['data'] = {
-    'labels': labels,
-    'datasets': dataToPlot,
-  }
-
-  new Chart(ctx, cfg);
+  const graphData = this.prepareGraphData();
+  this.renderGraph(container, graphData[0], graphData[1]);
 }
 
 onConfigChanged(config) { };
