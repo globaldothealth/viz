@@ -121,7 +121,7 @@ prepareGraphData() {
 
   let countriesSortedByAffectedness = Object.keys(latestPercentageByCountry);
   countriesSortedByAffectedness.sort(function(a, b) {
-    return latestPercentageByCountry[b] > latestPercentageByCountry[a];
+    return latestPercentageByCountry[b] - latestPercentageByCountry[a];
   });
 
   this.countriesSortedByAffectedness_ = countriesSortedByAffectedness;

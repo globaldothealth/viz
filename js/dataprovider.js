@@ -209,7 +209,7 @@ DataProvider.prototype.getCountryByName = function(name) {
   return this.countriesByName_[name];
 };
 
-/** @return {Object} */
+/** @return {!Object} */
 DataProvider.prototype.getCountries = function() {
   return this.countries_;
 };
