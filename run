@@ -14,6 +14,12 @@ import data_util
 
 class VizHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
+        if self.path == "/js/main.js":
+            # TODO
+            print("Replacing data source URL...")
+        if self.path == "/js/diseasemap.js":
+            # TODO
+            print("Replacing mapbox API key...")
         super().do_GET()
 
 # Returns True if everything we need is here, False otherwise.
