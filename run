@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import json
 import os
 import shlex
 import subprocess
@@ -13,12 +14,20 @@ sys.path.append("scripts")
 import data_util
 
 MAPBOX_API_VARNAME = "MAPBOX_API_TOKEN"
+with open("config.json") as f:
+    CONFIG = json.loads(f.read())
+    f.close()
+
+if len(sys.argv) < 2:
+    print("Please give me the disease ID as an argument, for instance 'covid-19'")
+    sys.exit(1)
+
+DISEASE_ID = sys.argv[1]
 
 class VizHandler(SimpleHTTPRequestHandler):
 
     def send_head(self):
-        if self.path == "/js/main.js" or self.path == "/js/diseasemap.js":
-            print("Replacing data source URL or mapbox key...")
+        if self.path in ["/js/main.js", "/js/diseasemap.js", "/js/sidebar.js"]:
             path = self.translate_path(self.path)
             f = open(path)
             contents = f.read()
@@ -29,14 +38,15 @@ class VizHandler(SimpleHTTPRequestHandler):
             self.send_header("Content-Length", str(fs[6]))
             self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
             self.end_headers()
-            # TODO: Read data URL from config file
             if "diseasemap" in self.path:
                 contents = contents.replace("{{MAPBOX_API_TOKEN}}",
                                             os.environ[MAPBOX_API_VARNAME])
+            if "sidebar" in self.path:
+                contents = contents.replace(
+                    "{{TITLE}}", CONFIG[DISEASE_ID]["name"])
             if "main" in self.path:
                 contents = contents.replace(
-                    "{{DATA_SRC_URL}}",
-                    "https://raw.githubusercontent.com/ghdsi/covid-19/master/")
+                    "{{DATA_SRC_URL}}", CONFIG[DISEASE_ID]["data_src_url"])
             self.wfile.write(contents.encode())
             # We've taken care of everything, nothing left to do.
             return None

@@ -1,10 +1,9 @@
 {
   "covid-19": {
     "data_src_url": "https://raw.githubusercontent.com/ghdsi/covid-19/master/",
-    "name": "COVID-19",
-  },
-  "local": {
+    "name": "COVID-19"
+  }, "local": {
     "data_src_url": "http://localhost:8001",
-    "name": "Local",
-  },
+    "name": "Local"
+  }
 }
