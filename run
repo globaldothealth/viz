@@ -12,15 +12,35 @@ from http.server import SimpleHTTPRequestHandler
 sys.path.append("scripts")
 import data_util
 
+MAPBOX_API_VARNAME = "MAPBOX_API_TOKEN"
+
 class VizHandler(SimpleHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == "/js/main.js":
-            # TODO
-            print("Replacing data source URL...")
-        if self.path == "/js/diseasemap.js":
-            # TODO
-            print("Replacing mapbox API key...")
-        super().do_GET()
+
+    def send_head(self):
+        if self.path == "/js/main.js" or self.path == "/js/diseasemap.js":
+            print("Replacing data source URL or mapbox key...")
+            path = self.translate_path(self.path)
+            f = open(path)
+            contents = f.read()
+            ctype = self.guess_type(path)
+            self.send_response(200)
+            self.send_header("Content-type", ctype)
+            fs = os.fstat(f.fileno())
+            self.send_header("Content-Length", str(fs[6]))
+            self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
+            self.end_headers()
+            # TODO: Read data URL from config file
+            if "diseasemap" in self.path:
+                contents = contents.replace("{{MAPBOX_API_TOKEN}}",
+                                            os.environ[MAPBOX_API_VARNAME])
+            if "main" in self.path:
+                contents = contents.replace(
+                    "{{DATA_SRC_URL}}",
+                    "https://raw.githubusercontent.com/ghdsi/covid-19/master/")
+            self.wfile.write(contents.encode())
+            # We've taken care of everything, nothing left to do.
+            return None
+        return super().send_head()
 
 # Returns True if everything we need is here, False otherwise.
 def check_dependencies():
@@ -45,6 +65,12 @@ def run_http_server():
 def run():
     data_util.make_country_pages()
 
+    if MAPBOX_API_VARNAME not in os.environ:
+        print("Please set the 'MAPBOX_API_TOKEN' to your development token. "
+              "Aborting.")
+        print(os.environ)
+        sys.exit(1)
+
     try:
         http = threading.Thread(target=run_http_server)
         sass = threading.Thread(target=run_sass_precompiler)
@@ -54,7 +80,7 @@ def run():
         sass.join()
 
     except KeyboardInterrupt:
-        print("Shutting down...")
+        print("Hit Crtl-C a second time to shut down.")
         sys.exit(0)
 
 if __name__ == '__main__':
