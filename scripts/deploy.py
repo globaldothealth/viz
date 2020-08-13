@@ -3,6 +3,7 @@ Makes it easy and painless to deploy the site and make all necessary changes
 so that it's immediately ready to serve in production.
 """
 import glob
+import json
 import os
 import shlex
 import subprocess
@@ -28,6 +29,11 @@ HTML_FILES = [
     "index.html",
 ]
 
+with open("config.json") as f:
+    CONFIG = json.loads(f.read())
+    f.close()
+
+MAPBOX_PROD_API_TOKEN = "pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrOGl1NGNldTAyYXYzZnBqcnBmN3RjanAifQ.H377pe4LPPcymeZkUBiBtg"
 
 # Returns True if everything we need is here, False otherwise.
 def check_dependencies():
@@ -145,8 +151,19 @@ def copy_contents(target_path, quiet=False):
 
     return success
 
+def replace_string_in_dest_file(to_replace, replacement,
+                                target_path, relative_path):
+    full_path = os.path.join(target_path, relative_path)
+    with open(full_path) as f:
+        contents = f.read()
+        f.close()
+    contents = contents.replace(to_replace, replacement)
+    with open(full_path, "w") as f:
+        f.write(contents)
+        f.close()
+    return True
 
-def deploy(target_path, quiet=False):
+def deploy(disease_id, target_path, quiet=False):
     if not check_dependencies():
         sys.exit(1)
 
@@ -161,6 +178,16 @@ def deploy(target_path, quiet=False):
 
     success &= copy_contents(target_path, quiet=quiet)
     success &= restore_pristine_files()
+    success != replace_string_in_dest_file(
+        "{{DATA_SRC_URL}}",
+        CONFIG[disease_id]["data_src_url"],
+        target_path, "js/bundle.js")
+    success != replace_string_in_dest_file(
+        "{{TITLE}}", CONFIG[disease_id]["name"],
+        target_path, "js/bundle.js")
+    success != replace_string_in_dest_file(
+        "{{MAPBOX_API_TOKEN}}",
+        MAPBOX_PROD_API_TOKEN, target_path, "js/bundle.js")
 
     if success:
         if not quiet:

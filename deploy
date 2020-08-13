@@ -8,19 +8,21 @@ import os
 import shlex
 import subprocess
 
-if len(sys.argv) < 2:
-    print("Please give me the target path as an argument. "
-          "For instance:\n\n\t" + sys.argv[0] + " /var/www/html/covid-19\n")
+if len(sys.argv) < 3:
+    print("Usage: " + sys.argv[0] + " disease_id target_path")
     sys.exit(1)
 
 src_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(src_path)
-target_path = sys.argv[1]
-if os.path.exists(target_path):
-    print("Target '" + target_path + "' already exists. "
+
+DISEASE_ID = sys.argv[1]
+TARGET_PATH = sys.argv[2]
+
+if os.path.exists(TARGET_PATH):
+    print("Target '" + TARGET_PATH + "' already exists. "
           "Please make a back-up and remove it.")
     sys.exit(1)
-os.mkdir(target_path)
+os.mkdir(TARGET_PATH)
 
 if __name__ == '__main__':
-    deploy(target_path)
+    deploy(DISEASE_ID, TARGET_PATH)

@@ -8,9 +8,11 @@ function bootstrap() {
 class Viz {
 
 constructor() {
-  /** @const @private {DataProvider} */
-  this.dataProvider_ = new DataProvider(
-      'https://raw.githubusercontent.com/ghdsi/covid-19/master/');
+  /**
+   * This will be replaced at run time or deploy time.
+   * @const @private {DataProvider}
+   */
+  this.dataProvider_ = new DataProvider('{{DATA_SRC_URL}}');
 
   /** @private @const {!Object.<!View>} */
   this.views_ = {};
