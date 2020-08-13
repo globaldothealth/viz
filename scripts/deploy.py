@@ -28,6 +28,7 @@ HTML_FILES = [
     "index.html",
 ]
 
+MAPBOX_PROD_API_TOKEN = "pk.eyJ1IjoiaGVhbHRobWFwIiwiYSI6ImNrOGl1NGNldTAyYXYzZnBqcnBmN3RjanAifQ.H377pe4LPPcymeZkUBiBtg"
 
 # Returns True if everything we need is here, False otherwise.
 def check_dependencies():
@@ -145,6 +146,17 @@ def copy_contents(target_path, quiet=False):
 
     return success
 
+def replace_string_in_dest_file(to_replace, replacement,
+                                target_path, relative_path):
+    full_path = os.path.join(target_path, relative_path)
+    with open(full_path) as f:
+        contents = f.read()
+        f.close()
+    contents = contents.replace(to_replace, replacement)
+    with open(full_path, "w") as f:
+        f.write(contents)
+        f.close()
+    return True
 
 def deploy(target_path, quiet=False):
     if not check_dependencies():
@@ -161,6 +173,14 @@ def deploy(target_path, quiet=False):
 
     success &= copy_contents(target_path, quiet=quiet)
     success &= restore_pristine_files()
+    # TODO: Read this from a config file
+    success != replace_string_in_dest_file(
+        "{{DATA_SRC_URL}}",
+        "https://raw.githubusercontent.com/ghdsi/covid-19/master/",
+        target_path, "js/bundle.js")
+    success != replace_string_in_dest_file(
+        "{{MAPBOX_API_TOKEN}}",
+        MAPBOX_PROD_API_TOKEN, target_path, "js/bundle.js")
 
     if success:
         if not quiet:
