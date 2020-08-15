@@ -27,30 +27,47 @@ DISEASE_ID = sys.argv[1]
 class VizHandler(SimpleHTTPRequestHandler):
 
     def send_head(self):
-        if self.path in ["/js/main.js", "/js/diseasemap.js", "/js/sidebar.js"]:
-            path = self.translate_path(self.path)
-            f = open(path)
-            contents = f.read()
-            ctype = self.guess_type(path)
-            self.send_response(200)
-            self.send_header("Content-type", ctype)
-            fs = os.fstat(f.fileno())
-            self.send_header("Content-Length", str(fs[6]))
-            self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
+        path = self.translate_path(self.path)
+        if "favicon.ico" in path:
+            self.send_response(404)
             self.end_headers()
-            if "diseasemap" in self.path:
-                contents = contents.replace("{{MAPBOX_API_TOKEN}}",
-                                            os.environ[MAPBOX_API_VARNAME])
-            if "sidebar" in self.path:
-                contents = contents.replace(
-                    "{{TITLE}}", CONFIG[DISEASE_ID]["name"])
-            if "main" in self.path:
-                contents = contents.replace(
-                    "{{DATA_SRC_URL}}", CONFIG[DISEASE_ID]["data_src_url"])
-            self.wfile.write(contents.encode())
-            # We've taken care of everything, nothing left to do.
             return None
-        return super().send_head()
+        f = None
+        if os.path.isdir(path):
+            if not self.path.endswith('/'):
+                self.send_response(301)
+                self.send_header("Location", self.path + "/")
+                self.end_headers()
+                return None
+            for index in "index.html", "index.htm":
+                index = os.path.join(path, index)
+                if os.path.exists(index):
+                    path = index
+                    break
+            else:
+                return self.list_directory(path)
+        f = open(path)
+        contents = f.read()
+        ctype = self.guess_type(path)
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header("Content-type", ctype)
+        fs = os.fstat(f.fileno())
+        self.send_header("Content-Length", str(fs[6]))
+        self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
+        self.end_headers()
+        if "diseasemap.js" in self.path:
+            contents = contents.replace("{{MAPBOX_API_TOKEN}}",
+                                        os.environ[MAPBOX_API_VARNAME])
+        if "sidebar.js" in self.path:
+            contents = contents.replace(
+                "{{TITLE}}", CONFIG[DISEASE_ID]["name"])
+        if "main.js" in self.path:
+            contents = contents.replace(
+                "{{DATA_SRC_URL}}", CONFIG[DISEASE_ID]["data_src_url"] + "/")
+        self.wfile.write(contents.encode())
+        # We've taken care of everything, nothing left to do.
+        return None
 
 # Returns True if everything we need is here, False otherwise.
 def check_dependencies():
