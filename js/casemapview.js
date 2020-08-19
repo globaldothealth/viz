@@ -13,7 +13,7 @@ getId() {
 }
 
 getTitle() {
-  return 'Case Map';
+  return '🗺  Cases';
 }
 
 }

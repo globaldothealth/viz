@@ -257,7 +257,7 @@ input[type=text] {
 #sidebar {
   backdrop-filter: blur(.5rem);
   background-color: $sidebar-bgcolor-dark;
-  box-shadow: 2px 0 12px 0 rgba(0,0,0,0.10);
+  box-shadow: 0 20px 30px 1px rgba(0, 0, 0, 0.1);
   border-radius: 1ex;
   color: #aaa;
   display: flex;

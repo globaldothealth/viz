@@ -17,7 +17,7 @@ getId() {
 }
 
 getTitle() {
-  return 'Completeness Map';
+  return '🗺  Completeness';
 }
 
 }
