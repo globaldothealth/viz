@@ -151,7 +151,11 @@ Viz.prototype.onConfigChanged = function(config) {
   document.body.classList.add(darkRequested ? 'dark' : 'light');
   document.body.classList.remove(darkRequested ? 'light' : 'dark');
 
-  document.body.classList.toggle('fullscreen', !!config['fullscreen']);
+  const isFullScreen = !!config['fullscreen'];
+  document.body.classList.toggle('fullscreen', isFullScreen);
+  if (isFullScreen) {
+    document.getElementById('settings-menu').style.display = 'none';
+  }
 }
 
 // Exports

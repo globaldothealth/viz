@@ -32,6 +32,10 @@ body.dark {
   border-bottom: 2px solid $topbar-nav-active-border-color-light;
 }
 
+.light #settings-menu {
+  background-color: $sidebar-bgcolor-light;
+}
+
 .dark #topbar {
   background-color: $topbar-bgcolor-dark;
   border-bottom-color: $topbar-nav-border-color-dark;
@@ -49,6 +53,11 @@ body.dark {
 .dark #topbar div.active {
   border-bottom-color: $topbar-nav-active-border-color-dark;
 }
+
+.dark #settings-menu {
+  background-color: $sidebar-bgcolor-dark;
+}
+
 .light #legend {
   color: #333;
   background-color: rgba(255,255,255,.8);
@@ -88,7 +97,6 @@ body.dark {
   button {
     color: #454545;
     background-color: #fff;
-    border: 1px solid #f0f0f0;
     box-shadow: none;
     &:focus, &:hover, &:active, &.is-active {
       background-color: #f3f3f3;

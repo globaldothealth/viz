@@ -16,7 +16,7 @@ getId() {
 }
 
 getTitle() {
-  return 'Historical Map';
+  return '🗺  Historical';
 };
 
 render() {

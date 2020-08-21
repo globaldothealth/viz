@@ -17,7 +17,7 @@ getId() {
 }
 
 getTitle() {
-  return 'Freshness Map';
+  return '🗺  Freshness';
 }
 
 fetchData() {

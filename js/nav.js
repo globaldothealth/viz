@@ -238,11 +238,14 @@ Nav.prototype.makeToggle = function(toggleId, name, checked) {
   return container;
 }
 
-/** Initializes and renders the navigation bar. */
-Nav.prototype.setupTopBar = function() {
-  const baseUrl = window.location.origin + '/';
-  let topBar = document.getElementById('topbar');
-
+Nav.prototype.setupSettings = function() {
+  const settingsEl = document.createElement('div');
+  settingsEl.setAttribute('id', 'settings');
+  settingsEl.textContent = '⚙';
+  settingsEl.classList.add('navlink');
+  const settingsMenu = document.createElement('div');
+  settingsMenu.style.display = 'none';
+  settingsMenu.setAttribute('id', 'settings-menu');
   const navIds = Object.keys(this.items_);
   for (let i = 0; i < navIds.length; i++) {
     const item = this.items_[navIds[i]];
@@ -252,14 +255,38 @@ Nav.prototype.setupTopBar = function() {
       // TODO: Get potentially non-default value
       itemEl = this.makeToggle(item.getId(), item.getName(), checked);
       itemEl.onclick = this.toggle.bind(this, item.getId());
-    } else {
+      settingsMenu.appendChild(itemEl);
+    }
+  }
+  document.getElementById('topbar').appendChild(settingsEl);
+  document.body.appendChild(settingsMenu);
+  settingsEl.onclick = function() {
+    const menuEl = document.getElementById('settings-menu');
+    const currentlyShown = menuEl.style.display != 'none';
+    menuEl.style.top = document.getElementById('topbar').clientHeight + 'px';
+    console.log(menuEl.style.top);
+    menuEl.style.display = currentlyShown ? 'none' : 'block';
+  };
+};
+
+/** Initializes and renders the navigation bar. */
+Nav.prototype.setupTopBar = function() {
+  const baseUrl = window.location.origin + '/';
+  let topBar = document.getElementById('topbar');
+
+  const navIds = Object.keys(this.items_);
+  for (let i = 0; i < navIds.length; i++) {
+    const item = this.items_[navIds[i]];
+    let itemEl;
+    if (!item.isToggle()) {
       itemEl = document.createElement('div');
       itemEl.setAttribute('id', navIds[i]);
       itemEl.classList.add('navlink');
       itemEl.textContent = item.getName();
       itemEl.onclick = this.navigate.bind(this, item.getId());
+      topBar.appendChild(itemEl);
     }
-    topBar.appendChild(itemEl);
   }
+  this.setupSettings();
   this.processHash(window.location.href);
 }
