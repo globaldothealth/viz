@@ -16,4 +16,8 @@ getTitle() {
   return '🗺  Cases';
 }
 
+isThreeDimensional() {
+  return true;
+}
+
 }

@@ -1,9 +1,7 @@
 /** A data source for maps showing case counts. */
 class CaseMapDataSource extends MapDataSource {
 
-/**
- * @param {DataProvider} dataProvider
- */
+/** @param {DataProvider} dataProvider */
 constructor(dataProvider) {
   super(dataProvider);
 }

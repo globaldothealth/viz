@@ -26,6 +26,10 @@ showHistoricalData() {
   return false;
 }
 
+isThreeDimensional() {
+  return false;
+}
+
 fetchData() {
   let dp = this.dataProvider_;
   let self = this;

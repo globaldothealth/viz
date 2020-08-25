@@ -19,6 +19,10 @@ getTitle() {
   return '🗺  Historical';
 };
 
+isThreeDimensional() {
+  return true;
+}
+
 render() {
   super.render();
   this.timeAnimation_.render();

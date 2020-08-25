@@ -98,8 +98,9 @@ DiseaseMap.prototype.init = function(isDark) {
   let self = this;
   this.mapboxMap_.on('load', function () {
     self.loadData();
-    // TODO: Don't do this in 2D mode.
-    self.mapboxMap_.easeTo({pitch: 55});
+    if (self.view_.isThreeDimensional()) {
+      self.mapboxMap_.easeTo({pitch: 55});
+    }
     if (!!self.nav_.getConfig('focus')) {
       self.flyToCountry(/** @type {string} */ (self.nav_.getConfig('focus')));
     }
@@ -123,17 +124,31 @@ DiseaseMap.prototype.setupSource = function() {
   });
 };
 
+DiseaseMap.prototype.findFirstSymbolId = function() {
+  var layers = this.mapboxMap_.getStyle().layers;
+  // Find the index of the first symbol layer in the map style
+  var firstSymbolId;
+  for (var i = 0; i < layers.length; i++) {
+    if (layers[i].type === 'symbol') {
+      firstSymbolId = layers[i].id;
+      break;
+    }
+  }
+  return firstSymbolId;
+}
+
 DiseaseMap.prototype.setupLayers = function() {
   if (!!this.mapboxMap_.getLayer(this.layerId_)) {
     return;
   }
 
+  const firstSymbolId = this.findFirstSymbolId();
   this.mapboxMap_.addLayer({
     'id': this.layerId_,
     'type': this.dataSource_.getType(),
     'source': this.sourceId_,
     'paint': this.dataSource_.getPaint(),
-  });
+  }, firstSymbolId);
   // TODO: we might want to restore the 'new' layer.
   // self.addLayer('daily', 'new', 'cornflowerblue');
 };
@@ -161,8 +176,9 @@ DiseaseMap.prototype.setStyle = function(isDark) {
   // Not sure why we need to reload the data after a style change.
   this.mapboxMap_.on('styledata', function () {
     self.loadData();
-    // TODO: Don't do this in 2D mode.
-    self.mapboxMap_.easeTo({pitch: 55});
+    if (self.view_.isThreeDimensional()) {
+      self.mapboxMap_.easeTo({pitch: 55});
+    }
   });
   this.mapboxMap_.setStyle(newStyle);
   this.currentStyle_ = newStyle;

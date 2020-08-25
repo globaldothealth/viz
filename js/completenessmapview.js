@@ -17,7 +17,11 @@ getId() {
 }
 
 getTitle() {
-  return '🗺  Completeness';
+  return '🗺  Coverage (3D)';
+}
+
+isThreeDimensional() {
+  return true;
 }
 
 }
