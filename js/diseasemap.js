@@ -125,7 +125,7 @@ DiseaseMap.prototype.setupSource = function() {
 };
 
 DiseaseMap.prototype.findFirstSymbolId = function() {
-  var layers = this.mapboxMap_.getStyle().layers;
+  var layers = this.mapboxMap_.getStyle()['layers'];
   // Find the index of the first symbol layer in the map style
   var firstSymbolId;
   for (var i = 0; i < layers.length; i++) {
