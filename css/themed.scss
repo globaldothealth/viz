@@ -74,6 +74,16 @@ body.dark {
   }
 }
 
+/* Side bar */
+
+.light #logo {
+  background: url('/img/gh_logo.svg');
+}
+
+.dark #logo {
+  background: url('/img/gh_logo_white.svg');
+}
+
 .light #sidebar,
 .light #sidebar-tab {
   background-color: $sidebar-bgcolor-light;
