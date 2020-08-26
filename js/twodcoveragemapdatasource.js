@@ -64,6 +64,7 @@ getPaint() {
   }
   return {
     'fill-color': colors,
+    'fill-outline-color': '#337abc',
     'fill-opacity': 1,
   };
 }
