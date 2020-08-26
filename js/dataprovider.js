@@ -347,6 +347,8 @@ DataProvider.prototype.fetchCountryNames = function() {
         let c = new Country(code, name, continent, population, bboxes);
         self.countries_[code] = c;
         self.countriesByName_[name] = c;
+        const centroid = c.getCentroid();
+        locationInfo['' + centroid[1] + '|' + centroid[0]] = '||' + code;
       }
     });
 };

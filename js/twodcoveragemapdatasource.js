@@ -31,6 +31,9 @@ getFeatureSet() {
     }
     const aggregateCaseCount = aggregate['cum_conf'];
     let individualCaseCount = 0;
+    const country = this.dataProvider_.getCountry(code);
+    const centroid = country.getCentroid();
+    const geoId = [centroid[1], centroid[0]].join('|');
     if (!!dehydratedFeatures[code]) {
       individualCaseCount = dehydratedFeatures[code]['total'];
     }
@@ -39,6 +42,7 @@ getFeatureSet() {
     let feature = {
       'type': 'Feature',
       'properties': {
+        'geoid': geoId,
         'individualtotal': individualCaseCount,
         'aggregatetotal': aggregateCaseCount,
         'coverage': percent,
@@ -47,7 +51,6 @@ getFeatureSet() {
     };
     features.push(feature);
   }
-  console.log(features);
   return this.formatFeatureSet(features.map(
       f => this.formatFeature(f, false /* 3D */)));
 }

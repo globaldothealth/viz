@@ -210,28 +210,35 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   let lng = parseFloat(coordinatesString[1]);
 
   let totalCaseCount = 0;
-  // Country, province, city
-  let location = locationInfo[geo_id].split('|');
-  // Replace country code with name if necessary
-  if (location[2].length == 2) {
-    location[2] = this.dataProvider_.getCountry(location[2]).getName();
-  }
-  const countryName = location[2];
-  const country = this.dataProvider_.getCountryByName(countryName);
 
-  // Remove empty strings
-  location = location.filter(function (el) { return el != ''; });
+  // Country, province, city
+  let location = locationInfo[geo_id];
   let locationSpan = [];
-  for (let i = 0; i < location.length; i++) {
-    if (i == location.length - 1 && !!country) {
-      // TODO: Restore link to country page.
-      // locationSpan.push('<a target="_blank" href="/c/' +
-                        // country.getCode() + '/">' + location[i] + '</a>');
-      locationSpan.push(location[i]);
-    } else {
+  console.log(location);
+  if (!!location) {
+    location = location.split('|');
+    // Replace country code with name if necessary
+    if (location[2].length == 2) {
+      location[2] = this.dataProvider_.getCountry(location[2]).getName();
+    }
+    const countryName = location[2];
+    const country = this.dataProvider_.getCountryByName(countryName);
+
+    // Remove empty strings
+    location = location.filter(function (el) { return el != ''; });
+    for (let i = 0; i < location.length; i++) {
+      if (i == location.length - 1 && !!country) {
+        // TODO: Restore link to country page.
+        // locationSpan.push('<a target="_blank" href="/c/' +
+        // country.getCode() + '/">' + location[i] + '</a>');
+      }
       locationSpan.push(location[i]);
     }
   }
+  if (!locationSpan.length) {
+    return;
+  }
+
   totalCaseCount = props['total'];
 
   let content = document.createElement('div');
