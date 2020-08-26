@@ -20,6 +20,10 @@ getTitle() {
   return '🗺  Freshness';
 }
 
+isThreeDimensional() {
+  return true;
+}
+
 fetchData() {
   const dp = this.dataProvider_;
   return super.fetchData().then(dp.fetchFreshnessData.bind(dp));

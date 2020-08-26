@@ -204,73 +204,12 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
 
   let f = e['features'][0];
   let props = f['properties'];
-  let geo_id = props['geoid'];
+  const geo_id = props['geoid'];
   let coordinatesString = geo_id.split('|');
-  let lat = parseFloat(coordinatesString[0]);
-  let lng = parseFloat(coordinatesString[1]);
+  const lat = parseFloat(coordinatesString[0]);
+  const lng = parseFloat(coordinatesString[1]);
 
-  let totalCaseCount = 0;
-
-  // Country, province, city
-  let location = locationInfo[geo_id];
-  let locationSpan = [];
-  console.log(location);
-  if (!!location) {
-    location = location.split('|');
-    // Replace country code with name if necessary
-    if (location[2].length == 2) {
-      location[2] = this.dataProvider_.getCountry(location[2]).getName();
-    }
-    const countryName = location[2];
-    const country = this.dataProvider_.getCountryByName(countryName);
-
-    // Remove empty strings
-    location = location.filter(function (el) { return el != ''; });
-    for (let i = 0; i < location.length; i++) {
-      if (i == location.length - 1 && !!country) {
-        // TODO: Restore link to country page.
-        // locationSpan.push('<a target="_blank" href="/c/' +
-        // country.getCode() + '/">' + location[i] + '</a>');
-      }
-      locationSpan.push(location[i]);
-    }
-  }
-  if (!locationSpan.length) {
-    return;
-  }
-
-  totalCaseCount = props['total'];
-
-  let content = document.createElement('div');
-  content.innerHTML = '<h3 class="popup-header"><span>' +
-        locationSpan.join(', ') + '</span>: ' + totalCaseCount.toLocaleString() + '</h3>';
-
-  if (this.view_.showHistoricalData()) {
-    let relevantFeaturesByDay = {};
-    const dates = this.dataProvider_.getDates();
-    for (let i = 0; i < dates.length; i++) {
-      const date = dates[i];
-      relevantFeaturesByDay[date] = [];
-      const atomicFeatures = this.dataProvider_.getAtomicFeaturesForDay(date);
-      for (let j = 0; j < atomicFeatures.length; j++) {
-        const feature = atomicFeatures[j];
-        if (!feature) {
-          continue;
-        }
-        if (feature['properties']['geoid'] == geo_id) {
-          relevantFeaturesByDay[date].push(feature);
-        }
-      }
-    }
-
-    let container = document.createElement('div');
-    container.classList.add('chart');
-    Graphing.makeCasesGraph(
-        DataProvider.convertGeoJsonFeaturesToGraphData(
-            relevantFeaturesByDay, 'total'), false /* average */, container,
-        countryName);
-    content.appendChild(container);
-  }
+  const contents = this.dataSource_.getPopupContentsForFeature(f);
 
   // Restore this if we decide to render multiple "world copies" again.
   // Ensure that if the map is zoomed out such that multiple
@@ -279,7 +218,7 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   // while (Math.abs(e['lngLat']['lng'] - lng) > 180) {
     // lng += e['lngLat']['lng'] > lng ? 360 : -360;
   // }
-  this.popup_.setLngLat([lng, lat]).setDOMContent(content);
+  this.popup_.setLngLat([lng, lat]).setDOMContent(contents);
   this.popup_.addTo(this.mapboxMap_);
   let self = this;
   this.popup_.getElement().onmouseleave = function() {

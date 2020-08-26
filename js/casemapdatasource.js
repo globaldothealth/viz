@@ -37,6 +37,48 @@ getFeatureSet() {
       f => this.formatFeature(f, true /* 3D */)));
 }
 
+getPopupContentsForFeature(f) {
+  let props = f['properties'];
+  const geo_id = props['geoid'];
+
+  let totalCaseCount = 0;
+
+  // Country, province, city
+  let location = locationInfo[geo_id];
+  let locationSpan = [];
+  console.log(location);
+  if (!!location) {
+    location = location.split('|');
+    // Replace country code with name if necessary
+    if (location[2].length == 2) {
+      location[2] = this.dataProvider_.getCountry(location[2]).getName();
+    }
+    const countryName = location[2];
+    const country = this.dataProvider_.getCountryByName(countryName);
+
+    // Remove empty strings
+    location = location.filter(function (el) { return el != ''; });
+    for (let i = 0; i < location.length; i++) {
+      // if (i == location.length - 1 && !!country) {
+        // TODO: Restore link to country page.
+        // locationSpan.push('<a target="_blank" href="/c/' +
+        // country.getCode() + '/">' + location[i] + '</a>');
+      // }
+      locationSpan.push(location[i]);
+    }
+  }
+  if (!locationSpan.length) {
+    return;
+  }
+
+  totalCaseCount = props['total'];
+
+  let content = document.createElement('div');
+  content.innerHTML = '<h3 class="popup-header"><span>' +
+        locationSpan.join(', ') + '</span>: ' + totalCaseCount.toLocaleString() + '</h3>';
+  return content;
+}
+
 getLegendTitle() {
   return 'Cases';
 }

@@ -56,6 +56,12 @@ getFeatureSet() {
   return this.formatFeatureSet([]);
 }
 
+getPopupContentsForFeature(f) {
+  let contents = document.createElement('div');
+  contents.innerHTML = 'Default pop-up content';
+  return contents;
+}
+
 getLegendTitle() {
   return 'Untitled';
 }
