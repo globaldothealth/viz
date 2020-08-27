@@ -72,7 +72,11 @@ body.completeness #app table {
 
 /* Map views */
 
-body.casemap #app, body.historicalmap #app, body.completeness #app, body.freshness #app {
+body.casemap #app,
+body.historicalmap #app,
+body.completeness #app,
+body.coverage #app,
+body.freshness #app {
   /* For the map, occupy the whole viewport. */
   margin: 0;
   padding: 0;

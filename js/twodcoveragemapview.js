@@ -17,7 +17,7 @@ fetchData() {
 }
 
 getId() {
-  return '2dcoveragemap';
+  return 'coverage';
 }
 
 getTitle() {
