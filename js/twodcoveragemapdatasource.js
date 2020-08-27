@@ -136,5 +136,5 @@ TwoDCoverageMapDataSource.initializeColorScale = function() {
 TwoDCoverageMapDataSource.COLORS = [
   '#0093df',  // vibrant blue
   '#6bbde9',  // light blue
-  '#bcdbe7',  // nearly white
+  '#e4eef3',  // nearly white
 ];
