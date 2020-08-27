@@ -125,17 +125,16 @@ getLegendItems() {
 }
 
 TwoDCoverageMapDataSource.initializeColorScale = function() {
-  // These RGB values correspond to the hex colors below. We use a mid-point
-  // because blending just two colors doesn't look very nice.
-  const complete = [67, 146, 221];  // vibrant blue
-  const mid = [146, 195, 238];  // light blue
-  const incomplete = [232, 239, 247];  // nearly white
   const stops = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  return MapDataSource.makeColorScale(complete, mid, incomplete, stops);
+  return MapDataSource.makeColorScale(
+    hexToRgb(TwoDCoverageMapDataSource.COLORS[0]),
+    hexToRgb(TwoDCoverageMapDataSource.COLORS[1]),
+    hexToRgb(TwoDCoverageMapDataSource.COLORS[2]),
+    stops);
 }
 
 TwoDCoverageMapDataSource.COLORS = [
-  '#4392dd',  // vibrant blue
-  '#92c3ee',  // light blue
-  '#e8eff7',  // nearly white
+  '#0093df',  // vibrant blue
+  '#6bbde9',  // light blue
+  '#bcdbe7',  // nearly white
 ];
