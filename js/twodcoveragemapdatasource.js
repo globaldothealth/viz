@@ -43,6 +43,7 @@ getFeatureSet() {
       'type': 'Feature',
       'properties': {
         'geoid': geoId,
+        'countryname': country.getName(),
         'individualtotal': individualCaseCount,
         'aggregatetotal': aggregateCaseCount,
         'coverage': percent,
@@ -75,6 +76,16 @@ getPaint() {
 formatFeature(inFeature, threeD) {
   // No need to format much here.
   return inFeature;
+}
+
+getPopupContentsForFeature(f) {
+  const props = f['properties'];
+  let contents = document.createElement('div');
+  contents.innerHTML = '<h2><b>' + props['countryname'] + '</b></h2>' +
+    '<b>' + props['coverage'] + ' %</b> (' +
+    props['individualtotal'].toLocaleString() + ' out of ' +
+    props['aggregatetotal'].toLocaleString() + ')';
+  return contents;
 }
 
 getLegendTitle() {
