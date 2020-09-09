@@ -59,8 +59,7 @@ CountryDashboard.prototype.showCountryPage = function(data) {
   container.classList.add('chart');
   container.setAttribute('id', 'new');
   container.innerHTML = '';
-  Graphing.makeCasesGraph(o, true /* useAverageWindow */, container,
-                          country.getName());
+  Graphing.makeCasesGraph(o, true /* useAverageWindow */, container);
   chartsEl.appendChild(container);
 
   o = {'dates': dates};

@@ -88,13 +88,11 @@ function handleHideModal() {
 Viz.prototype.init = function() {
 
   this.registerView(new CaseMapView(this.dataProvider_, this.nav_));
-  this.registerView(new CompletenessMapView(this.dataProvider_, this.nav_));
+  this.registerView(new TwoDCoverageMapView(this.dataProvider_, this.nav_));
   this.registerView(new FreshnessMapView(this.dataProvider_, this.nav_));
   this.registerView(new HistoricalMapView(this.dataProvider_, this.nav_));
   this.registerView(new RankView(this.dataProvider_, this.nav_));
   this.registerView(new SyncView(this.dataProvider_));
-  // Disabled in favor of the completeness map view.
-  // this.registerView(new CompletenessView(this.dataProvider_));
 
   this.nav_.setupTopBar();
 
@@ -157,6 +155,12 @@ Viz.prototype.onConfigChanged = function(config) {
     document.getElementById('settings-menu').style.display = 'none';
   }
 }
+
+const hexToRgb = hex =>
+  hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
+             ,(m, r, g, b) => '#' + r + r + g + g + b + b)
+    .substring(1).match(/.{2}/g)
+    .map(x => parseInt(x, 16))
 
 // Exports
 if (typeof(globalThis) === 'undefined' && typeof(global) !== "undefined") {

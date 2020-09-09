@@ -5,5 +5,8 @@
   }, "local": {
     "data_src_url": "http://localhost:8001",
     "name": "Local"
+  }, "test-disease": {
+    "data_src_url": "https://idontexist.thatsokay",
+    "name": "Test Disease"
   }
 }

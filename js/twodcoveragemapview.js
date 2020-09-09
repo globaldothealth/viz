@@ -1,4 +1,5 @@
-class CompletenessMapView extends MapView {
+/** A 2D map showing coverage. */
+class TwoDCoverageMapView extends MapView {
 
 /**
  * @param {DataProvider} dataProvider
@@ -8,50 +9,31 @@ constructor(dataProvider, nav) {
   super(dataProvider, nav);
 
   /** @private @const */
-  this.colorScale_ = CompletenessMapView.initializeColorScale();
+  this.colorScale_ = TwoDCoverageMapView.initializeColorScale();
 }
 
-getType() {
-  return 'fill-extrusion';
+fetchData() {
+  let superPromise = super.fetchData();
+  let self = this;
+  return superPromise.then(
+    // We also need country boundary data to show coverage per country.
+    self.dataProvider_.fetchCountryBoundaries.bind(self.dataProvider_));
 }
 
 getId() {
-  return 'completeness';
+  return 'coverage';
 }
 
 getTitle() {
-  return '🗺  Coverage (3D)';
+  return '🗺  Coverage';
 }
 
 isThreeDimensional() {
-  return true;
+  return false;
 }
 
-getHeightForFeature(feature) {
-  return 10 * Math.sqrt(100000 * feature['properties']['aggregatetotal']);
-}
-
-getSizeForFeature(feature) {
-  // Since this map is showning country-wide features only, make them a bit
-  // large.
-  return 2;
-}
-
-getPaint() {
-  let colors = ['step', ['get', 'completeness']];
-  for (let i = 0; i < this.colorScale_.length; i++) {
-    let color = this.colorScale_[i];
-    // Push the color, then the value stop.
-    colors.push(color[0]);
-    if (i < this.colorScale_.length - 1) {
-      colors.push(color[1]);
-    }
-  }
-  return {
-    'fill-extrusion-height': ['get', 'height'],
-    'fill-extrusion-color': colors,
-    'fill-extrusion-opacity': 0.8,
-  };
+getType() {
+  return 'fill';
 }
 
 getFeatureSet() {
@@ -65,32 +47,72 @@ getFeatureSet() {
   for (let i = 0; i < aggregates.length; i++) {
     let aggregate = aggregates[i];
     const code = aggregate['code'];
+    const boundaries = this.dataProvider_.getBoundariesForCountry(code);
+    if (!boundaries) {
+      console.log('No available boundaries for country ' + code);
+      continue;
+    }
     const aggregateCaseCount = aggregate['cum_conf'];
     let individualCaseCount = 0;
-    if (!!dehydratedFeatures[code]) {
-      individualCaseCount = dehydratedFeatures[code]['total'];
-    }
     const country = this.dataProvider_.getCountry(code);
     const centroid = country.getCentroid();
     const geoId = [centroid[1], centroid[0]].join('|');
+    if (!!dehydratedFeatures[code]) {
+      individualCaseCount = dehydratedFeatures[code]['total'];
+    }
     let percent = Math.floor(
         Math.min(100, (individualCaseCount / aggregateCaseCount) * 100));
     let feature = {
+      'type': 'Feature',
       'properties': {
         'geoid': geoId,
+        'countryname': country.getName(),
         'individualtotal': individualCaseCount,
         'aggregatetotal': aggregateCaseCount,
-        'completeness': percent
-      }
+        'coverage': percent,
+      },
+      'geometry': boundaries,
     };
     features.push(feature);
   }
   return this.formatFeatureSet(features.map(
-      f => this.formatFeature(f, true /* 3D */)));
+      f => this.formatFeature(f, false /* 3D */)));
+}
+
+getPaint() {
+  let colors = ['step', ['get', 'coverage']];
+  for (let i = 0; i < this.colorScale_.length; i++) {
+    let color = this.colorScale_[i];
+    // Push the color, then the value stop.
+    colors.push(color[0]);
+    if (i < this.colorScale_.length - 1) {
+      colors.push(color[1]);
+    }
+  }
+  return {
+    'fill-color': colors,
+    'fill-outline-color': '#337abc',
+    'fill-opacity': 1,
+  };
+}
+
+formatFeature(inFeature, threeD) {
+  // No need to format much here.
+  return inFeature;
+}
+
+getPopupContentsForFeature(f) {
+  const props = f['properties'];
+  let contents = document.createElement('div');
+  contents.innerHTML = '<h2><b>' + props['countryname'] + '</b></h2>' +
+    '<b>' + props['coverage'] + ' %</b> (' +
+    props['individualtotal'].toLocaleString() + ' out of ' +
+    props['aggregatetotal'].toLocaleString() + ')';
+  return contents;
 }
 
 getLegendTitle() {
-  return 'Completeness';
+  return 'Coverage';
 }
 
 getLegendItems() {
@@ -99,7 +121,7 @@ getLegendItems() {
   gradientLegendItem.style.height = '120px';
 
   let gradientSide = document.createElement('div');
-  const gradientStops = CompletenessMapView.COLORS.join(',');
+  const gradientStops = TwoDCoverageMapView.COLORS.join(',');
   gradientSide.style.width = '15px';
   gradientSide.style.backgroundImage = 'linear-gradient(' + gradientStops + ')';
 
@@ -122,20 +144,20 @@ getLegendItems() {
 
   return [gradientLegendItem];
 }
-}  // CompletenessMapView
 
-CompletenessMapView.initializeColorScale = function() {
-  // These RGB values correspond to the hex colors below. We use a mid-point
-  // because blending just two colors doesn't look very nice.
-  const complete = [11, 179, 0];  // green
-  const mid = [255, 169, 0];  // orange
-  const incomplete = [255, 0, 0];  // red
-  const stops = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  return MapView.makeColorScale(complete, mid, incomplete, stops);
 }
 
-CompletenessMapView.COLORS = [
-  '#0bb300',  // green
-  '#ffa900',  // orange
-  '#ff0000',  // red
+TwoDCoverageMapView.initializeColorScale = function() {
+  const stops = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+  return MapView.makeColorScale(
+    hexToRgb(TwoDCoverageMapView.COLORS[0]),
+    hexToRgb(TwoDCoverageMapView.COLORS[1]),
+    hexToRgb(TwoDCoverageMapView.COLORS[2]),
+    stops);
+}
+
+TwoDCoverageMapView.COLORS = [
+  '#0093df',  // vibrant blue
+  '#6bbde9',  // light blue
+  '#e4eef3',  // nearly white
 ];

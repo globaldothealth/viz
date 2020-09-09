@@ -2,17 +2,13 @@ class DiseaseMap {
 
 /**
  * @param {DataProvider} dataProvider
- * @param {!MapDataSource} dataSource
  * @param {MapView} view
  * @param {Nav} nav
  */
-constructor(dataProvider, dataSource, view, nav) {
+constructor(dataProvider, view, nav) {
 
   /** @private */
   this.mapboxMap_ = null;
-
-  /** @private @const {!MapDataSource} */
-  this.dataSource_ = dataSource;
 
   /** @private @const {MapView} */
   this.view_ = view;
@@ -79,7 +75,7 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   // the map is finished loading.
   let source = this.mapboxMap_.getSource(this.sourceId_);
   if (!!source) {
-    source.setData(this.dataSource_.getFeatureSet());
+    source.setData(this.view_.getFeatureSet());
   }
 };
 
@@ -87,7 +83,7 @@ DiseaseMap.prototype.init = function(isDark) {
   mapboxgl.accessToken = DiseaseMap.MAPBOX_TOKEN;
   this.mapboxMap_ = new mapboxgl.Map({
     'container': 'map',
-    'center': [10, 0],
+    'center': [10, 40],
     'minZoom': 1.5,
     'renderWorldCopies': false,
     'zoom': 2.5,
@@ -98,8 +94,9 @@ DiseaseMap.prototype.init = function(isDark) {
   let self = this;
   this.mapboxMap_.on('load', function () {
     self.loadData();
-    // TODO: Don't do this in 2D mode.
-    self.mapboxMap_.easeTo({pitch: 55});
+    if (self.view_.isThreeDimensional()) {
+      self.mapboxMap_.easeTo({pitch: 55});
+    }
     if (!!self.nav_.getConfig('focus')) {
       self.flyToCountry(/** @type {string} */ (self.nav_.getConfig('focus')));
     }
@@ -119,21 +116,35 @@ DiseaseMap.prototype.setupSource = function() {
   }
   this.mapboxMap_.addSource(this.sourceId_, {
     'type': 'geojson',
-    'data': this.dataSource_.formatFeatureSet([])
+    'data': this.view_.formatFeatureSet([])
   });
 };
+
+DiseaseMap.prototype.findFirstSymbolId = function() {
+  var layers = this.mapboxMap_.getStyle()['layers'];
+  // Find the index of the first symbol layer in the map style
+  var firstSymbolId;
+  for (var i = 0; i < layers.length; i++) {
+    if (layers[i].type === 'symbol') {
+      firstSymbolId = layers[i].id;
+      break;
+    }
+  }
+  return firstSymbolId;
+}
 
 DiseaseMap.prototype.setupLayers = function() {
   if (!!this.mapboxMap_.getLayer(this.layerId_)) {
     return;
   }
 
+  const firstSymbolId = this.findFirstSymbolId();
   this.mapboxMap_.addLayer({
     'id': this.layerId_,
-    'type': this.dataSource_.getType(),
+    'type': this.view_.getType(),
     'source': this.sourceId_,
-    'paint': this.dataSource_.getPaint(),
-  });
+    'paint': this.view_.getPaint(),
+  }, firstSymbolId);
   // TODO: we might want to restore the 'new' layer.
   // self.addLayer('daily', 'new', 'cornflowerblue');
 };
@@ -161,8 +172,9 @@ DiseaseMap.prototype.setStyle = function(isDark) {
   // Not sure why we need to reload the data after a style change.
   this.mapboxMap_.on('styledata', function () {
     self.loadData();
-    // TODO: Don't do this in 2D mode.
-    self.mapboxMap_.easeTo({pitch: 55});
+    if (self.view_.isThreeDimensional()) {
+      self.mapboxMap_.easeTo({pitch: 55});
+    }
   });
   this.mapboxMap_.setStyle(newStyle);
   this.currentStyle_ = newStyle;
@@ -188,66 +200,12 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
 
   let f = e['features'][0];
   let props = f['properties'];
-  let geo_id = props['geoid'];
+  const geo_id = props['geoid'];
   let coordinatesString = geo_id.split('|');
-  let lat = parseFloat(coordinatesString[0]);
-  let lng = parseFloat(coordinatesString[1]);
+  const lat = parseFloat(coordinatesString[0]);
+  const lng = parseFloat(coordinatesString[1]);
 
-  let totalCaseCount = 0;
-  // Country, province, city
-  let location = locationInfo[geo_id].split('|');
-  // Replace country code with name if necessary
-  if (location[2].length == 2) {
-    location[2] = this.dataProvider_.getCountry(location[2]).getName();
-  }
-  const countryName = location[2];
-  const country = this.dataProvider_.getCountryByName(countryName);
-
-  // Remove empty strings
-  location = location.filter(function (el) { return el != ''; });
-  let locationSpan = [];
-  for (let i = 0; i < location.length; i++) {
-    if (i == location.length - 1 && !!country) {
-      // TODO: Restore link to country page.
-      // locationSpan.push('<a target="_blank" href="/c/' +
-                        // country.getCode() + '/">' + location[i] + '</a>');
-      locationSpan.push(location[i]);
-    } else {
-      locationSpan.push(location[i]);
-    }
-  }
-  totalCaseCount = props['total'];
-
-  let content = document.createElement('div');
-  content.innerHTML = '<h3 class="popup-header"><span>' +
-        locationSpan.join(', ') + '</span>: ' + totalCaseCount.toLocaleString() + '</h3>';
-
-  if (this.view_.showHistoricalData()) {
-    let relevantFeaturesByDay = {};
-    const dates = this.dataProvider_.getDates();
-    for (let i = 0; i < dates.length; i++) {
-      const date = dates[i];
-      relevantFeaturesByDay[date] = [];
-      const atomicFeatures = this.dataProvider_.getAtomicFeaturesForDay(date);
-      for (let j = 0; j < atomicFeatures.length; j++) {
-        const feature = atomicFeatures[j];
-        if (!feature) {
-          continue;
-        }
-        if (feature['properties']['geoid'] == geo_id) {
-          relevantFeaturesByDay[date].push(feature);
-        }
-      }
-    }
-
-    let container = document.createElement('div');
-    container.classList.add('chart');
-    Graphing.makeCasesGraph(
-        DataProvider.convertGeoJsonFeaturesToGraphData(
-            relevantFeaturesByDay, 'total'), false /* average */, container,
-        countryName);
-    content.appendChild(container);
-  }
+  const contents = this.view_.getPopupContentsForFeature(f);
 
   // Restore this if we decide to render multiple "world copies" again.
   // Ensure that if the map is zoomed out such that multiple
@@ -256,7 +214,7 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   // while (Math.abs(e['lngLat']['lng'] - lng) > 180) {
     // lng += e['lngLat']['lng'] > lng ? 360 : -360;
   // }
-  this.popup_.setLngLat([lng, lat]).setDOMContent(content);
+  this.popup_.setLngLat([lng, lat]).setDOMContent(contents);
   this.popup_.addTo(this.mapboxMap_);
   let self = this;
   this.popup_.getElement().onmouseleave = function() {
@@ -266,10 +224,10 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
 
 DiseaseMap.prototype.showLegend = function() {
   document.getElementById('legend-header').textContent =
-      this.dataSource_.getLegendTitle();
+      this.view_.getLegendTitle();
   let list = document.getElementById('legend').getElementsByTagName('ul')[0];
   list.innerHTML = '';
-  let items = this.dataSource_.getLegendItems();
+  let items = this.view_.getLegendItems();
   for (let i = 0; i < items.length; i++) {
     list.appendChild(items[i]);
   }

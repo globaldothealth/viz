@@ -20,6 +20,12 @@ constructor(baseUrl) {
   this.countries_ = {};
 
   /**
+   * A map from 2-letter ISO country codes to precise country boundaries.
+   * @private {!Object}
+   */
+  this.countryBoundaries_ = {};
+
+  /**
    * A map from country names to country objects.
    * @private {Object}
    */
@@ -214,6 +220,11 @@ DataProvider.prototype.getCountries = function() {
   return this.countries_;
 };
 
+/** @return {!Object} */
+DataProvider.prototype.getBoundariesForCountry = function(code) {
+  return this.countryBoundaries_[code];
+};
+
 /**
  * @return {!Promise} A promise to return all the necessary basic data needed
  *     for most views.
@@ -336,10 +347,28 @@ DataProvider.prototype.fetchCountryNames = function() {
         let c = new Country(code, name, continent, population, bboxes);
         self.countries_[code] = c;
         self.countriesByName_[name] = c;
+        const centroid = c.getCentroid();
+        locationInfo['' + centroid[1] + '|' + centroid[0]] = '||' + code;
       }
     });
 };
 
+/** @return {!Promise} */
+DataProvider.prototype.fetchCountryBoundaries = function() {
+  let boundaries = Object.keys(this.countryBoundaries_).length;
+  if (!!boundaries) {
+    return Promise.resolve();
+  }
+  let self = this;
+  return fetch('https://raw.githubusercontent.com/ghdsi/common/master/country_boundaries.json')
+    .then(function(response) { return response.json(); })
+    .then(function(jsonData) {
+      for (let i = 0; i < jsonData.length; i++) {
+        let datum = jsonData[i];
+        self.countryBoundaries_[datum['code']] = datum['geometry'];
+      }
+    });
+}
 
 /**
  * Loads the latest case counts from the scraper.

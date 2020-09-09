@@ -26,7 +26,7 @@ class DeployTest(base_test.BaseTest):
             os.system("rm -rf " + TEST_TARGET)
         os.mkdir(TEST_TARGET)
         # Note: set 'quiet' to True for debugging failures.
-        deploy(os.path.join(os.getcwd(), TEST_TARGET), quiet=True)
+        deploy('test-disease', os.path.join(os.getcwd(), TEST_TARGET), quiet=True)
 
         self.check(
             self.target_file_contains("index.html", "google-analytics"),
@@ -35,11 +35,6 @@ class DeployTest(base_test.BaseTest):
         self.check(
             self.target_file_contains("index.html", "<body"),
             "The deployed index file should contain the basic HTML")
-
-        self.check(
-            self.target_file_contains("index.html", "fetchAboutPage"),
-            "The index page needs to make an unobfuscated call "
-            "to 'fetchAboutPage'")
 
         self.check(self.target_file_exists(JAVASCRIPT_BUNDLE),
                    "Javascript should get compiled as part of deployment.")

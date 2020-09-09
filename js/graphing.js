@@ -85,7 +85,7 @@ Graphing.applySlidingWindow = function(data, windowSize) {
  * |DataProvider.convertGeoJsonFeaturesToGraphData|.
  * Returns a DOM element with the requested graph.
  */
-Graphing.makeCasesGraph = function(data, useAverageWindow, container, countryName) {
+Graphing.makeCasesGraph = function(data, useAverageWindow, container) {
 
   const slidingWindowSize = 7;
   const singleCurve = Object.keys(data).length == 2;
@@ -125,7 +125,7 @@ Graphing.makeCasesGraph = function(data, useAverageWindow, container, countryNam
     if (!!info) {
       info = info.split('|');
       // Use the country name.
-      info[2] = countryName;
+      // info[2] = countryName;
       // Remove empty strings.
       info = info.filter(function (el) { return el != ''; });
       label = info.join(', ');

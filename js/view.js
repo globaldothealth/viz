@@ -57,4 +57,5 @@ class View {
 
   /** @abstract  Called when something changes in the configuration. */
   onConfigChanged(config) { };
+
 }
