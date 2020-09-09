@@ -122,8 +122,8 @@ getPaint() {
   // Simple circle paint.
   let colors = ['step', ['get', 'total']];
   // Don't use the last color here (for new cases).
-  for (let i = 0; i < CaseMapDataSource.COLORS.length; i++) {
-    let color = CaseMapDataSource.COLORS[i];
+  for (let i = 0; i < CaseMapView.COLORS.length; i++) {
+    let color = CaseMapView.COLORS[i];
     colors.push(color[0]);
     if (color.length > 2) {
       colors.push(color[2]);

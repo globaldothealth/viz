@@ -5,7 +5,7 @@ class CaseMapView extends MapView {
  * @param {Nav} nav
  */
 constructor(dataProvider, nav) {
-  super(dataProvider, new CaseMapDataSource(dataProvider), nav);
+  super(dataProvider, nav);
 }
 
 getId() {
@@ -26,8 +26,8 @@ getType() {
 
 getPaint() {
   let colors = ['step', ['get', 'total']];
-  for (let i = 0; i < CaseMapDataSource.COLORS.length; i++) {
-    let color = CaseMapDataSource.COLORS[i];
+  for (let i = 0; i < CaseMapView.COLORS.length; i++) {
+    let color = CaseMapView.COLORS[i];
     colors.push(color[0]);
     if (color.length > 2) {
       colors.push(color[2]);
@@ -99,8 +99,8 @@ getLegendTitle() {
 
 getLegendItems() {
   let items = [];
-  for (let i = 0; i < CaseMapDataSource.COLORS.length; i++) {
-    let color = CaseMapDataSource.COLORS[i];
+  for (let i = 0; i < CaseMapView.COLORS.length; i++) {
+    let color = CaseMapView.COLORS[i];
     let item = document.createElement('li');
     let circle = document.createElement('span');
     circle.className = 'circle';

@@ -6,7 +6,7 @@ class TwoDCoverageMapView extends MapView {
  * @param {Nav} nav
  */
 constructor(dataProvider, nav) {
-  super(dataProvider, new TwoDCoverageMapDataSource(dataProvider), nav);
+  super(dataProvider, nav);
 
   /** @private @const */
   this.colorScale_ = TwoDCoverageMapView.initializeColorScale();
@@ -121,7 +121,7 @@ getLegendItems() {
   gradientLegendItem.style.height = '120px';
 
   let gradientSide = document.createElement('div');
-  const gradientStops = TwoDCoverageMapDataSource.COLORS.join(',');
+  const gradientStops = TwoDCoverageMapView.COLORS.join(',');
   gradientSide.style.width = '15px';
   gradientSide.style.backgroundImage = 'linear-gradient(' + gradientStops + ')';
 
@@ -150,9 +150,9 @@ getLegendItems() {
 TwoDCoverageMapView.initializeColorScale = function() {
   const stops = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
   return MapDataSource.makeColorScale(
-    hexToRgb(TwoDCoverageMapDataSource.COLORS[0]),
-    hexToRgb(TwoDCoverageMapDataSource.COLORS[1]),
-    hexToRgb(TwoDCoverageMapDataSource.COLORS[2]),
+    hexToRgb(TwoDCoverageMapView.COLORS[0]),
+    hexToRgb(TwoDCoverageMapView.COLORS[1]),
+    hexToRgb(TwoDCoverageMapView.COLORS[2]),
     stops);
 }
 

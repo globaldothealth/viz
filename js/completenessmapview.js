@@ -5,10 +5,10 @@ class CompletenessMapView extends MapView {
  * @param {Nav} nav
  */
 constructor(dataProvider, nav) {
-  super(dataProvider, new CompletenessMapDataSource(dataProvider), nav);
+  super(dataProvider, nav);
 
   /** @private @const */
-  this.colorScale_ = CompletenessMapDataSource.initializeColorScale();
+  this.colorScale_ = CompletenessMapView.initializeColorScale();
 }
 
 getType() {
