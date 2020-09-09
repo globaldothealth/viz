@@ -15,6 +15,7 @@ def compile_js(quiet=False):
         "--js js/util.js "
         "--js js/view.js "
         "--js js/mapview.js "
+        "--js js/percountrymapview.js "
         "--js js/completenessview.js "
         "--js js/freshnessmapview.js "
         "--js js/country.js "
