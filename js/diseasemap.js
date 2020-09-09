@@ -2,17 +2,13 @@ class DiseaseMap {
 
 /**
  * @param {DataProvider} dataProvider
- * @param {!MapDataSource} dataSource
  * @param {MapView} view
  * @param {Nav} nav
  */
-constructor(dataProvider, dataSource, view, nav) {
+constructor(dataProvider, view, nav) {
 
   /** @private */
   this.mapboxMap_ = null;
-
-  /** @private @const {!MapDataSource} */
-  this.dataSource_ = dataSource;
 
   /** @private @const {MapView} */
   this.view_ = view;
@@ -79,7 +75,7 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   // the map is finished loading.
   let source = this.mapboxMap_.getSource(this.sourceId_);
   if (!!source) {
-    source.setData(this.dataSource_.getFeatureSet());
+    source.setData(this.view_.getFeatureSet());
   }
 };
 
@@ -120,7 +116,7 @@ DiseaseMap.prototype.setupSource = function() {
   }
   this.mapboxMap_.addSource(this.sourceId_, {
     'type': 'geojson',
-    'data': this.dataSource_.formatFeatureSet([])
+    'data': this.view_.formatFeatureSet([])
   });
 };
 
@@ -145,9 +141,9 @@ DiseaseMap.prototype.setupLayers = function() {
   const firstSymbolId = this.findFirstSymbolId();
   this.mapboxMap_.addLayer({
     'id': this.layerId_,
-    'type': this.dataSource_.getType(),
+    'type': this.view_.getType(),
     'source': this.sourceId_,
-    'paint': this.dataSource_.getPaint(),
+    'paint': this.view_.getPaint(),
   }, firstSymbolId);
   // TODO: we might want to restore the 'new' layer.
   // self.addLayer('daily', 'new', 'cornflowerblue');
@@ -209,7 +205,7 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   const lat = parseFloat(coordinatesString[0]);
   const lng = parseFloat(coordinatesString[1]);
 
-  const contents = this.dataSource_.getPopupContentsForFeature(f);
+  const contents = this.view_.getPopupContentsForFeature(f);
 
   // Restore this if we decide to render multiple "world copies" again.
   // Ensure that if the map is zoomed out such that multiple
@@ -228,10 +224,10 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
 
 DiseaseMap.prototype.showLegend = function() {
   document.getElementById('legend-header').textContent =
-      this.dataSource_.getLegendTitle();
+      this.view_.getLegendTitle();
   let list = document.getElementById('legend').getElementsByTagName('ul')[0];
   list.innerHTML = '';
-  let items = this.dataSource_.getLegendItems();
+  let items = this.view_.getLegendItems();
   for (let i = 0; i < items.length; i++) {
     list.appendChild(items[i]);
   }

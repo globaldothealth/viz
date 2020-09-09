@@ -19,7 +19,6 @@ def compile_js(quiet=False):
         "--js js/freshnessmapview.js "
         "--js js/country.js "
         "--js js/mapdatasource.js "
-        "--js js/twodcoveragemapdatasource.js "
         "--js js/casemapdatasource.js "
         "--js js/historicalmapdatasource.js "
         "--js js/completenessmapdatasource.js "
