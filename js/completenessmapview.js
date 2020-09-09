@@ -125,15 +125,15 @@ getLegendItems() {
 }  // CompletenessMapView
 
 CompletenessMapView.initializeColorScale = function() {
-  // These RGB values correspond to the hex colors below. We use a mid-point
-  // because blending just two colors doesn't look very nice.
-  const complete = [11, 179, 0];  // green
-  const mid = [255, 169, 0];  // orange
-  const incomplete = [255, 0, 0];  // red
   const stops = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  return MapView.makeColorScale(complete, mid, incomplete, stops);
+  return MapView.makeColorScale(
+    hexToRgb(CompletenessMapView.COLORS[0]),
+    hexToRgb(CompletenessMapView.COLORS[1]),
+    hexToRgb(CompletenessMapView.COLORS[2]),
+    stops);
 }
 
+// We use a mid-point because blending just two colors doesn't look very nice.
 CompletenessMapView.COLORS = [
   '#0bb300',  // green
   '#ffa900',  // orange
