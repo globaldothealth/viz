@@ -149,7 +149,7 @@ getLegendItems() {
 
 TwoDCoverageMapView.initializeColorScale = function() {
   const stops = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  return MapDataSource.makeColorScale(
+  return MapView.makeColorScale(
     hexToRgb(TwoDCoverageMapView.COLORS[0]),
     hexToRgb(TwoDCoverageMapView.COLORS[1]),
     hexToRgb(TwoDCoverageMapView.COLORS[2]),

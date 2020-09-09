@@ -99,7 +99,7 @@ getLegendItems() {
   gradientLegendItem.style.height = '120px';
 
   let gradientSide = document.createElement('div');
-  const gradientStops = CompletenessMapDataSource.COLORS.join(',');
+  const gradientStops = CompletenessMapView.COLORS.join(',');
   gradientSide.style.width = '15px';
   gradientSide.style.backgroundImage = 'linear-gradient(' + gradientStops + ')';
 
@@ -122,7 +122,7 @@ getLegendItems() {
 
   return [gradientLegendItem];
 }
-}  // CompletenessMapDataSource
+}  // CompletenessMapView
 
 CompletenessMapView.initializeColorScale = function() {
   // These RGB values correspond to the hex colors below. We use a mid-point
@@ -131,7 +131,7 @@ CompletenessMapView.initializeColorScale = function() {
   const mid = [255, 169, 0];  // orange
   const incomplete = [255, 0, 0];  // red
   const stops = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  return MapDataSource.makeColorScale(complete, mid, incomplete, stops);
+  return MapView.makeColorScale(complete, mid, incomplete, stops);
 }
 
 CompletenessMapView.COLORS = [

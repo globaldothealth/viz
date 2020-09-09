@@ -5,10 +5,10 @@ class FreshnessMapView extends MapView {
  * @param {Nav} nav
  */
 constructor(dataProvider, nav) {
-  super(dataProvider, new FreshnessMapDataSource(dataProvider), nav);
+  super(dataProvider, nav);
 
   /** @private @const */
-  this.colorScale_ = FreshnessMapDataSource.initializeColorScale();
+  this.colorScale_ = FreshnessMapView.initializeColorScale();
 }
 
 getType() {
@@ -108,7 +108,7 @@ getLegendItems() {
   gradientLegendItem.style.height = '120px';
 
   let gradientSide = document.createElement('div');
-  const gradientStops = CompletenessMapDataSource.COLORS.join(',');
+  const gradientStops = CompletenessMapView.COLORS.join(',');
   gradientSide.style.width = '15px';
   gradientSide.style.backgroundImage = 'linear-gradient(' + gradientStops + ')';
 
@@ -141,7 +141,7 @@ FreshnessMapView.initializeColorScale = function() {
   const mid = [255, 169, 0];  // orange
   const old = [255, 0, 0];  // red
   const stops = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  return MapDataSource.makeColorScale(old, mid, recent, stops);
+  return MapView.makeColorScale(old, mid, recent, stops);
 }
 
 FreshnessMapView.COLORS = [
