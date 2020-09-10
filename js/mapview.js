@@ -42,11 +42,7 @@ fetchData() {
   let dataPromise = new Promise(function(resolve, reject) {
     superPromise.then(function() {
       return dp.fetchLatestDailySlice.bind(dp)();
-    }).then(function() {
-      // } else {
-        resolve();
-      // }
-    });
+    }).then(function() { resolve(); });
   });
   let mapPromise = new Promise(function(resolve, reject) {
     const mapBoxId = 'mapbox';
