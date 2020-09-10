@@ -317,7 +317,7 @@ input[type=text] {
 }
 
 #logo {
-  height: 7ex;
+  height: 6ex;
   left: 2ex;
   position: fixed;
   top: 5ex;
@@ -326,16 +326,16 @@ input[type=text] {
 
 #logo img {
   border-right: 1px solid #555;
-  margin-right: 1ex;
-  padding-right: 1ex;
+  margin-right: 0.6ex;
+  padding-right: 0.6ex;
   object-fit: contain;
   vertical-align: middle;
-  width: 7ex;
+  width: 5ex;
 }
 
 #logo span {
   color: #0094e2;
-  font-size: 7ex;
+  font-size: 5ex;
   vertical-align: middle;
 }
 
