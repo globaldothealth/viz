@@ -316,6 +316,33 @@ input[type=text] {
   margin: 2ex 0;
 }
 
+#sidebar #ghlist {
+  background: #edf3f1;
+  border-radius: 1ex;
+  color: #575c5f;
+  cursor: pointer;
+  height: 5ex;
+  margin-top: 2ex;
+  padding: 1ex 0;
+  text-align: center;
+}
+
+#sidebar #ghlist img {
+  border-right: 1px solid #555;
+  height: 3ex;
+  margin-left: 3ex;
+  margin-right: 0.6ex;
+  object-fit: contain;
+  padding-right: 0.6ex;
+  vertical-align: middle;
+}
+
+#sidebar #ghlist span {
+  color: #137564;
+  font-size: 3ex;
+  vertical-align: middle;
+}
+
 #logo {
   height: 6ex;
   left: 2ex;
