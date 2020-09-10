@@ -45,6 +45,14 @@ class View {
     document.body.classList.add(this.getId());
   }
 
+  renderLogo() {
+    let logoEl = document.createElement('div');
+    logoEl.classList.add('logo');
+    logoEl.setAttribute('id', 'logo');
+    logoEl.innerHTML = '<img src="/img/gh_logo.svg" /><span>Map</span>';
+    document.getElementById('app').appendChild(logoEl);
+  }
+
   /** @return {boolean} Whether this view is currently shown. */
   isShown() {
     return document.body.classList.contains(this.getId());

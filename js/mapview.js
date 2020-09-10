@@ -16,9 +16,6 @@ constructor(dataProvider, nav) {
 
   /** @private {SideBar} */
   this.sideBar_ = null;
-
-  /** @private {boolean} */
-  this.firstRender_ = true;
 }
 
 showHistoricalData() {
@@ -45,11 +42,7 @@ fetchData() {
   let dataPromise = new Promise(function(resolve, reject) {
     superPromise.then(function() {
       return dp.fetchLatestDailySlice.bind(dp)();
-    }).then(function() {
-      // } else {
-        resolve();
-      // }
-    });
+    }).then(function() { resolve(); });
   });
   let mapPromise = new Promise(function(resolve, reject) {
     const mapBoxId = 'mapbox';
@@ -83,10 +76,7 @@ render() {
 
   this.sideBar_.render();
   this.sideBar_.renderCountryList();
-  if (this.firstRender_) {
-    this.sideBar_.toggle();
-  }
-  this.firstRender_ = false;
+  this.renderLogo();
 }
 
 onMapReady() {
