@@ -125,6 +125,7 @@ render() {
   if (this.nav_.getConfig('autodrive')) {
     this.rankAdvance(true, 1);
   }
+  this.renderLogo();
 }
 
 setUpScale() {

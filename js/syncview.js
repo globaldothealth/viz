@@ -200,6 +200,7 @@ render() {
       STARTING_CASE_COUNT.toLocaleString() + '<sup>th</sup> case</h2><div id="filters"></div>';
   this.renderFilters();
   this.updateGraph();
+  this.renderLogo();
 }
 
 onConfigChanged(config) { };

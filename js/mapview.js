@@ -76,6 +76,7 @@ render() {
 
   this.sideBar_.render();
   this.sideBar_.renderCountryList();
+  this.renderLogo();
 }
 
 onMapReady() {

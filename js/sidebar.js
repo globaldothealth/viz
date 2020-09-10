@@ -59,7 +59,7 @@ SideBar.prototype.flyToCountry = function(event) {
 }
 
 SideBar.prototype.render = function() {
-  this.element_.innerHTML = '<div id="sidebar-tab"></div><div class="sidebar-header"><img id="logo" src="/img/gh_logo.svg" /><h1 class="sidebar-title">{{TITLE}}</h1></div><div id="latest-global"></div><div id="per-capita-container"><input type="checkbox" id="percapita"><label for="percapita">Per capita</label></div><div id="location-list"></div>';
+  this.element_.innerHTML = '<div id="sidebar-tab"></div><div class="sidebar-header"><h1 class="sidebar-title">{{TITLE}}</h1></div><div id="latest-global"></div><div id="per-capita-container"><input type="checkbox" id="percapita"><label for="percapita">Per capita</label></div><div id="location-list"></div>';
   const tabEl = document.getElementById('sidebar-tab');
   let icon = document.createElement('span');
   icon.setAttribute('id', 'sidebar-tab-icon');
