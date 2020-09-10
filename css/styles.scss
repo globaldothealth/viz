@@ -273,22 +273,21 @@ input[type=text] {
 #sidebar {
   backdrop-filter: blur(.5rem);
   background-color: $sidebar-bgcolor-dark;
-  box-shadow: 0 20px 30px 1px rgba(0, 0, 0, 0.1);
   border-radius: 1ex;
+  bottom: 25%;
+  box-shadow: 0 20px 30px 1px rgba(0, 0, 0, 0.1);
   color: #aaa;
   display: flex;
   flex-direction: column;
+  height: 70%;
+  left: 5ex;
   padding: 2ex;
   position: fixed;
-  height: 50%;
-  left: 5ex;
   margin-top: 0;
+  top: 15%;
   transition: left 0.2s;
-  top: 25%;
-  bottom: 25%;
   width: $sidebar-width;
   z-index: 3;
-  -webkit-backdrop-filter: blur(.5rem);
 }
 
 .sidebar-hidden #sidebar {

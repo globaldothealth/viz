@@ -16,9 +16,6 @@ constructor(dataProvider, nav) {
 
   /** @private {SideBar} */
   this.sideBar_ = null;
-
-  /** @private {boolean} */
-  this.firstRender_ = true;
 }
 
 showHistoricalData() {
@@ -83,10 +80,6 @@ render() {
 
   this.sideBar_.render();
   this.sideBar_.renderCountryList();
-  if (this.firstRender_) {
-    this.sideBar_.toggle();
-  }
-  this.firstRender_ = false;
 }
 
 onMapReady() {
