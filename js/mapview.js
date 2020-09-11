@@ -95,10 +95,6 @@ unload() {
   this.map_.onUnload();
 }
 
-getSource() {
-  return {};
-}
-
 getType() {
   return this.isThreeDimensional() ? 'fill-extrusion' : 'circle';
 }
