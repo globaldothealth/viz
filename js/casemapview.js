@@ -20,10 +20,6 @@ isThreeDimensional() {
   return true;
 }
 
-getType() {
-  return 'fill-extrusion';
-}
-
 getPaint() {
   let colors = ['step', ['get', 'total']];
   for (let i = 0; i < CaseMapView.COLORS.length; i++) {

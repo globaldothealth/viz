@@ -69,6 +69,9 @@ SideBar.prototype.render = function() {
   document.getElementById('percapita').addEventListener('change',
       this.updateCountryListCounts.bind(this));
   this.renderLatestCounts();
+  document.getElementById('ghlist').onclick = function(e) {
+    window.location.href = 'https://curator.ghdsi.org/cases';
+  };
 };
 
 SideBar.prototype.renderLatestCounts = function() {

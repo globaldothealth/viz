@@ -18,10 +18,6 @@ constructor(dataProvider, nav) {
   this.sideBar_ = null;
 }
 
-showHistoricalData() {
-  return false;
-}
-
 isThreeDimensional() {
   return false;
 }
