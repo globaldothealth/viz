@@ -19,10 +19,6 @@ getTitle() {
   return '🗺  Historical';
 };
 
-getType() {
-  return 'fill-extrusion';
-}
-
 isThreeDimensional() {
   return true;
 }

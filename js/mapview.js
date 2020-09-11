@@ -104,7 +104,7 @@ getSource() {
 }
 
 getType() {
-  return 'circle';
+  return this.isThreeDimensional() ? 'fill-extrusion' : 'circle';
 }
 
 getPaint() {
@@ -154,7 +154,7 @@ getPopupContentsForFeature(f) {
 }
 
 getLegendTitle() {
-  return 'Untitled';
+  return this.getTitle();
 }
 
 getLegendItems() {
