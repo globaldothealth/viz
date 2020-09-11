@@ -23,10 +23,6 @@ fetchData() {
     self.dataProvider_.fetchCountryBoundaries.bind(self.dataProvider_));
 }
 
-isThreeDimensional() {
-  return false;
-}
-
 getType() {
   return 'fill';
 }
