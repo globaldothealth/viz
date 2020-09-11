@@ -19,8 +19,28 @@ getTitle() {
   return '🗺  Historical';
 };
 
+getType() {
+  return 'fill-extrusion';
+}
+
 isThreeDimensional() {
   return true;
+}
+
+getPaint() {
+  let colors = ['step', ['get', 'total']];
+  for (let i = 0; i < CaseMapView.COLORS.length; i++) {
+    let color = CaseMapView.COLORS[i];
+    colors.push(color[0]);
+    if (color.length > 2) {
+      colors.push(color[2]);
+    }
+  }
+  return {
+    'fill-extrusion-height': ['get', 'height'],
+    'fill-extrusion-color': colors,
+    'fill-extrusion-opacity': 0.8,
+  };
 }
 
 render() {
@@ -80,6 +100,10 @@ getFeatureSet() {
   let dehydratedFeatures = this.dataProvider_.getAtomicFeaturesForDay(currentIsoDate);
   return this.formatFeatureSet(dehydratedFeatures.map(
       f => this.formatFeature(f, true /* 3D */)));
+}
+
+getHeightForFeature(feature) {
+  return 10 * Math.sqrt(100000 * feature['properties']['total']);
 }
 
 getPopupContentsForFeature(f) {
