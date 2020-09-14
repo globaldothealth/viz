@@ -24,7 +24,7 @@ isThreeDimensional() {
 }
 
 getPaint() {
-  let colors = ['step', ['get', 'total']];
+  let colors = ['step', ['get', 'cum_conf']];
 
   for (let i = 0; i < this.colorScale_.length; i++) {
     let color = this.colorScale_[i];
@@ -43,12 +43,11 @@ getPaint() {
 }
 
 getHeightForFeature(feature) {
-  return 10 * Math.sqrt(100000 * feature['properties']['total']);
+  return 10 * Math.sqrt(100 * feature['cum_conf']);
 }
 
 getFeatureSet() {
-  const latestDate = this.dataProvider_.getLatestDate();
-  let dehydratedFeatures = this.dataProvider_.getAtomicFeaturesForDay(latestDate);
+  let dehydratedFeatures = this.dataProvider_.getLatestAggregateData();
   return this.formatFeatureSet(dehydratedFeatures.map(
       f => this.formatFeature(f, true /* 3D */)));
 }
@@ -95,26 +94,43 @@ getPopupContentsForFeature(f) {
   return content;
 }
 
+formatFeature(inFeature, threeD) {
+  console.log(inFeature);
+  return inFeature;
+}
+
 getLegendTitle() {
   return 'Cases';
 }
 
 getLegendItems() {
-  let items = [];
-  for (let i = 0; i < CaseMapView.COLORS.length; i++) {
-    let color = CaseMapView.COLORS[i];
-    let item = document.createElement('li');
-    let circle = document.createElement('span');
-    circle.className = 'circle';
-    circle.style.backgroundColor = color[0];
-    let label = document.createElement('span');
-    label.className = 'label';
-    label.textContent = color[1];
-    item.appendChild(circle);
-    item.appendChild(label);
-    items.push(item);
-  }
-  return items;
+  let gradientLegendItem = document.createElement('div');
+  gradientLegendItem.style.display = 'flex';
+  gradientLegendItem.style.height = '120px';
+
+  let gradientSide = document.createElement('div');
+  const gradientStops = PerCountryMapView.COLORS.join(',');
+  gradientSide.style.width = '15px';
+  gradientSide.style.backgroundImage = 'linear-gradient(' + gradientStops + ')';
+
+  let textSide = document.createElement('div');
+  textSide.style.display = 'flex';
+  textSide.style.flexDirection = 'column';
+  textSide.style.marginLeft = '5px';
+  let textSideTop = document.createElement('div');
+  let textSideMiddle = document.createElement('div');
+  let textSideBottom = document.createElement('div');
+  textSideTop.textContent = '6M';
+  textSideBottom.textContent = '0';
+  textSideMiddle.style.flexGrow = 1;
+  textSide.appendChild(textSideTop);
+  textSide.appendChild(textSideMiddle);
+  textSide.appendChild(textSideBottom);
+
+  gradientLegendItem.appendChild(gradientSide);
+  gradientLegendItem.appendChild(textSide);
+
+  return [gradientLegendItem];
 }
 
 }  // AggregateMapView
