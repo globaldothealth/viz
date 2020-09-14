@@ -16,7 +16,7 @@ getId() {
 }
 
 getTitle() {
-  return '🗺  Aggregates';
+  return 'Aggregates';
 }
 
 isThreeDimensional() {

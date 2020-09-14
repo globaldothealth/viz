@@ -16,7 +16,7 @@ getId() {
 }
 
 getTitle() {
-  return '🗺  Historical';
+  return 'Historical';
 };
 
 render() {
