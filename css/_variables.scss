@@ -9,9 +9,11 @@ $text-color-dark: #fff;
 $sidebar-bgcolor-light: rgba(255, 255, 255, 1);
 $sidebar-bgcolor-dark: rgba(59, 59, 59, 1);
 
-$topbar-bgcolor-light: #007aec;
+$accent-color: #0094e2;
+
+$topbar-bgcolor-light: $accent-color;
 $topbar-bgcolor-dark: $sidebar-bgcolor-dark;
-$topbar-hover-bgcolor-light: #1484ed;
+$topbar-hover-bgcolor-light: lighten($accent-color, 3%);
 $topbar-hover-bgcolor-dark: rgba(45, 45, 45, .8);
 $topbar-text-color-light: #fff;
 $topbar-text-color-dark: $text-color-dark;
