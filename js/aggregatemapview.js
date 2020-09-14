@@ -43,7 +43,13 @@ getPaint() {
 }
 
 getHeightForFeature(feature) {
-  return 10 * Math.sqrt(100 * feature['cum_conf']);
+  return 10 * Math.sqrt(50000 * feature['cum_conf']);
+}
+
+getSizeForFeature(feature) {
+  // Since this map is showning country-wide features only, make them a bit
+  // large.
+  return 2;
 }
 
 getFeatureSet() {
@@ -61,7 +67,6 @@ getPopupContentsForFeature(f) {
   // Country, province, city
   let location = locationInfo[geo_id];
   let locationSpan = [];
-  console.log(location);
   if (!!location) {
     location = location.split('|');
     // Replace country code with name if necessary
@@ -95,8 +100,12 @@ getPopupContentsForFeature(f) {
 }
 
 formatFeature(inFeature, threeD) {
-  console.log(inFeature);
-  return inFeature;
+  let feature = JSON.parse(JSON.stringify(inFeature));
+  const country = this.dataProvider_.getCountry(inFeature['code']);
+  const centroid = country.getCentroid();
+  feature['properties'] = {'geoid': centroid[1] + '|' + centroid[0]};
+  feature['properties']['cum_conf'] = inFeature['cum_conf'];
+  return super.formatFeature(feature, threeD);
 }
 
 getLegendTitle() {
