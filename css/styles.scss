@@ -97,13 +97,14 @@ body.rank .toggles {
 }
 
 body.rank .inview-toggle {
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
   display: inline-block;
   margin: 2ex 4ex;
   text-align: center;
 }
 
 body.rank .inview-toggle div {
-  border: 1px solid #999;
   cursor: pointer;
   display: inline-block;
   padding: 10px;
@@ -111,8 +112,8 @@ body.rank .inview-toggle div {
 }
 
 body.rank .inview-toggle div.active {
-  color: black;
-  background: cornflowerblue;
+  color: white;
+  background: $accent-color;
 }
 
 body.rank #rank_content {
@@ -233,20 +234,24 @@ input[type=text] {
   }
 }
 
+#topbar-container {
+  display: flex;
+  justify-content: space-around;
+  position: fixed;
+  top: 2ex;
+  width: 100%;
+  z-index: 4;
+}
+
 #topbar {
+  border-radius: $card-border-radius;
+  box-shadow: $card-box-shadow;
   display: flex;
   flex-direction: row;
   font-size: 90%;
   justify-content: space-between;
-  left: 0;
-  margin: 0;
-  padding: 0;
-  position: fixed;
-  right: 0;
-  text-transform: uppercase;
-  top: 0;
-  width: 100%;
-  z-index: 4;
+  margin: 0 auto;
+  padding: 0 1ex;
 }
 
 .fullscreen #topbar,
@@ -262,9 +267,10 @@ input[type=text] {
 }
 
 #topbar .navlink {
-  border-left-style: solid;
-  border-left-width: 1px;
-  padding: 1ex 5px;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  margin: 0;
+  padding: 1.5ex 3ex;
 }
 
 #settings-menu {
@@ -277,9 +283,9 @@ input[type=text] {
 #sidebar {
   backdrop-filter: blur(.5rem);
   background-color: $sidebar-bgcolor-dark;
-  border-radius: 1ex;
+  border-radius: $card-border-radius;
   bottom: 25%;
-  box-shadow: 0 20px 30px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: $card-box-shadow;
   color: #aaa;
   display: flex;
   flex-direction: column;
@@ -351,7 +357,7 @@ input[type=text] {
   height: 6ex;
   left: 2ex;
   position: fixed;
-  top: 5ex;
+  top: $topbar-height;
   z-index: 10;
 }
 

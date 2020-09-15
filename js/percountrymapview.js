@@ -91,7 +91,7 @@ PerCountryMapView.initializeColorScale = function() {
 }
 
 PerCountryMapView.COLORS = [
-  '#0093df',  // vibrant blue
-  '#6bbde9',  // light blue
-  '#e4eef3',  // nearly white
+  '#0070d4',  // vibrant blue
+  '#7eace1',  // light blue
+  '#ffffff',  // nearly white
 ];

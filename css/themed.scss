@@ -26,10 +26,11 @@ body.dark {
 
 .light #topbar div.navlink:hover {
   background-color: $topbar-hover-bgcolor-light;
+  color: $topbar-hover-text-color-light;
 }
 
 .light #topbar div.active {
-  border-bottom: 2px solid $topbar-nav-active-border-color-light;
+  border-bottom: 4px solid $topbar-nav-active-border-color-light;
 }
 
 .light #settings-menu {
@@ -48,10 +49,11 @@ body.dark {
 
 .dark #topbar div.navlink:hover {
   background-color: $topbar-hover-bgcolor-dark;
+  color: $topbar-hover-text-color-dark;
 }
 
 .dark #topbar div.active {
-  border-bottom-color: $topbar-nav-active-border-color-dark;
+  border-bottom: 4px solid $topbar-nav-active-border-color-dark;
 }
 
 .dark #settings-menu {

@@ -10,19 +10,23 @@ $sidebar-bgcolor-light: rgba(255, 255, 255, 1);
 $sidebar-bgcolor-dark: rgba(59, 59, 59, 1);
 
 $accent-color: #0094e2;
+$card-border-radius: 1ex;
+$card-box-shadow: 0 10px 30px 1px rgba(0, 0, 0, 0.1);
 
-$topbar-bgcolor-light: $accent-color;
+$topbar-bgcolor-light: $sidebar-bgcolor-light;
 $topbar-bgcolor-dark: $sidebar-bgcolor-dark;
-$topbar-hover-bgcolor-light: lighten($accent-color, 3%);
+$topbar-hover-bgcolor-light: lighten($accent-color, 50%);
 $topbar-hover-bgcolor-dark: rgba(45, 45, 45, .8);
-$topbar-text-color-light: #fff;
+$topbar-text-color-light: $text-color-light;
 $topbar-text-color-dark: $text-color-dark;
+$topbar-hover-text-color-light: $topbar-text-color-light;
+$topbar-hover-text-color-dark: $topbar-text-color-dark;
 
 $topbar-nav-border-color-light: $topbar-bgcolor-light;
 $topbar-nav-border-color-dark: rgba(255, 255, 255, 0.2);
 
-$topbar-nav-active-border-color-light: $topbar-text-color-light;
-$topbar-nav-active-border-color-dark: rgba(255, 255, 255, 0.2);
+$topbar-nav-active-border-color-light: $accent-color;
+$topbar-nav-active-border-color-dark: $accent-color;
 
 $legend-group-10: #67009E;
 $legend-group-100: #921694;
@@ -48,7 +52,7 @@ $page-padding-end: 1rem;
 $sidebar-width: 18rem;
 $sidebar-margin-end: 1rem;
 
-$topbar-height: 3.5ex;
+$topbar-height: 9ex;
 
 @media screen and (max-width: $breakpoint-md-max) {
   $page-padding-end: 0.5rem;

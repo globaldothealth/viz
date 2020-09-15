@@ -146,7 +146,7 @@ getLegendItems() {
 
 AggregateMapView.initializeColorScale = function() {
   const max_cases = 6000000;
-  const stops = [0, max_cases / 2, max_cases];
+  const stops = [0, max_cases / 1.3, max_cases];
   return MapView.makeColorScale(
     hexToRgb(PerCountryMapView.COLORS[0]),
     hexToRgb(PerCountryMapView.COLORS[1]),
