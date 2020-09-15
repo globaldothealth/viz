@@ -14,7 +14,7 @@ getId() {
 }
 
 getTitle() {
-  return '🗺  Coverage';
+  return 'Coverage';
 }
 
 getFeatureSet() {

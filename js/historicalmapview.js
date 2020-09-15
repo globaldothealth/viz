@@ -1,4 +1,4 @@
-class HistoricalMapView extends MapView {
+class HistoricalMapView extends CaseMapView {
 
 /**
  * @param {DataProvider} dataProvider
@@ -16,12 +16,8 @@ getId() {
 }
 
 getTitle() {
-  return '🗺  Historical';
+  return 'Historical';
 };
-
-isThreeDimensional() {
-  return true;
-}
 
 render() {
   super.render();
@@ -42,10 +38,6 @@ render() {
         }
       });
   }, 1000);
-}
-
-showHistoricalData() {
-  return true;
 }
 
 /** @param {string} date */

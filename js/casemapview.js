@@ -13,15 +13,11 @@ getId() {
 }
 
 getTitle() {
-  return '🗺  Cases';
+  return 'Cases';
 }
 
 isThreeDimensional() {
   return true;
-}
-
-getType() {
-  return 'fill-extrusion';
 }
 
 getPaint() {

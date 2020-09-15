@@ -25,7 +25,7 @@ function filterList() {
   let filter = document.getElementById('location-filter').value.toUpperCase();
   let ul = document.getElementById('location-list');
   let list_items = document.getElementById(
-      'location-list').getElementsByTagName('li');
+      'location-list').getElementsByTagName('div');
   let clearFilter = document.getElementById('clear-filter');
   // Loop through all list items, and hide those who don't match the search
   // query.
@@ -37,7 +37,7 @@ function filterList() {
 
     // Show/hide matching list items.
     const show = txtValue.toUpperCase().indexOf(filter) != -1;
-    list_items[i].style.display = show ? 'list-item' : 'none';
+    list_items[i].style.display = show ? 'block' : 'none';
   }
 }
 
@@ -69,6 +69,9 @@ SideBar.prototype.render = function() {
   document.getElementById('percapita').addEventListener('change',
       this.updateCountryListCounts.bind(this));
   this.renderLatestCounts();
+  document.getElementById('ghlist').onclick = function(e) {
+    window.location.href = 'https://curator.ghdsi.org/cases';
+  };
 };
 
 SideBar.prototype.renderLatestCounts = function() {
@@ -123,7 +126,7 @@ SideBar.prototype.renderCountryList = function() {
         legendGroup = '2000';
       }
 
-      let item = document.createElement('li');
+      let item = document.createElement('div');
       let button = document.createElement('button');
       button.setAttribute('country', code);
       button.onclick = this.flyToCountry.bind(this);

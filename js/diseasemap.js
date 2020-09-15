@@ -223,11 +223,14 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
 }
 
 DiseaseMap.prototype.showLegend = function() {
+  const items = this.view_.getLegendItems();
+  if (!items.length) {
+    return;
+  }
   document.getElementById('legend-header').textContent =
       this.view_.getLegendTitle();
   let list = document.getElementById('legend').getElementsByTagName('ul')[0];
   list.innerHTML = '';
-  let items = this.view_.getLegendItems();
   for (let i = 0; i < items.length; i++) {
     list.appendChild(items[i]);
   }

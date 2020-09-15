@@ -18,10 +18,6 @@ constructor(dataProvider, nav) {
   this.sideBar_ = null;
 }
 
-showHistoricalData() {
-  return false;
-}
-
 isThreeDimensional() {
   return false;
 }
@@ -99,12 +95,8 @@ unload() {
   this.map_.onUnload();
 }
 
-getSource() {
-  return {};
-}
-
 getType() {
-  return 'circle';
+  return this.isThreeDimensional() ? 'fill-extrusion' : 'circle';
 }
 
 getPaint() {
@@ -154,7 +146,7 @@ getPopupContentsForFeature(f) {
 }
 
 getLegendTitle() {
-  return 'Untitled';
+  return this.getTitle();
 }
 
 getLegendItems() {

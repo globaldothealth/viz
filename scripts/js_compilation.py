@@ -28,6 +28,7 @@ def compile_js(quiet=False):
         "--js js/sidebar.js "
         "--js js/countrydashboard.js "
         "--js js/twodcoveragemapview.js "
+        "--js js/aggregatemapview.js "
         "--js js/casemapview.js "
         "--js js/completenessmapview.js "
         "--js js/historicalmapview.js "

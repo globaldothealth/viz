@@ -20,7 +20,7 @@ getId() {
 }
 
 getTitle() {
-  return '🗺  Freshness';
+  return 'Freshness';
 }
 
 isThreeDimensional() {
