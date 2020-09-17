@@ -9,6 +9,9 @@ constructor(dataProvider, caseMapView, container) {
 
   /** @const @private {!Element} */
   this.element_ = container;
+
+  /** @const @private {boolean} */
+  this.showPerCapitaOption_ = false;
 }
 
 toggle() {
@@ -58,16 +61,36 @@ SideBar.prototype.flyToCountry = function(event) {
   this.caseMapView_.flyToCountry(code);
 }
 
+/** @private */
+SideBar.prototype.createPerCapitaCheckbox_ = function() {
+  let perCapitaContainer = document.createElement('div');
+  perCapitaContainer.setAttribute('id', 'per-capita-container');
+  let checkbox = document.createElement('input');
+  checkbox.setAttribute('type', 'checkbox');
+  checkbox.setAttribute('id', 'percapita');
+  let label = document.createElement('label');
+  label.setAttribute('for', 'percapita');
+  label.textContent = 'Per Capita';
+  perCapitaContainer.appendChild(checkbox);
+  perCapitaContainer.appendChild(label);
+  this.element_.insertBefore(perCapitaContainer,
+                             document.getElementById('location-list'));
+
+  checkbox.addEventListener('change',
+                            this.updateCountryListCounts.bind(this));
+}
+
 SideBar.prototype.render = function() {
-  this.element_.innerHTML = '<div id="sidebar-tab"></div><div class="sidebar-header"><h1 class="sidebar-title">{{TITLE}}</h1></div><div id="latest-global"></div><div id="per-capita-container"><input type="checkbox" id="percapita"><label for="percapita">Per capita</label></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>List</span></div>';
+  this.element_.innerHTML = '<div id="sidebar-tab"></div><div class="sidebar-header"><h1 class="sidebar-title">{{TITLE}}</h1></div><div id="latest-global"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>List</span></div>';
   const tabEl = document.getElementById('sidebar-tab');
   let icon = document.createElement('span');
+  if (this.showPerCapitaOption_) {
+    this.createPerCapitaCheckbox_();
+  }
   icon.setAttribute('id', 'sidebar-tab-icon');
   icon.textContent = '▶';
   tabEl.appendChild(icon);
   tabEl.onclick = this.toggle;
-  document.getElementById('percapita').addEventListener('change',
-      this.updateCountryListCounts.bind(this));
   this.renderLatestCounts();
   document.getElementById('ghlist').onclick = function(e) {
     window.location.href = 'https://curator.ghdsi.org/cases';
@@ -150,7 +173,8 @@ SideBar.prototype.updateCountryListCounts = function() {
     const code = span.parentNode.getAttribute('country');
     const country = this.dataProvider_.getCountry(code);
     let countToShow = this.dataProvider_.getLatestDataPerCountry()[code][0];
-    if (document.getElementById('percapita').checked) {
+    const perCapitaCheckbox = document.getElementById('percapita');
+    if (!!perCapitaCheckbox && perCapitaCheckbox.checked) {
       const population = country.getPopulation();
       if (!!population) {
         countToShow = '' + (100 * countToShow / country.getPopulation()).
