@@ -390,26 +390,17 @@ input[type=text] {
 }
 
 #total-cases, #total-deaths {
+  color: black;
   font-size: 1.7rem;
   font-weight: 500;
   margin-right: 0.35ex;
 }
 
-#total-deaths {
-  color: red;
-}
-
-.reported-cases-label {
-  font-size: .8rem;
-  font-weight: 200;
-  line-height: 1;
-}
-
 .last-updated-date {
   display: block;
   font-size: .7rem;
-  font-style: italic;
   color: #ccc;
+  margin-top: 1ex;
 }
 
 .location-filter-wrapper {
@@ -449,7 +440,7 @@ input[type=text] {
   button {
     display: flex;
     justify-content: space-between;
-    padding: .5rem 1ex .2rem 0;
+    padding: .5rem 0 .2rem 0;
     width: 100%;
     font-size: .9rem;
     color: #ccc;
