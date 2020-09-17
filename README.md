@@ -3,8 +3,13 @@
 
 ## With "official" data
 
-Make sure dependencies in `prerequisites.md` are met. Then, to run the
-application locally, pick a disease, for instance 'covid-19' and:
+Make sure dependencies in `prerequisites.md` are met. You also need to get a
+mapbox API key and set it to an environment variable:
+
+`export MAPBOX_API_TOKEN="[your-mapbox-api-key-here]"`
+
+Then, to run the application locally, pick a disease, for instance 'covid-19'
+and:
 
 `./run covid-19`
 
