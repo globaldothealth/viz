@@ -16,32 +16,8 @@ getTitle() {
   return 'Cumulative cases';
 }
 
-getPaint() {
-  let colors = ['step', ['get', 'cum_conf']];
-  const colorStops = this.getColorStops();
-  for (let i = 0; i < colorStops.length; i++) {
-    let color = colorStops[i];
-    colors.push(color[0]);
-    if (color.length > 2) {
-      colors.push(color[2]);
-    }
-  }
-
-  return {
-    'fill-color': colors,
-    'fill-outline-color': '#337abc',
-    'fill-opacity': 1,
-  };
-}
-
-getHeightForFeature(feature) {
-  return 10 * Math.sqrt(50000 * feature['cum_conf']);
-}
-
-getSizeForFeature(feature) {
-  // Since this map is showning country-wide features only, make them a bit
-  // large.
-  return 2;
+getPropertyNameForPaint() {
+  return 'cum_conf';
 }
 
 getFeatureSet() {

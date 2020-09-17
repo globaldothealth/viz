@@ -20,21 +20,8 @@ isThreeDimensional() {
   return true;
 }
 
-getPaint() {
-  let colors = ['step', ['get', 'total']];
-  const colorStops = this.getColorStops();
-  for (let i = 0; i < colorStops.length; i++) {
-    let color = colorStops[i];
-    colors.push(color[0]);
-    if (color.length > 2) {
-      colors.push(color[2]);
-    }
-  }
-  return {
-    'fill-extrusion-height': ['get', 'height'],
-    'fill-extrusion-color': colors,
-    'fill-extrusion-opacity': 0.8,
-  };
+getPropertyNameForPaint() {
+  return 'total';
 }
 
 getHeightForFeature(feature) {

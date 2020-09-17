@@ -99,25 +99,41 @@ getType() {
   return this.isThreeDimensional() ? 'fill-extrusion' : 'circle';
 }
 
+getColorStops() {
+  return [];
+}
+
+getPropertyNameForPaint() {
+  return 'cum_conf';
+}
+
+getPaintProperties(colors) {
+  if (this.isThreeDimensional()) {
+    return {
+      'fill-extrusion-height': ['get', 'height'],
+      'fill-extrusion-color': colors,
+      'fill-extrusion-opacity': 0.8,
+    };
+  } else {
+    return {
+      'fill-color': colors,
+      'fill-outline-color': '#337abc',
+      'fill-opacity': 1,
+    };
+  }
+}
+
 getPaint() {
-  // Simple circle paint.
-  let colors = ['step', ['get', 'total']];
-  // Don't use the last color here (for new cases).
-  for (let i = 0; i < CaseMapView.COLORS.length; i++) {
-    let color = CaseMapView.COLORS[i];
+  let colors = ['step', ['get', this.getPropertyNameForPaint()]];
+  const colorStops = this.getColorStops();
+  for (let i = 0; i < colorStops.length; i++) {
+    let color = colorStops[i];
     colors.push(color[0]);
     if (color.length > 2) {
       colors.push(color[2]);
     }
   }
-  return {
-    'circle-radius': [
-      'case', ['<', 0, ['number', ['get', 'total']]],
-      ['*', ['log10', ['sqrt', ['get', 'total']]], 5],
-      0],
-    'circle-color': colors,
-    'circle-opacity': 0.6,
-  };
+  return this.getPaintProperties(colors);
 }
 
 /**
@@ -147,10 +163,6 @@ getPopupContentsForFeature(f) {
 
 getLegendTitle() {
   return this.getTitle();
-}
-
-getColorStops() {
-  return [];
 }
 
 getLegendItems() {
