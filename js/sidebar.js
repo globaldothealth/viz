@@ -106,10 +106,19 @@ SideBar.prototype.renderLatestCounts = function() {
   document.getElementById('last-updated-date').innerText = latest[2];
 };
 
+SideBar.prototype.makeCaseCountProgressBar = function(caseCount, maxCaseCount) {
+  let bar = document.createElement('div');
+  bar.classList.add('country-cases-bar');
+  // Use a value slightly lower than
+  let widthPercent = Math.floor(100 * caseCount / maxCaseCount);
+  bar.style.width = '' + widthPercent + '%';
+  return bar;
+}
+
 SideBar.prototype.renderCountryList = function() {
   let countryList = document.getElementById('location-list');
   const latestAggregateData = this.dataProvider_.getLatestAggregateData();
-  if (!latestAggregateData) {
+  if (!latestAggregateData || latestAggregateData.length < 1) {
     console.log('No data for rendering country list');
     return;
   }
@@ -118,6 +127,8 @@ SideBar.prototype.renderCountryList = function() {
   latestAggregateData.sort(function(a, b) {
     return b['cum_conf'] - a['cum_conf'];
   });
+  const maxConfirmedCases = latestAggregateData[0]['cum_conf'];
+  console.log('Max confirmed cases: ' + maxConfirmedCases);
   for (let i = 0; i < latestAggregateData.length; ++i) {
     let location = latestAggregateData[i];
     if (!location || !location['code']) {
@@ -139,24 +150,16 @@ SideBar.prototype.renderCountryList = function() {
     if (!!countryList) {
       // No city or province, just the country code.
       locationInfo[geoid] = '||' + code;
-      if (cumConf <= 10) {
-        legendGroup = '10';
-      } else if (cumConf <= 100) {
-        legendGroup = '100';
-      } else if (cumConf <= 500) {
-        legendGroup = '500';
-      } else if (cumConf <= 2000) {
-        legendGroup = '2000';
-      }
 
       let item = document.createElement('div');
+      item.classList.add('location-list-item');
       let button = document.createElement('button');
       button.setAttribute('country', code);
       button.onclick = this.flyToCountry.bind(this);
       button.innerHTML = '<span class="label">' + name + '</span>' +
-          '<span class="num legend-group-' + legendGroup +
-          '"></span>';
+          '<span class="num"></span>';
       item.appendChild(button);
+      item.appendChild(this.makeCaseCountProgressBar(cumConf, maxConfirmedCases));
       countryList.appendChild(item);
     }
   }
