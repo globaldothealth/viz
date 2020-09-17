@@ -10,9 +10,6 @@ class PerCountryMapView extends MapView {
  */
 constructor(dataProvider, nav) {
   super(dataProvider, nav);
-
-  /** @private @const */
-  this.colorScale_ = TwoDCoverageMapView.initializeColorScale();
 }
 
 fetchData() {
@@ -27,29 +24,12 @@ getType() {
   return 'fill';
 }
 
-getPaint() {
-  let colors = ['step', ['get', 'coverage']];
-  for (let i = 0; i < this.colorScale_.length; i++) {
-    let color = this.colorScale_[i];
-    // Push the color, then the value stop.
-    colors.push(color[0]);
-    if (i < this.colorScale_.length - 1) {
-      colors.push(color[1]);
-    }
-  }
-  return {
-    'fill-color': colors,
-    'fill-outline-color': '#337abc',
-    'fill-opacity': 1,
-  };
-}
-
 formatFeature(inFeature, threeD) {
   // No need to format much here.
   return inFeature;
 }
 
-getLegendItems() {
+getGradientLegendItems() {
   let gradientLegendItem = document.createElement('div');
   gradientLegendItem.style.display = 'flex';
   gradientLegendItem.style.height = '120px';

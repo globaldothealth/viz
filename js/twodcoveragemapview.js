@@ -17,6 +17,20 @@ getTitle() {
   return 'Coverage';
 }
 
+getPropertyNameForPaint() {
+  return 'coverage';
+}
+
+getColorStops() {
+  return [
+    [MapView.COLORS[0], '< 20%', 20],
+    [MapView.COLORS[1], '20–40%', 40],
+    [MapView.COLORS[2], '40-60%', 60],
+    [MapView.COLORS[3], '60–80%', 80],
+    [MapView.COLORS[4], '> 80%'],
+  ];
+}
+
 getFeatureSet() {
   const latestDate = this.dataProvider_.getLatestDate();
   const latestDateForAggregate = this.dataProvider_.getLatestDateWithAggregateData();
