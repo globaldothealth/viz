@@ -47,14 +47,11 @@ def check_dependencies():
     if not os.path.exists("tools/closure-compiler.jar"):
         print("The Closure compiler isn't available, fetching it. "
               "This will only happen once.")
-        os.system("curl \"https://dl.google.com/closure-compiler/"
-                  "compiler-latest.zip\" > compiler-latest.zip")
         if not os.path.exists("tools"):
             os.mkdir("tools")
-        os.system("unzip -d tools compiler-latest.zip")
-        os.system("mv tools/closure-compiler*.jar tools/closure-compiler.jar")
-        os.system("rm -rf tools/COPYING tools/README.md")
-        os.system("rm -f compiler-latest.zip")
+        os.system("curl \"https://repo1.maven.org/maven2/com/google/javascript/"
+                  "closure-compiler/v20200830/closure-compiler-v20200830.jar"
+                  "\" > tools/closure-compiler.jar")
 
     return True
 
