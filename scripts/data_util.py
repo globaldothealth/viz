@@ -1,6 +1,4 @@
-import glob
 import os
-import pandas
 import sys
 
 sys.path.append("scripts")
