@@ -172,6 +172,9 @@ DiseaseMap.prototype.setStyle = function(isDark) {
   // Not sure why we need to reload the data after a style change.
   this.mapboxMap_.on('styledata', function () {
     self.loadData();
+    window['avani'] = function(angle) {
+      self.mapboxMap_.easeTo({pitch: angle});
+    }
     if (self.view_.isThreeDimensional()) {
       self.mapboxMap_.easeTo({pitch: 55});
     }

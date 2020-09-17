@@ -1,6 +1,6 @@
 import os
 
-DEBUG = False
+DEBUG = True
 
 def compile_js(quiet=False):
 
