@@ -122,10 +122,10 @@ AggregateMapView.initializeColorScale = function() {
 
 /** @const */
 AggregateMapView.COLORS = [
-  ['#c0dbf5', '< 10k', 10000],
-  ['#a8cef1', '10k–100k', 100000],
-  ['#2b88dc', '100k–500k', 500000],
-  ['#0271d5', '500k–2M', 2000000],
-  ['#0f4f88', '2M-10M', 10000000],
-  ['#00436b', '> 10M'],
+  [MapView.COLORS[0], '< 10k', 10000],
+  [MapView.COLORS[1], '10k–100k', 100000],
+  [MapView.COLORS[2], '100k–500k', 500000],
+  [MapView.COLORS[3], '500k–2M', 2000000],
+  [MapView.COLORS[4], '2M-10M', 10000000],
+  [MapView.COLORS[5], '> 10M'],
 ];
