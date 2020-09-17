@@ -149,8 +149,27 @@ getLegendTitle() {
   return this.getTitle();
 }
 
+getColorStops() {
+  return [];
+}
+
 getLegendItems() {
-   return [];
+  let items = [];
+  const colors = this.getColorStops();
+  for (let i = 0; i < colors.length; i++) {
+    let color = colors[i];
+    let item = document.createElement('li');
+    let circle = document.createElement('span');
+    circle.className = 'circle';
+    circle.style.backgroundColor = color[0];
+    let label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = color[1];
+    item.appendChild(circle);
+    item.appendChild(label);
+    items.push(item);
+  }
+  return items;
 }
 
 /**

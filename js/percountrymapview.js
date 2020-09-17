@@ -49,7 +49,7 @@ formatFeature(inFeature, threeD) {
   return inFeature;
 }
 
-getLegendItems() {
+getGradientLegendItems() {
   let gradientLegendItem = document.createElement('div');
   gradientLegendItem.style.display = 'flex';
   gradientLegendItem.style.height = '120px';

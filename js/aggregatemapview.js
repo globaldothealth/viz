@@ -18,8 +18,9 @@ getTitle() {
 
 getPaint() {
   let colors = ['step', ['get', 'cum_conf']];
-  for (let i = 0; i < AggregateMapView.COLORS.length; i++) {
-    let color = AggregateMapView.COLORS[i];
+  const colorStops = this.getColorStops();
+  for (let i = 0; i < colorStops.length; i++) {
+    let color = colorStops[i];
     colors.push(color[0]);
     if (color.length > 2) {
       colors.push(color[2]);
@@ -90,42 +91,15 @@ getLegendTitle() {
   return 'Cases';
 }
 
-getLegendItems() {
-  let items = [];
-  for (let i = 0; i < AggregateMapView.COLORS.length; i++) {
-    let color = AggregateMapView.COLORS[i];
-    let item = document.createElement('li');
-    let circle = document.createElement('span');
-    circle.className = 'circle';
-    circle.style.backgroundColor = color[0];
-    let label = document.createElement('span');
-    label.className = 'label';
-    label.textContent = color[1];
-    item.appendChild(circle);
-    item.appendChild(label);
-    items.push(item);
-  }
-  return items;
+getColorStops() {
+  return [
+    [MapView.COLORS[0], '< 10k', 10000],
+    [MapView.COLORS[1], '10k–100k', 100000],
+    [MapView.COLORS[2], '100k–500k', 500000],
+    [MapView.COLORS[3], '500k–2M', 2000000],
+    [MapView.COLORS[4], '2M-10M', 10000000],
+    [MapView.COLORS[5], '> 10M']
+  ];
 }
 
 }  // AggregateMapView
-
-AggregateMapView.initializeColorScale = function() {
-  const max_cases = 6000000;
-  const stops = [0, max_cases / 1.3, max_cases];
-  return MapView.makeColorScale(
-    hexToRgb(PerCountryMapView.COLORS[0]),
-    hexToRgb(PerCountryMapView.COLORS[1]),
-    hexToRgb(PerCountryMapView.COLORS[2]),
-    stops);
-}
-
-/** @const */
-AggregateMapView.COLORS = [
-  [MapView.COLORS[0], '< 10k', 10000],
-  [MapView.COLORS[1], '10k–100k', 100000],
-  [MapView.COLORS[2], '100k–500k', 500000],
-  [MapView.COLORS[3], '500k–2M', 2000000],
-  [MapView.COLORS[4], '2M-10M', 10000000],
-  [MapView.COLORS[5], '> 10M'],
-];

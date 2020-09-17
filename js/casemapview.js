@@ -22,8 +22,9 @@ isThreeDimensional() {
 
 getPaint() {
   let colors = ['step', ['get', 'total']];
-  for (let i = 0; i < CaseMapView.COLORS.length; i++) {
-    let color = CaseMapView.COLORS[i];
+  const colorStops = this.getColorStops();
+  for (let i = 0; i < colorStops.length; i++) {
+    let color = colorStops[i];
     colors.push(color[0]);
     if (color.length > 2) {
       colors.push(color[2]);
@@ -93,32 +94,15 @@ getLegendTitle() {
   return 'Cases';
 }
 
-getLegendItems() {
-  let items = [];
-  for (let i = 0; i < CaseMapView.COLORS.length; i++) {
-    let color = CaseMapView.COLORS[i];
-    let item = document.createElement('li');
-    let circle = document.createElement('span');
-    circle.className = 'circle';
-    circle.style.backgroundColor = color[0];
-    let label = document.createElement('span');
-    label.className = 'label';
-    label.textContent = color[1];
-    item.appendChild(circle);
-    item.appendChild(label);
-    items.push(item);
-  }
-  return items;
+getColorStops() {
+  return [
+    [MapView.COLORS[0], '< 100', 100],
+    [MapView.COLORS[1], '100–1k', 1000],
+    [MapView.COLORS[2], '1k–5k', 5000],
+    [MapView.COLORS[3], '5k–20k', 20000],
+    [MapView.COLORS[4], '20k-100k', 100000],
+    [MapView.COLORS[5], '> 100k']
+  ];
 }
 
 }  // CaseMapView
-
-/** @const */
-CaseMapView.COLORS = [
-  [MapView.COLORS[0], '< 100', 100],
-  [MapView.COLORS[1], '100–1k', 1000],
-  [MapView.COLORS[2], '1k–5k', 5000],
-  [MapView.COLORS[3], '5k–20k', 20000],
-  [MapView.COLORS[4], '20k-100k', 100000],
-  [MapView.COLORS[5], '> 100k'],
-];
