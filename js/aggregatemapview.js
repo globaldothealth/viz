@@ -1,4 +1,4 @@
-class AggregateMapView extends MapView {
+class AggregateMapView extends PerCountryMapView {
 
 /**
  * @param {DataProvider} dataProvider
@@ -6,39 +6,30 @@ class AggregateMapView extends MapView {
  */
 constructor(dataProvider, nav) {
   super(dataProvider, nav);
-
-  /** @private @const */
-  this.colorScale_ = AggregateMapView.initializeColorScale();
 }
 
 getId() {
-  return 'aggregatemap';
+  return 'cumulative';
 }
 
 getTitle() {
-  return 'Aggregates';
-}
-
-isThreeDimensional() {
-  return true;
+  return 'Cumulative cases';
 }
 
 getPaint() {
   let colors = ['step', ['get', 'cum_conf']];
-
-  for (let i = 0; i < this.colorScale_.length; i++) {
-    let color = this.colorScale_[i];
-    // Push the color, then the value stop.
+  for (let i = 0; i < AggregateMapView.COLORS.length; i++) {
+    let color = AggregateMapView.COLORS[i];
     colors.push(color[0]);
-    if (i < this.colorScale_.length - 1) {
-      colors.push(color[1]);
+    if (color.length > 2) {
+      colors.push(color[2]);
     }
   }
 
   return {
-    'fill-extrusion-height': ['get', 'height'],
-    'fill-extrusion-color': colors,
-    'fill-extrusion-opacity': 0.8,
+    'fill-color': colors,
+    'fill-outline-color': '#337abc',
+    'fill-opacity': 1,
   };
 }
 
@@ -53,59 +44,46 @@ getSizeForFeature(feature) {
 }
 
 getFeatureSet() {
-  let dehydratedFeatures = this.dataProvider_.getLatestAggregateData();
-  return this.formatFeatureSet(dehydratedFeatures.map(
-      f => this.formatFeature(f, true /* 3D */)));
+  const latestDate = this.dataProvider_.getLatestDate();
+  const latestDateForAggregate = this.dataProvider_.getLatestDateWithAggregateData();
+  // This is a map from country code to the corresponding feature.
+  let dehydratedFeatures = this.dataProvider_.getCountryFeaturesForDay(latestDate);
+  const aggregates = this.dataProvider_.getAggregateData()[latestDateForAggregate];
+  let features = [];
+  let codes = Object.keys(dehydratedFeatures);
+  for (let i = 0; i < aggregates.length; i++) {
+    let aggregate = aggregates[i];
+    const code = aggregate['code'];
+    const boundaries = this.dataProvider_.getBoundariesForCountry(code);
+    if (!boundaries) {
+      console.log('No available boundaries for country ' + code);
+      continue;
+    }
+    const aggregateCaseCount = aggregate['cum_conf'];
+    const country = this.dataProvider_.getCountry(code);
+    const centroid = country.getCentroid();
+    const geoId = [centroid[1], centroid[0]].join('|');
+    let feature = {
+      'type': 'Feature',
+      'properties': {
+        'geoid': geoId,
+        'countryname': country.getName(),
+        'cum_conf': aggregateCaseCount,
+      },
+      'geometry': boundaries,
+    };
+    features.push(feature);
+  }
+  return this.formatFeatureSet(features.map(
+      f => this.formatFeature(f, false /* 3D */)));
 }
 
 getPopupContentsForFeature(f) {
-  let props = f['properties'];
-  const geo_id = props['geoid'];
-
-  let totalCaseCount = 0;
-
-  // Country, province, city
-  let location = locationInfo[geo_id];
-  let locationSpan = [];
-  if (!!location) {
-    location = location.split('|');
-    // Replace country code with name if necessary
-    if (location[2].length == 2) {
-      location[2] = this.dataProvider_.getCountry(location[2]).getName();
-    }
-    const countryName = location[2];
-    const country = this.dataProvider_.getCountryByName(countryName);
-
-    // Remove empty strings
-    location = location.filter(function (el) { return el != ''; });
-    for (let i = 0; i < location.length; i++) {
-      // if (i == location.length - 1 && !!country) {
-        // TODO: Restore link to country page.
-        // locationSpan.push('<a target="_blank" href="/c/' +
-        // country.getCode() + '/">' + location[i] + '</a>');
-      // }
-      locationSpan.push(location[i]);
-    }
-  }
-  if (!locationSpan.length) {
-    return;
-  }
-
-  totalCaseCount = props['total'];
-
-  let content = document.createElement('div');
-  content.innerHTML = '<h3 class="popup-header"><span>' +
-        locationSpan.join(', ') + '</span>: ' + totalCaseCount.toLocaleString() + '</h3>';
-  return content;
-}
-
-formatFeature(inFeature, threeD) {
-  let feature = JSON.parse(JSON.stringify(inFeature));
-  const country = this.dataProvider_.getCountry(inFeature['code']);
-  const centroid = country.getCentroid();
-  feature['properties'] = {'geoid': centroid[1] + '|' + centroid[0]};
-  feature['properties']['cum_conf'] = inFeature['cum_conf'];
-  return super.formatFeature(feature, threeD);
+  const props = f['properties'];
+  let contents = document.createElement('div');
+  contents.innerHTML = '<h2><b>' + props['countryname'] + '</b></h2>' +
+    '<b>' + props['cum_conf'].toLocaleString() + ' cases</b>';
+  return contents;
 }
 
 getLegendTitle() {
@@ -113,33 +91,21 @@ getLegendTitle() {
 }
 
 getLegendItems() {
-  let gradientLegendItem = document.createElement('div');
-  gradientLegendItem.style.display = 'flex';
-  gradientLegendItem.style.height = '120px';
-
-  let gradientSide = document.createElement('div');
-  const gradientStops = PerCountryMapView.COLORS.join(',');
-  gradientSide.style.width = '15px';
-  gradientSide.style.backgroundImage = 'linear-gradient(' + gradientStops + ')';
-
-  let textSide = document.createElement('div');
-  textSide.style.display = 'flex';
-  textSide.style.flexDirection = 'column';
-  textSide.style.marginLeft = '5px';
-  let textSideTop = document.createElement('div');
-  let textSideMiddle = document.createElement('div');
-  let textSideBottom = document.createElement('div');
-  textSideTop.textContent = '6M';
-  textSideBottom.textContent = '0';
-  textSideMiddle.style.flexGrow = 1;
-  textSide.appendChild(textSideTop);
-  textSide.appendChild(textSideMiddle);
-  textSide.appendChild(textSideBottom);
-
-  gradientLegendItem.appendChild(gradientSide);
-  gradientLegendItem.appendChild(textSide);
-
-  return [gradientLegendItem];
+  let items = [];
+  for (let i = 0; i < AggregateMapView.COLORS.length; i++) {
+    let color = AggregateMapView.COLORS[i];
+    let item = document.createElement('li');
+    let circle = document.createElement('span');
+    circle.className = 'circle';
+    circle.style.backgroundColor = color[0];
+    let label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = color[1];
+    item.appendChild(circle);
+    item.appendChild(label);
+    items.push(item);
+  }
+  return items;
 }
 
 }  // AggregateMapView
@@ -153,3 +119,13 @@ AggregateMapView.initializeColorScale = function() {
     hexToRgb(PerCountryMapView.COLORS[2]),
     stops);
 }
+
+/** @const */
+AggregateMapView.COLORS = [
+  ['#c0dbf5', '< 10k', 10000],
+  ['#a8cef1', '10k–100k', 100000],
+  ['#2b88dc', '100k–500k', 500000],
+  ['#0271d5', '500k–2M', 2000000],
+  ['#0f4f88', '2M-10M', 10000000],
+  ['#00436b', '> 10M'],
+];

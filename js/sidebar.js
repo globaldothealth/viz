@@ -128,7 +128,6 @@ SideBar.prototype.renderCountryList = function() {
     return b['cum_conf'] - a['cum_conf'];
   });
   const maxConfirmedCases = latestAggregateData[0]['cum_conf'];
-  console.log('Max confirmed cases: ' + maxConfirmedCases);
   for (let i = 0; i < latestAggregateData.length; ++i) {
     let location = latestAggregateData[i];
     if (!location || !location['code']) {
