@@ -8,6 +8,8 @@ application locally, pick a disease, for instance 'covid-19' and:
 
 `./run covid-19`
 
+Then, in your browser, load http://localhost:8000
+
 ## With local data
 
 First, start a server to serve your local data from port 8001:
@@ -28,6 +30,6 @@ Before deploying, commit your changes or sending a pull request, please run the 
 
 Run this:
 
-`./deploy path/to/target`
+`./deploy covid-19 path/to/target`
 
-and then copy the contents of the target directory as appropriate (e.g. to AWS).
+for the `covid-19` disease (replace as needed) and then copy the contents of the target directory as appropriate (e.g. to AWS).
