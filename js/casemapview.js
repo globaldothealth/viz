@@ -13,7 +13,7 @@ getId() {
 }
 
 getTitle() {
-  return 'Cases';
+  return 'Individual cases';
 }
 
 isThreeDimensional() {
