@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&display=swap');
 @import 'variables';
 @import 'mixins';
 
@@ -29,11 +30,11 @@ html {
 }
 
 body {
-  font-family: arial;
+  font-family: 'Inter', Helvetica, Arial, sans-serif;
 }
 
 #app {
-  height: 100%;
+  height: calc(100% - 10ex);
   left: 0;
   margin: 0;
   padding: $topbar-height 2ex 0 2ex;
@@ -80,9 +81,10 @@ body.casemap #app,
 body.historicalmap #app,
 body.completeness #app,
 body.coverage #app,
+body.cumulative #app,
 body.freshness #app {
   /* For the map, occupy the whole viewport. */
-  margin: 0;
+  margin: 10ex 0 0 0;
   padding: 0;
 }
 
@@ -244,13 +246,13 @@ input[type=text] {
 }
 
 #topbar {
-  border-radius: $card-border-radius;
-  box-shadow: $card-box-shadow;
+  // border-radius: $card-border-radius;
+  // box-shadow: $card-box-shadow;
   display: flex;
   flex-direction: row;
   font-size: 90%;
   justify-content: space-between;
-  margin: 0 auto;
+  margin: 0 0 0 auto;
   padding: 0 1ex;
 }
 
@@ -495,7 +497,7 @@ input[type=text] {
 #legend {
   border-radius: $box-corner;
   position: absolute;
-  top: 5ex;
+  top: 10ex;
   right: $page-padding-end;
   padding: .5rem .25rem;
   background-color: rgba(70,70,70,.8);
