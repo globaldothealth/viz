@@ -57,8 +57,9 @@ class VizHandler(SimpleHTTPRequestHandler):
         self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
         self.end_headers()
         if "diseasemap.js" in self.path:
-            contents = contents.replace("{{MAPBOX_API_TOKEN}}",
-                                        os.environ[MAPBOX_API_VARNAME])
+            if MAPBOX_API_VARNAME in os.environ:
+                contents = contents.replace("{{MAPBOX_API_TOKEN}}",
+                                            os.environ[MAPBOX_API_VARNAME])
         if "sidebar.js" in self.path:
             contents = contents.replace(
                 "{{TITLE}}", CONFIG[DISEASE_ID]["name"])
