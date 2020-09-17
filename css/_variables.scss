@@ -13,8 +13,8 @@ $accent-color: #0094e2;
 $card-border-radius: 1ex;
 $card-box-shadow: 0 10px 30px 1px rgba(0, 0, 0, 0.1);
 
-$topbar-bgcolor-light: $sidebar-bgcolor-light;
-$topbar-bgcolor-dark: $sidebar-bgcolor-dark;
+$topbar-bgcolor-light: none transparent; 
+$topbar-bgcolor-dark: none transparent;
 $topbar-hover-bgcolor-light: lighten($accent-color, 50%);
 $topbar-hover-bgcolor-dark: rgba(45, 45, 45, .8);
 $topbar-text-color-light: $text-color-light;

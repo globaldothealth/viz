@@ -22,15 +22,16 @@ body.dark {
 
 .light #topbar div.navlink {
   border-left-color: $topbar-nav-border-color-light;
+  font-weight: 500;
 }
 
 .light #topbar div.navlink:hover {
-  background-color: $topbar-hover-bgcolor-light;
-  color: $topbar-hover-text-color-light;
+  color: $topbar-nav-active-border-color-light;
 }
 
 .light #topbar div.active {
   border-bottom: 4px solid $topbar-nav-active-border-color-light;
+  color: $topbar-nav-active-border-color-light;
 }
 
 .light #settings-menu {
