@@ -34,7 +34,7 @@ body {
 }
 
 #app {
-  height: calc(100% - 10ex);
+  height: 100%;
   left: 0;
   margin: 0;
   padding: $topbar-height 2ex 0 2ex;
@@ -84,8 +84,12 @@ body.coverage #app,
 body.cumulative #app,
 body.freshness #app {
   /* For the map, occupy the whole viewport. */
-  margin: 10ex 0 0 0;
+  margin: 0;
   padding: 0;
+}
+
+div#map-wrapper #map {
+  margin-top: 12ex;
 }
 
 /* Rank view */
