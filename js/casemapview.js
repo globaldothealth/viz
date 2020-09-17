@@ -115,10 +115,10 @@ getLegendItems() {
 
 /** @const */
 CaseMapView.COLORS = [
-  ['#c0dbf5', '< 100', 100],
-  ['#a8cef1', '100–1k', 1000],
-  ['#2b88dc', '1k–5k', 5000],
-  ['#0271d5', '5k–20k', 20000],
-  ['#0f4f88', '20k-100k', 100000],
-  ['#00436b', '> 100k'],
+  [MapView.COLORS[0], '< 100', 100],
+  [MapView.COLORS[1], '100–1k', 1000],
+  [MapView.COLORS[2], '1k–5k', 5000],
+  [MapView.COLORS[3], '5k–20k', 20000],
+  [MapView.COLORS[4], '20k-100k', 100000],
+  [MapView.COLORS[5], '> 100k'],
 ];

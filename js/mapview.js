@@ -224,3 +224,13 @@ MapView.makeColorScale = function(topColor, midColor, bottomColor, numericalScal
   }
   return scale;
 }
+
+// Increasingly clear shades of blue.
+MapView.COLORS = [
+  '#c0dbf5',
+  '#a8cef1',
+  '#2b88dc',
+  '#0271d5',
+  '#0f4f88',
+  '#00436b',
+]
