@@ -445,12 +445,11 @@ input[type=text] {
 
 #location-list {
   flex: 1;
-  margin-top: 1.5ex;
   overflow: auto;
   button {
     display: flex;
     justify-content: space-between;
-    padding: .5rem 1ex .5rem 0;
+    padding: .5rem 1ex .2rem 0;
     width: 100%;
     font-size: .9rem;
     color: #ccc;
@@ -462,9 +461,6 @@ input[type=text] {
     cursor: pointer;
     &:focus, &:hover, &:active, &.is-active {
       background-color: #454545;
-    }
-    &.is-active {
-      border-color: $legend-group-10;
     }
   }
   .label {
@@ -478,21 +474,16 @@ input[type=text] {
     align-items: center;
     font-weight: normal;
     color: #ccc;
-    &:after {
-      content: '';
-      display: block;
-      width: .5rem;
-      height: .5rem;
-      margin-left: .65rem;
-      border-radius: 50%;
-      border: 1px solid;
-    }
-    &.legend-group-10:after { background-color: $legend-group-10; border-color: darken($legend-group-10, 5%); }
-    &.legend-group-100:after { background-color: $legend-group-100; border-color: darken($legend-group-100, 5%);  }
-    &.legend-group-500:after { background-color: $legend-group-500; border-color: darken($legend-group-500, 5%); }
-    &.legend-group-2000:after { background-color: $legend-group-2000; border-color: darken($legend-group-2000, 5%); }
-    &.legend-group-default:after { background-color: darken($legend-group-default, 7%); border-color: darken($legend-group-default, 10%); }
   }
+}
+
+.location-list-item {
+  margin-right: 8px;
+}
+
+.country-cases-bar {
+  background-color: $accent-color;
+  height: 3px;
 }
 
 .map-wrapper {
