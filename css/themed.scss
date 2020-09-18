@@ -35,7 +35,12 @@ body.dark {
   color: $topbar-nav-active-border-color-light;
 }
 
-.light #settings-menu, .light #more-menu {
+#topbar div#settings.navlink {
+  font-size: 24px;
+  padding-top: 0;
+}
+
+.light #settings-menu {
   background-color: $sidebar-bgcolor-light;
 }
 
