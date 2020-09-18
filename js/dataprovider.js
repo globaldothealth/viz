@@ -74,6 +74,17 @@ constructor(baseUrl) {
 }
 }  // DataProvider
 
+DataProvider.LAT_LNG_DECIMAL_LENGTH = 4;
+
+DataProvider.normalizeGeoId = function(geoid) {
+  let parts = geoid.split('|');
+  let output = [];
+  for (let i = 0; i < parts.length; i++) {
+    output.push(parseFloat(parts[i]).toFixed(DataProvider.LAT_LNG_DECIMAL_LENGTH));
+  }
+  return output.join('|');
+};
+
 /**
  * This takes an Object whose keys are date string, and values are arrays of
  * GeoJSON-style features. It returns an Object with the following properties:
@@ -460,6 +471,8 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
   // "Re-hydrate" the features into objects ingestable by the map.
   for (let i = 0; i < features.length; i++) {
     let feature = features[i];
+    feature['properties']['geoid'] = DataProvider.normalizeGeoId(
+        feature['properties']['geoid']);
 
     // If we don't know where this is, discard.
     if (!locationInfo[feature['properties']['geoid']]) {

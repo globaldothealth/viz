@@ -9,7 +9,7 @@ constructor(dataProvider, nav) {
 }
 
 getId() {
-  return 'casemap';
+  return 'cases';
 }
 
 getTitle() {
@@ -44,7 +44,6 @@ getPopupContentsForFeature(f) {
   // Country, province, city
   let location = locationInfo[geo_id];
   let locationSpan = [];
-  console.log(location);
   if (!!location) {
     location = location.split('|');
     // Replace country code with name if necessary
@@ -72,8 +71,8 @@ getPopupContentsForFeature(f) {
   totalCaseCount = props['total'];
 
   let content = document.createElement('div');
-  content.innerHTML = '<h3 class="popup-header"><span>' +
-        locationSpan.join(', ') + '</span>: ' + totalCaseCount.toLocaleString() + '</h3>';
+  content.innerHTML = '<h2><b>' + locationSpan.join(', ') + '</b></h2>' +
+      '<b>' + totalCaseCount.toLocaleString() + '</b> cases</b>';
   return content;
 }
 

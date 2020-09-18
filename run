@@ -46,16 +46,9 @@ class VizHandler(SimpleHTTPRequestHandler):
                     break
             else:
                 return self.list_directory(path)
+
         f = open(path)
         contents = f.read()
-        ctype = self.guess_type(path)
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header("Content-type", ctype)
-        fs = os.fstat(f.fileno())
-        self.send_header("Content-Length", str(fs[6]))
-        self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
-        self.end_headers()
         if "diseasemap.js" in self.path:
             if MAPBOX_API_VARNAME in os.environ:
                 contents = contents.replace("{{MAPBOX_API_TOKEN}}",
@@ -66,16 +59,25 @@ class VizHandler(SimpleHTTPRequestHandler):
         if "main.js" in self.path:
             contents = contents.replace(
                 "{{DATA_SRC_URL}}", CONFIG[DISEASE_ID]["data_src_url"] + "/")
-        self.wfile.write(contents.encode())
+        encoded_contents = contents.encode()
+        ctype = self.guess_type(path)
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header("Content-type", ctype)
+        fs = os.fstat(f.fileno())
+        self.send_header("Content-Length", str(len(encoded_contents)))
+        self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
+        self.end_headers()
+        self.wfile.write(encoded_contents)
         # We've taken care of everything, nothing left to do.
         return None
 
-# Returns True if everything we need is here, False otherwise.
-def check_dependencies():
+# Returns True if everything we need for sass is here, False otherwise.
+def check_sass():
     try:
         subprocess.check_call(shlex.split("sass --version"))
     except (subprocess.CalledProcessError, OSError):
-        print("Please install 'sass' first.")
+        print("WARNING: 'sass' is not installed, CSS will not update on the fly")
         return False
     return True
 
@@ -103,16 +105,14 @@ def run():
         http = threading.Thread(target=run_http_server)
         sass = threading.Thread(target=run_sass_precompiler)
         http.start()
-        sass.start()
+        if check_sass():
+            sass.start()
+            sass.join()
         http.join()
-        sass.join()
 
     except KeyboardInterrupt:
         print("Hit Crtl-C a second time to shut down.")
         sys.exit(0)
 
 if __name__ == '__main__':
-    if not check_dependencies():
-        sys.exit(1)
-
     run()
