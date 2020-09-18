@@ -59,7 +59,7 @@ getPopupContentsForFeature(f) {
   const props = f['properties'];
   let contents = document.createElement('div');
   contents.innerHTML = '<h2><b>' + props['countryname'] + '</b></h2>' +
-    '<b>' + props['cum_conf'].toLocaleString() + ' cases</b>';
+    '<b>' + props['cum_conf'].toLocaleString() + '</b> cases';
   return contents;
 }
 
