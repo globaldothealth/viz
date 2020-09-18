@@ -278,10 +278,14 @@ input[type=text] {
 }
 
 #settings-menu {
-  padding: 3ex;
+  padding: 2ex;
   position: fixed;
-  right: 0;
+  right: 2ex;
   z-index: 10;
+  backdrop-filter: blur(.5rem);
+  background-color: $sidebar-bgcolor-dark;
+  border-radius: $card-border-radius;
+  box-shadow: $card-box-shadow;
 }
 
 #sidebar {
