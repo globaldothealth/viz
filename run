@@ -70,12 +70,12 @@ class VizHandler(SimpleHTTPRequestHandler):
         # We've taken care of everything, nothing left to do.
         return None
 
-# Returns True if everything we need is here, False otherwise.
-def check_dependencies():
+# Returns True if everything we need for sass is here, False otherwise.
+def check_sass():
     try:
         subprocess.check_call(shlex.split("sass --version"))
     except (subprocess.CalledProcessError, OSError):
-        print("Please install 'sass' first.")
+        print("WARNING: 'sass' is not installed, CSS will not update on the fly")
         return False
     return True
 
@@ -103,16 +103,14 @@ def run():
         http = threading.Thread(target=run_http_server)
         sass = threading.Thread(target=run_sass_precompiler)
         http.start()
-        sass.start()
+        if check_sass():
+            sass.start()
+            sass.join()
         http.join()
-        sass.join()
 
     except KeyboardInterrupt:
         print("Hit Crtl-C a second time to shut down.")
         sys.exit(0)
 
 if __name__ == '__main__':
-    if not check_dependencies():
-        sys.exit(1)
-
     run()
