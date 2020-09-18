@@ -46,8 +46,11 @@ class VizHandler(SimpleHTTPRequestHandler):
                     break
             else:
                 return self.list_directory(path)
-        f = open(path)
-        contents = f.read()
+        # Always read in binary mode. Opening files in text mode may cause
+        # newline translations, making the actual size of the content
+        # transmitted less than the content-length
+        f = open(path, "rb")
+        contents = f.read().decode()
         ctype = self.guess_type(path)
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
