@@ -263,7 +263,10 @@ Nav.prototype.setupSettings = function() {
   settingsEl.onclick = function() {
     const menuEl = document.getElementById('settings-menu');
     const currentlyShown = menuEl.style.display != 'none';
-    menuEl.style.top = document.getElementById('topbar').clientHeight + 'px';
+    const topBarEl = document.getElementById('topbar');
+    const topBarRect = topBarEl.getClientRects()[0];
+    const topPosition = topBarRect.y + topBarRect.height;
+    menuEl.style.top = topPosition + 'px';
     console.log(menuEl.style.top);
     menuEl.style.display = currentlyShown ? 'none' : 'block';
   };
