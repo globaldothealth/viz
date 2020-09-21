@@ -34,9 +34,12 @@ function filterList() {
   // query.
   for (let i = 0; i < list_items.length; ++i) {
     let label = list_items[i].getElementsByClassName('label')[0];
+    if (!label) {
+      continue;
+    }
     let txtValue = label.textContent || label.innerText;
     // Show/hide the clear filter button.
-    clearFilter.style.display = !!filter ? 'flex' : 'none';
+    clearFilter.style.display = !!filter ? 'inline-block' : 'none';
 
     // Show/hide matching list items.
     const show = txtValue.toUpperCase().indexOf(filter) != -1;
@@ -81,7 +84,7 @@ SideBar.prototype.createPerCapitaCheckbox_ = function() {
 }
 
 SideBar.prototype.render = function() {
-  this.element_.innerHTML = '<div id="sidebar-tab"></div><div class="sidebar-header"><h1 class="sidebar-title">{{TITLE}}</h1></div><div id="latest-global"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>List</span></div>';
+  this.element_.innerHTML = '<div id="sidebar-tab"></div><div class="sidebar-header"><h1 class="sidebar-title">{{TITLE}}</h1></div><div id="latest-global"></div><div id="location-filter-wrapper"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>List</span></div>';
   const tabEl = document.getElementById('sidebar-tab');
   let icon = document.createElement('span');
   if (this.showPerCapitaOption_) {
@@ -92,9 +95,23 @@ SideBar.prototype.render = function() {
   tabEl.appendChild(icon);
   tabEl.onclick = this.toggle;
   this.renderLatestCounts();
+  this.renderSearch(document.getElementById('location-filter-wrapper'));
   document.getElementById('ghlist').onclick = function(e) {
     window.location.href = 'https://curator.ghdsi.org/cases';
   };
+};
+
+SideBar.prototype.renderSearch = function(container) {
+  let searchInput = document.createElement('input');
+  searchInput.setAttribute('id', 'location-filter');
+  searchInput.setAttribute('placeholder', 'Search');
+  searchInput.onkeydown = filterList;
+  let clearEl = document.createElement('div');
+  clearEl.setAttribute('id', 'clear-filter');
+  clearEl.innerHTML = '&times;';
+  clearEl.onclick = clearFilter;
+  container.appendChild(searchInput);
+  container.appendChild(clearEl);
 };
 
 SideBar.prototype.renderLatestCounts = function() {
@@ -215,6 +232,3 @@ SideBar.prototype.sortCountryList = function() {
     list.appendChild(itemsArray[i]);
   }
 };
-
-globalThis['clearFilter'] = clearFilter;
-globalThis['filterList'] = filterList;

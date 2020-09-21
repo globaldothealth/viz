@@ -88,10 +88,6 @@ body.freshness #app {
   padding: 0;
 }
 
-div#map-wrapper #map {
-  margin-top: 12ex;
-}
-
 /* Rank view */
 
 body.rank {
@@ -277,11 +273,18 @@ input[type=text] {
   padding: 1.5ex 2ex;
 }
 
-#settings-menu {
+#more-menu, #settings-menu {
   padding: 3ex;
   position: fixed;
-  right: 0;
   z-index: 10;
+}
+
+#more-menu {
+  right: 10ex;
+}
+
+#settings-menu {
+  right: 0;
 }
 
 #sidebar {
@@ -407,27 +410,24 @@ input[type=text] {
   margin-top: 1ex;
 }
 
-.location-filter-wrapper {
-  position: relative;
+#location-filter {
   width: 100%;
+}
+
+#location-filter-wrapper {
+  position: relative;
   padding-bottom: .5rem;
-  border-bottom: 1px solid #666;
 }
 
 #clear-filter {
-  display: none;
-  position: absolute;
-  top: 50%;
-  right: .75rem;
-  transform: translateY(-50%);
-  align-items: center;
-  justify-content: center;
-  color: #333;
+  color: #aaa;
   cursor: pointer;
-  transition: all .3s ease;
-  &:hover, &:focus {
-    transform: translateY(-50%) rotate(-90deg);
-  }
+  display: none;
+  font-size: 3ex;
+  height: 100%;
+  position: absolute;
+  right: .75rem;
+  top: 0;
 }
 
 #per-capita-container input {
