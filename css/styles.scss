@@ -37,10 +37,14 @@ body {
   height: 100%;
   left: 0;
   margin: 0;
-  padding: $topbar-height 2ex 0 2ex;
   position: absolute;
   top: 0;
   width: 100%;
+}
+
+/** Add some padding around the app for non-map views. */
+.rank #app, .sync #app {
+  padding: $topbar-height 2ex 0 2ex;
 }
 
 h1 {
