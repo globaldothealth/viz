@@ -23,6 +23,7 @@ body.dark {
 .light #topbar div.navlink {
   border-left-color: $topbar-nav-border-color-light;
   font-weight: 500;
+  text-shadow: -1px -1px 0 $topbar-text-shadow-color-light, 1px -1px 0 $topbar-text-shadow-color-light, -1px 1px 0 $topbar-text-shadow-color-light, 1px 1px 0 $topbar-text-shadow-color-light;
 }
 
 .light #topbar div.navlink:hover {
@@ -34,7 +35,7 @@ body.dark {
   color: $topbar-nav-active-border-color-light;
 }
 
-.light #settings-menu {
+.light #settings-menu, .light #more-menu {
   background-color: $sidebar-bgcolor-light;
 }
 
@@ -46,6 +47,7 @@ body.dark {
 
 .dark #topbar div.navlink {
   border-left-color: $topbar-nav-border-color-dark;
+  text-shadow: -1px -1px 0 $topbar-text-shadow-color-dark, 1px -1px 0 $topbar-text-shadow-color-dark, -1px 1px 0 $topbar-text-shadow-color-dark, 1px 1px 0 $topbar-text-shadow-color-dark;
 }
 
 .dark #topbar div.navlink:hover {
@@ -57,7 +59,7 @@ body.dark {
   border-bottom: 4px solid $topbar-nav-active-border-color-dark;
 }
 
-.dark #settings-menu {
+.dark #settings-menu, .dark #more-menu {
   background-color: $sidebar-bgcolor-dark;
 }
 
