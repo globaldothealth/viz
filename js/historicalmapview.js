@@ -12,11 +12,11 @@ constructor(dataProvider, nav) {
 }
 
 getId() {
-  return 'historicalmap';
+  return 'evolution';
 }
 
 getTitle() {
-  return 'Historical';
+  return 'Evolution';
 };
 
 render() {
