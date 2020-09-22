@@ -278,6 +278,7 @@ input[type=text] {
 }
 
 #more-menu, #settings-menu {
+  box-shadow: $card-box-shadow;
   padding: 3ex;
   position: fixed;
   z-index: 10;
