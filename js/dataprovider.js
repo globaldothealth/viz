@@ -339,7 +339,7 @@ DataProvider.prototype.fetchCountryNames = function() {
     return Promise.resolve();
   }
   let self = this;
-  return fetch('https://raw.githubusercontent.com/ghdsi/common/master/countries.data')
+  return fetch('https://raw.githubusercontent.com/globaldothealth/common/master/countries.data')
     .then(function(response) { return response.text(); })
     .then(function(responseText) {
       let countryLines = responseText.trim().split('\n');
@@ -371,7 +371,7 @@ DataProvider.prototype.fetchCountryBoundaries = function() {
     return Promise.resolve();
   }
   let self = this;
-  return fetch('https://raw.githubusercontent.com/ghdsi/common/master/country_boundaries.json')
+  return fetch('https://raw.githubusercontent.com/globaldothealth/common/master/country_boundaries.json')
     .then(function(response) { return response.json(); })
     .then(function(jsonData) {
       for (let i = 0; i < jsonData.length; i++) {
