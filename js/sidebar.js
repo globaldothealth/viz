@@ -105,7 +105,7 @@ SideBar.prototype.renderSearch = function(container) {
   let searchInput = document.createElement('input');
   searchInput.setAttribute('id', 'location-filter');
   searchInput.setAttribute('placeholder', 'Search');
-  searchInput.onkeydown = filterList;
+  searchInput.onkeyup = filterList;
   let clearEl = document.createElement('div');
   clearEl.setAttribute('id', 'clear-filter');
   clearEl.innerHTML = '&times;';
