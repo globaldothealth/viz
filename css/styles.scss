@@ -543,11 +543,25 @@ input[type=text] {
 }
 
 .mapboxgl-popup {
+  box-shadow: $card-box-shadow;
   color: #222;
+}
+
+.mapboxgl-popup h2 {
+  font-weight: bold;
+}
+
+/* Hide the popup anchor */
+.mapboxgl-popup-tip {
+  display: none;
 }
 
 div.mapboxgl-popup-content {
   padding: 20px;
+}
+
+.popup-case-count {
+  color: $accent-color;
 }
 
 .popup-header {
