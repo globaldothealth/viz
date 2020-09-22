@@ -48,12 +48,6 @@ Viz.prototype.getCurrentViewId = function() {
   return this.currentViewId_;
 };
 
-function fetchAboutPage() {
-  fetch('https://raw.githubusercontent.com/ghdsi/covid-19/master/about.html')
-    .then(function(response) { return response.text(); })
-    .then(function(html) { handleShowModal(html); });
-}
-
 function handleShowModal(html) {
   let modal = document.getElementById('modal');
   let modalWrapper = document.getElementById('modal-wrapper');
@@ -102,7 +96,6 @@ Viz.prototype.init = function() {
     console.log('Hash change ' + h.newURL);
   }
 
-  // document.getElementById('credit').onclick = fetchAboutPage;
   document.onkeydown = this.onKeyDown.bind(this);
   window.setTimeout(this.updateData.bind(this), Viz.LIVE_UPDATE_INTERVAL_MS);
 }
