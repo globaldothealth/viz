@@ -11,7 +11,7 @@ CountryDashboard.prototype.init = function() {
   let self = this;
   const dp = self.dataProvider_;
   dp.fetchCountryNames().
-        then(dp.fetchJhuData.bind(dp)).
+        then(dp.fetchAggregateData.bind(dp)).
         then(dp.loadCountryData.bind(dp)).
         then(self.showCountryPage.bind(self));
 }

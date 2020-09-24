@@ -247,7 +247,7 @@ DataProvider.prototype.fetchInitialData = function() {
     this.fetchCountryNames(),
     this.fetchDataIndex(),
     this.fetchLocationData(),
-    this.fetchJhuData()
+    this.fetchAggregateData()
   ]);
 };
 
@@ -481,7 +481,8 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
     // City, province, country.
     const locationStr = locationInfo[feature['properties']['geoid']];
     let location = locationStr.split('|');
-    const countryCode = location[2];
+    // The country code is the last element.
+    let countryCode = location.slice(-1)[0];
     if (!countryCode || countryCode.length != 2) {
       console.log('Warning: invalid country code: ' + countryCode);
       console.log('From ' + location);
@@ -501,7 +502,7 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
 };
 
 
-DataProvider.prototype.fetchJhuData = function() {
+DataProvider.prototype.fetchAggregateData = function() {
   if (!!this.aggregateData_) {
     return Promise.resolve();
   }

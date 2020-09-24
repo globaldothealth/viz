@@ -96,9 +96,13 @@ SideBar.prototype.render = function() {
   tabEl.onclick = this.toggle;
   this.renderLatestCounts();
   this.renderSearch(document.getElementById('location-filter-wrapper'));
-  document.getElementById('ghlist').onclick = function(e) {
-    window.location.href = 'https://curator.ghdsi.org/cases';
-  };
+  if ('{{TITLE}}' == 'COVID-19') {
+    document.getElementById('ghlist').onclick = function(e) {
+      window.location.href = 'https://curator.ghdsi.org/cases';
+    };
+  } else {
+    document.getElementById('ghlist').style.display = 'none';
+  }
 };
 
 SideBar.prototype.renderSearch = function(container) {
