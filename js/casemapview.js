@@ -46,16 +46,16 @@ getPopupContentsForFeature(f) {
   let locationSpan = [];
   if (!!location) {
     location = location.split('|');
+    let countryName = location.slice(-1)[0];
     // Replace country code with name if necessary
-    if (location[2].length == 2) {
-      location[2] = this.dataProvider_.getCountry(location[2]).getName();
+    if (countryName.length == 2) {
+      countryName = this.dataProvider_.getCountry(countryName).getName();
     }
-    const countryName = location[2];
     const country = this.dataProvider_.getCountryByName(countryName);
 
     // Remove empty strings
     location = location.filter(function (el) { return el != ''; });
-    for (let i = 0; i < location.length; i++) {
+    for (let i = 0; i < location.length - 1; i++) {
       // if (i == location.length - 1 && !!country) {
         // TODO: Restore link to country page.
         // locationSpan.push('<a target="_blank" href="/c/' +
@@ -63,6 +63,7 @@ getPopupContentsForFeature(f) {
       // }
       locationSpan.push(location[i]);
     }
+    locationSpan.push(countryName);
   }
   if (!locationSpan.length) {
     return;
