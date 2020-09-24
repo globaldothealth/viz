@@ -2,10 +2,16 @@
   "covid-19": {
     "data_src_url": "https://raw.githubusercontent.com/globaldothealth/covid-19/master/",
     "name": "COVID-19"
-  }, "local": {
+  },
+  "h1n1": {
+    "data_src_url": "https://raw.githubusercontent.com/globaldothealth/h1n1/master/",
+    "name": "H1N1"
+  },
+  "local": {
     "data_src_url": "http://localhost:8001",
     "name": "Local"
-  }, "test-disease": {
+  },
+  "test-disease": {
     "data_src_url": "https://idontexist.thatsokay",
     "name": "Test Disease"
   }
