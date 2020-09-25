@@ -16,7 +16,7 @@ getId() {
 }
 
 getTitle() {
-  return 'Evolution';
+  return 'Time series';
 };
 
 render() {
