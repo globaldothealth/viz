@@ -58,8 +58,12 @@ class VizHandler(SimpleHTTPRequestHandler):
             contents = contents.replace(
                 "{{TITLE}}", CONFIG[DISEASE_ID]["name"])
         if "sidebar.js" in self.path:
+            other_diseases = []
+            for disease_id in CONFIG[DISEASE_ID]["linkto"]:
+                other_diseases.append("|".join([
+                    disease_id, CONFIG[disease_id]["name"], CONFIG[disease_id]["url"]]))
             contents = contents.replace(
-                "{{OTHER_DISEASES}}", ",".join(CONFIG[DISEASE_ID]["linkto"]))
+                "{{OTHER_DISEASES}}", ",".join(other_diseases))
         if "main.js" in self.path:
             destination = CONFIG[DISEASE_ID]["data_src_url"]
             if not destination.endswith("/"):

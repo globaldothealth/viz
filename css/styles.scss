@@ -277,7 +277,8 @@ input[type=text] {
   padding: 1.5ex 2ex;
 }
 
-#more-menu, #settings-menu {
+#more-menu, #settings-menu, #disease-selector {
+  background-color: $card-bg-color;
   box-shadow: $card-box-shadow;
   padding: 3ex;
   position: fixed;
@@ -332,6 +333,21 @@ input[type=text] {
 
 #sidebar-tab-icon {
   font-size: 80%;
+}
+
+#sidebar-header {
+  cursor: pointer;
+  height: $sidebar-header-height;
+  position: relative;
+}
+
+#disease-selector {
+  position: absolute;
+  top: $sidebar-header-height;
+}
+
+#disease-selector a {
+  text-decoration: none;
 }
 
 #sidebar #latest-global {

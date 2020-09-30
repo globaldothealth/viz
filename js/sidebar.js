@@ -13,8 +13,8 @@ constructor(dataProvider, caseMapView, container) {
   /** @const @private {boolean} */
   this.showPerCapitaOption_ = false;
 
-  /** @const {string} */
-  this.otherDiseases_ = '{{OTHER_DISEASES}}';
+  /** @const {Array.<string>} */
+  this.otherDiseases_ = '{{OTHER_DISEASES}}'.split(',');
 }
 
 toggle() {
@@ -86,8 +86,23 @@ SideBar.prototype.createPerCapitaCheckbox_ = function() {
                             this.updateCountryListCounts.bind(this));
 }
 
+SideBar.prototype.renderDiseaseSelector = function() {
+  const container = document.getElementById('disease-selector');
+  let rendered = '';
+  for (let i = 0; i < this.otherDiseases_.length; i++) {
+    let parts = this.otherDiseases_[i].split('|');
+    rendered += '<div><a href="' + parts[2] + '">' + parts[1] + '</a></div>';
+  }
+  container.innerHTML = rendered;
+  container.style.display = 'none';
+  document.getElementById('sidebar-header').onclick = function() {
+    const container = document.getElementById('disease-selector');
+    container.style.display = container.style.display == 'none' ? 'block' : 'none';
+  };
+}
+
 SideBar.prototype.render = function() {
-  this.element_.innerHTML = '<div id="sidebar-tab"></div><div class="sidebar-header"><h1 class="sidebar-title">{{TITLE}}</h1></div><div id="latest-global"></div><div id="location-filter-wrapper"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>List</span></div>';
+  this.element_.innerHTML = '<div id="sidebar-tab"></div><div id="sidebar-header"><h1 class="sidebar-title">{{TITLE}} ▼</h1><div id="disease-selector"></div></div><div id="latest-global"></div><div id="location-filter-wrapper"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>List</span></div>';
   const tabEl = document.getElementById('sidebar-tab');
   let icon = document.createElement('span');
   if (this.showPerCapitaOption_) {
@@ -97,6 +112,7 @@ SideBar.prototype.render = function() {
   icon.textContent = '▶';
   tabEl.appendChild(icon);
   tabEl.onclick = this.toggle;
+  this.renderDiseaseSelector();
   this.renderLatestCounts();
   this.renderSearch(document.getElementById('location-filter-wrapper'));
   if ('{{TITLE}}' == 'COVID-19') {
