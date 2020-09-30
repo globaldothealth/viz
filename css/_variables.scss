@@ -10,6 +10,7 @@ $sidebar-bgcolor-light: rgba(255, 255, 255, 1);
 $sidebar-bgcolor-dark: rgba(59, 59, 59, 1);
 
 $accent-color: #0094e2;
+$accent-color-highlighted: lighten($accent-color, 30%);
 $card-border-radius: 1ex;
 $card-box-shadow: 0 10px 30px 1px rgba(0, 0, 0, 0.1);
 
