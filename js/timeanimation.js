@@ -17,6 +17,18 @@ constructor(dataProvider, mapView) {
    */
   this.animationIntervalId_ = 0;
 }
+
+setLoading(flag) {
+  let playEl = document.getElementById('playpause');
+  if (flag) {
+    playEl.setAttribute('src', 'img/spinner.gif');
+    playEl.style.opacity = 0.5;
+  } else {
+    playEl.setAttribute('src', 'img/play.svg');
+    playEl.style.opacity = 1;
+  }
+}
+
 }
 
 /** @const */

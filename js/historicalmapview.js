@@ -29,9 +29,11 @@ render() {
   // we do this after we're done rendering the main map.
   window.setTimeout(function() {
     document.head.title = 'Loading...';
+    self.timeAnimation_.setLoading(true);
     self.dataProvider_.fetchDailySlices(
       // Update the time control UI after each daily slice.
       self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(function() {
+        self.timeAnimation_.setLoading(false);
         document.head.title = self.getTitle();
         if (self.nav_.getConfig('autodrive')) {
           self.toggleAnimation();

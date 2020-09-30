@@ -47,7 +47,8 @@ class VizHandler(SimpleHTTPRequestHandler):
             else:
                 return self.list_directory(path)
 
-        f = open(path)
+        binary = path.endswith(".gif") or path.endswith(".png")
+        f = open(path, "rb" if binary else "r")
         contents = f.read()
         if "diseasemap.js" in self.path:
             if MAPBOX_API_VARNAME in os.environ:
@@ -61,7 +62,7 @@ class VizHandler(SimpleHTTPRequestHandler):
             if not destination.endswith("/"):
                 destination += "/"
             contents = contents.replace("{{DATA_SRC_URL}}", destination)
-        encoded_contents = contents.encode()
+        encoded_contents = contents if binary else contents.encode()
         ctype = self.guess_type(path)
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
