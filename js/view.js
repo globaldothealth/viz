@@ -40,7 +40,7 @@ class View {
 
   /** Renders the view to the DOM. */
   render() {
-    document.title = this.getTitle();
+    document.title = this.getTitle() + ' | {{TITLE}}';
     console.log('Rendering "' + document.title + '"');
     document.body.classList.add(this.getId());
   }

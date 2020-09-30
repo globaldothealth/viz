@@ -54,9 +54,10 @@ class VizHandler(SimpleHTTPRequestHandler):
             if MAPBOX_API_VARNAME in os.environ:
                 contents = contents.replace("{{MAPBOX_API_TOKEN}}",
                                             os.environ[MAPBOX_API_VARNAME])
-        if "sidebar.js" in self.path:
+        if "sidebar.js" in self.path or "view.js" in self.path:
             contents = contents.replace(
                 "{{TITLE}}", CONFIG[DISEASE_ID]["name"])
+        if "sidebar.js" in self.path:
             contents = contents.replace(
                 "{{OTHER_DISEASES}}", ",".join(CONFIG[DISEASE_ID]["linkto"]))
         if "main.js" in self.path:
