@@ -1,11 +1,13 @@
 {
   "covid-19": {
     "data_src_url": "https://raw.githubusercontent.com/globaldothealth/covid-19/master/",
-    "name": "COVID-19"
+    "name": "COVID-19",
+    "linkto": ["H1N1"]
   },
   "h1n1": {
     "data_src_url": "https://raw.githubusercontent.com/globaldothealth/h1n1/master/",
-    "name": "H1N1"
+    "name": "H1N1",
+    "linkto": ["COVID-19"]
   },
   "local": {
     "data_src_url": "http://localhost:8001",

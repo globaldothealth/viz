@@ -57,6 +57,8 @@ class VizHandler(SimpleHTTPRequestHandler):
         if "sidebar.js" in self.path:
             contents = contents.replace(
                 "{{TITLE}}", CONFIG[DISEASE_ID]["name"])
+            contents = contents.replace(
+                "{{OTHER_DISEASES}}", ",".join(CONFIG[DISEASE_ID]["linkto"]))
         if "main.js" in self.path:
             destination = CONFIG[DISEASE_ID]["data_src_url"]
             if not destination.endswith("/"):

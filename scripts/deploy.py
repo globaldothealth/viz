@@ -185,6 +185,9 @@ def deploy(disease_id, target_path, quiet=False):
     success != replace_string_in_dest_file(
         "{{MAPBOX_API_TOKEN}}",
         MAPBOX_PROD_API_TOKEN, target_path, "js/bundle.js")
+    success != replace_string_in_dest_file(
+        "{{OTHER_DISEASES}}",
+        ",".join(CONFIG[disease_id]["linkto"]), target_path, "js/bundle.js")
 
     if success:
         if not quiet:

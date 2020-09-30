@@ -12,6 +12,9 @@ constructor(dataProvider, caseMapView, container) {
 
   /** @const @private {boolean} */
   this.showPerCapitaOption_ = false;
+
+  /** @const {string} */
+  this.otherDiseases_ = '{{OTHER_DISEASES}}';
 }
 
 toggle() {
