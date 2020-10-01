@@ -109,7 +109,7 @@ SideBar.prototype.render = function() {
     this.createPerCapitaCheckbox_();
   }
   icon.setAttribute('id', 'sidebar-tab-icon');
-  icon.textContent = '▶';
+  icon.textContent = '◀';
   tabEl.appendChild(icon);
   tabEl.onclick = this.toggle;
   this.renderDiseaseSelector();
