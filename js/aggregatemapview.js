@@ -13,7 +13,7 @@ getId() {
 }
 
 getTitle() {
-  return 'Cumulative cases';
+  return 'Country View';
 }
 
 getPropertyNameForPaint() {

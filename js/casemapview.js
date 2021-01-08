@@ -13,7 +13,7 @@ getId() {
 }
 
 getTitle() {
-  return 'Individual cases';
+  return 'Regional View';
 }
 
 isThreeDimensional() {

@@ -58,9 +58,9 @@ fetchData() {
 render() {
   super.render();
   let app = document.getElementById('app');
-  // app.innerHTML = '';
-  let sideBarEl = document.getElementById('sidebar');
-  // sideBarEl.setAttribute('id', 'sidebar');
+  app.innerHTML = '';
+  let sideBarEl = document.createElement('div');
+  sideBarEl.setAttribute('id', 'sidebar');
   this.sideBar_ = new SideBar(this.dataProvider_, this, sideBarEl);
 
   let mapEl = document.createElement('div');
