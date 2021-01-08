@@ -77,10 +77,12 @@ getFeatureSet() {
 getPopupContentsForFeature(f) {
   const props = f['properties'];
   let contents = document.createElement('div');
-  contents.innerHTML = '<h2><b>' + props['countryname'] + '</b></h2>' +
-    '<b>' + props['coverage'] + ' %</b> (' +
+  contents.innerHTML = '<h2 class="popup-title">' + props['countryname'] + ': ' +
+    props['coverage'] + '%</h2> <p>(' +
     props['individualtotal'].toLocaleString() + ' out of ' +
-    props['aggregatetotal'].toLocaleString() + ')';
+    props['aggregatetotal'].toLocaleString() + ')</p>' + 
+    '<div class="coverage-container"><div class="coverage-bar" style="height:12px;width:' + 
+    props['coverage']+ '%"></div></div><button class="popup">Explore Country Data</button>';
   return contents;
 }
 

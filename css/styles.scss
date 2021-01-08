@@ -611,6 +611,42 @@ div.mapboxgl-popup-content {
   width: 400px;
 }
 
+/* Coverage progress bars */
+.coverage-container {
+  border: 0;
+  border-radius: 8px;
+  width: 100%;
+  background: #efefef;
+  margin-bottom: 12px;
+}
+
+.coverage-bar {
+  background: #0094e2;
+  border-radius: 8px;;
+}
+
+h2.popup-title {
+  text-align: left;
+  font-size: 24px;
+  font-weight: 400;
+  padding: 0;
+  margin: 0 0 12px;
+}
+
+p.popup-count {
+  font-size: 16px;
+  margin-top: -4px;
+  font-weight: 400;
+}
+
+button.popup {
+  font-size: 12px;
+  background: #ecf3f0;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 20px;
+}
+
 /* Overrides for autodrive mode: remove most interactive elements */
 
 .autodrive #sidebar, .autodrive #credit,

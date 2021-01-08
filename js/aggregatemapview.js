@@ -58,8 +58,8 @@ getFeatureSet() {
 getPopupContentsForFeature(f) {
   const props = f['properties'];
   let contents = document.createElement('div');
-  contents.innerHTML = '<h2><b>' + props['countryname'] + '</b></h2>' +
-    '<b>' + props['cum_conf'].toLocaleString() + '</b> cases';
+  contents.innerHTML = '<h2 class="popup-title">' + props['countryname'] + '</h2>' +
+    '<p class=popup-count>' + props['cum_conf'].toLocaleString() + ' cases</p><button class="popup">Explore Country Data</button>';
   return contents;
 }
 
