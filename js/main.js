@@ -84,10 +84,10 @@ Viz.prototype.init = function() {
   this.registerView(new CaseMapView(this.dataProvider_, this.nav_));
   this.registerView(new AggregateMapView(this.dataProvider_, this.nav_));
   // this.registerView(new FreshnessMapView(this.dataProvider_, this.nav_));
-  this.registerView(new HistoricalMapView(this.dataProvider_, this.nav_));
+  // this.registerView(new HistoricalMapView(this.dataProvider_, this.nav_));
   this.registerView(new TwoDCoverageMapView(this.dataProvider_, this.nav_));
-  this.registerView(new RankView(this.dataProvider_, this.nav_));
-  this.registerView(new SyncView(this.dataProvider_));
+  // this.registerView(new RankView(this.dataProvider_, this.nav_));
+  // this.registerView(new SyncView(this.dataProvider_));
 
   this.nav_.setupTopBar();
 
