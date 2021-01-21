@@ -13,7 +13,7 @@ getId() {
 }
 
 getTitle() {
-  return 'Individual cases';
+  return 'Regional View';
 }
 
 isThreeDimensional() {
@@ -72,8 +72,8 @@ getPopupContentsForFeature(f) {
   totalCaseCount = props['total'];
 
   let content = document.createElement('div');
-  content.innerHTML = '<h2><b>' + locationSpan.join(', ') + '</b></h2>' +
-      '<b>' + totalCaseCount.toLocaleString() + '</b> cases</b>';
+  content.innerHTML = '<h2 class="popup-title">' + locationSpan.join(', ') + '</h2>' +
+    '<p class=popup-count>' + totalCaseCount.toLocaleString() + ' cases</p><button class="popup">Explore Region Data</button>';
   return content;
 }
 
