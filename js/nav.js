@@ -166,7 +166,7 @@ Nav.prototype.processHash = function(newUrl) {
   }
   const newHashes = newUrl.substring(baseUrl.length).split('/');
   let darkTheme = false;
-  let viewToLoad = 'cases';
+  let viewToLoad = 'cumulative';
   if (newHashes.length > 0) {
     for (let i = 0; i < newHashes.length; i++) {
       let hashBrown = newHashes[i];

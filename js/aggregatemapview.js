@@ -59,7 +59,7 @@ getPopupContentsForFeature(f) {
   const props = f['properties'];
   let contents = document.createElement('div');
   contents.innerHTML = '<h2 class="popup-title">' + props['countryname'] + '</h2>' +
-    '<p class=popup-count>' + props['cum_conf'].toLocaleString() + ' cases</p><button class="popup">Explore Country Data</button>';
+    '<p class=popup-count>' + props['cum_conf'].toLocaleString() + ' cases</p><a class="popup" target="_blank" href="https://dev-curator.ghdsi.org/cases?country=%22' + props['countryname'] +'%22">Explore Country Data</a>';
   return contents;
 }
 
