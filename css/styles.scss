@@ -244,9 +244,10 @@ input[type=text] {
   display: flex;
   justify-content: space-around;
   position: fixed;
-  top: 2ex;
+  top: 0ex;
   width: 100%;
   z-index: 9;
+  background: #edf3f1;
 }
 
 #topbar {
@@ -274,7 +275,7 @@ input[type=text] {
   border-top: 4px solid transparent;
   border-bottom: 4px solid transparent;
   margin: 0;
-  padding: 1.5ex 2ex;
+  padding: 2.5ex 2ex 1.5ex;
 }
 
 #settings-menu {
@@ -386,10 +387,10 @@ input[type=text] {
 
 #logo {
   height: 6ex;
-  left: 2ex;
+  left: 1ex;
   position: fixed;
-  top: 2ex;
-  z-index: 5;
+  top: 1ex;
+  z-index: 999;
 }
 
 #logo img {
@@ -673,12 +674,23 @@ p.popup-count {
   font-weight: 400;
 }
 
-button.popup {
+a.popup {
   font-size: 12px;
   background: #ecf3f0;
   border: 0;
   border-radius: 8px;
   padding: 10px 20px;
+  text-decoration: none;
+}
+
+a.popup.coverage {
+  display: block;
+  margin-top: 20px;
+}
+
+a.popup:hover {
+  background: #0E7569;
+  color: #ffffff;
 }
 
 /* Overrides for autodrive mode: remove most interactive elements */

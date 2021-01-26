@@ -82,7 +82,8 @@ getPopupContentsForFeature(f) {
     props['individualtotal'].toLocaleString() + ' out of ' +
     props['aggregatetotal'].toLocaleString() + ')</p>' + 
     '<div class="coverage-container"><div class="coverage-bar" style="height:12px;width:' + 
-    props['coverage']+ '%"></div></div><button class="popup">Explore Country Data</button>';
+    props['coverage']+ '%"></div></div>' +
+    '<a class="popup coverage" target="_blank" href="https://dev-curator.ghdsi.org/cases?country=%22' + props['countryname'] +'%22">Explore Country Data</a>';
   return contents;
 }
 

@@ -72,8 +72,16 @@ getPopupContentsForFeature(f) {
   totalCaseCount = props['total'];
 
   let content = document.createElement('div');
+  console.log("location: ", locationSpan);
   content.innerHTML = '<h2 class="popup-title">' + locationSpan.join(', ') + '</h2>' +
-    '<p class=popup-count>' + totalCaseCount.toLocaleString() + ' cases</p><button class="popup">Explore Region Data</button>';
+    '<p class=popup-count>' + totalCaseCount.toLocaleString() + ' cases</p> ' +
+    '<a class="popup" target="_blank" href="https://dev-curator.ghdsi.org/cases?country=%22' + 
+    locationSpan[2] +
+    '%22&admin1=%22' + 
+    locationSpan[1] + 
+    '%22&admin2=%22' + 
+    locationSpan[0] + 
+    '%22">Explore Regional Data</a>';
   return content;
 }
 
