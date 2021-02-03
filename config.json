@@ -1,13 +1,13 @@
 {
   "covid-19": {
     "url": "http://covid-19.global.health",
-    "data_src_url": "https://raw.githubusercontent.com/globaldothealth/covid-19/master/",
+    "data_src_url": "https://covid-19-aggregates.s3.amazonaws.com/",
     "name": "COVID-19",
     "linkto": ["h1n1"]
   },
   "h1n1": {
     "url": "http://h1n1.global.health",
-    "data_src_url": "https://raw.githubusercontent.com/globaldothealth/h1n1/master/",
+    "data_src_url": "https://h1n1-aggregates.s3.amazonaws.com/",
     "name": "H1N1",
     "linkto": ["covid-19"]
   },

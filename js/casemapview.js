@@ -25,7 +25,7 @@ getPropertyNameForPaint() {
 }
 
 getHeightForFeature(feature) {
-  return 10 * Math.sqrt(100000 * feature['properties']['total']);
+  return 10 * Math.sqrt(100000 * feature['casecount']);
 }
 
 getFeatureSet() {
