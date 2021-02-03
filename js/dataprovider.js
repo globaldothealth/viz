@@ -76,12 +76,11 @@ constructor(baseUrl) {
 
 DataProvider.LAT_LNG_DECIMAL_LENGTH = 4;
 
-DataProvider.normalizeGeoId = function(geoid) {
-  let parts = geoid.split('|');
+DataProvider.normalizeGeoId = function(lat, long) {
   let output = [];
-  for (let i = 0; i < parts.length; i++) {
-    output.push(parseFloat(parts[i]).toFixed(DataProvider.LAT_LNG_DECIMAL_LENGTH));
-  }
+  output.push(parseFloat(lat).toFixed(DataProvider.LAT_LNG_DECIMAL_LENGTH));
+  output.push(parseFloat(long).toFixed(DataProvider.LAT_LNG_DECIMAL_LENGTH));
+  // console.log(output);
   return output.join('|');
 };
 
@@ -152,7 +151,9 @@ DataProvider.prototype.getLatestDateWithAggregateData = function() {
   if (!this.aggregateData_) {
     return "";
   }
+  // console.log("are there dates here? ", this.aggregateData_);
   let dates = Object.keys(this.aggregateData_);
+  // console.log("dates: ", dates);
   return dates.sort()[dates.length - 1];
 }
 
@@ -160,12 +161,14 @@ DataProvider.prototype.getLatestDataPerCountry = function() {
   if (!this.latestDataPerCountry_) {
     this.latestDataPerCountry_ = {};
     const latestAggregateData = this.getLatestAggregateData();
+    // console.log("latest aggdata: ", latestAggregateData);
     if (!latestAggregateData) {
       return null;
     }
     for (let i = 0; i < latestAggregateData.length; i++) {
       const item = latestAggregateData[i];
-      this.latestDataPerCountry_[item['code']] = [item['cum_conf']];
+      console.log("this country: ", item['_id']);
+      this.latestDataPerCountry_[item['_id']] = [item['caseCount']];
     }
   }
   return this.latestDataPerCountry_;
@@ -194,6 +197,7 @@ DataProvider.prototype.getLatestAggregateData = function() {
 }
 
 DataProvider.prototype.getAggregateData = function() {
+  console.log("this agg data: ", this.aggregateData_);
   return this.aggregateData_;
 };
 
@@ -298,7 +302,7 @@ DataProvider.prototype.fetchLocationData = function() {
 DataProvider.prototype.fetchDataIndex = function() {
   let self = this;
   return new Promise(function(resolve, reject) {
-    fetch(self.baseUrl_ + '/d/index.txt').then(function(response) {
+    fetch(self.baseUrl_ + 'regional/index.txt').then(function(response) {
         return response.text();
       }).then(function(responseText) {
         let lines = responseText.split('\n');
@@ -393,11 +397,12 @@ DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
   }
   const timestamp = (new Date()).getTime();
   let self = this;
-  return fetch(this.baseUrl_ + 'globals.json?nocache=' + timestamp)
+  return fetch(this.baseUrl_ + 'total/latest.json?nocache=' + timestamp)
     .then(function(response) { return response.json(); })
     .then(function(jsonData) {
-      const counts = jsonData[0];
-      self.latestGlobalCounts_ = [parseInt(counts['caseCount'], 10),
+      const counts = jsonData;
+      console.log("counts: ", counts);
+      self.latestGlobalCounts_ = [parseInt(counts['total'], 10),
                                   parseInt(counts['deaths'], 10),
                                   counts['date']];
     });
@@ -438,7 +443,7 @@ DataProvider.prototype.fetchDailySlice = function(
   }
   const timestamp = (new Date()).getTime();
   let self = this;
-  let url = this.baseUrl_ + 'd/' + sliceFileName;
+  let url = this.baseUrl_ + 'country/latest.json';
   // Don't cache the most recent daily slice. Cache all others.
   if (isNewest) {
     url += '?nocache=' + timestamp;
@@ -462,8 +467,12 @@ DataProvider.prototype.fetchDailySlice = function(
 
 
 DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
-  let currentDate = jsonData['date'];
-  let features = jsonData['features'];
+
+  // console.log("full json data: ", jsonData);
+  let currentDate = Object.keys(jsonData);
+  // console.log("recent date: ", currentDate);
+  let features = jsonData[currentDate];
+  // console.log("data dump: ", features);
 
   // Cases grouped by country
   let countryFeatures = {};
@@ -471,18 +480,20 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
   // "Re-hydrate" the features into objects ingestable by the map.
   for (let i = 0; i < features.length; i++) {
     let feature = features[i];
-    feature['properties']['geoid'] = DataProvider.normalizeGeoId(
-        feature['properties']['geoid']);
+    feature['geoid'] = DataProvider.normalizeGeoId(
+        feature['lat'], feature['long']);
 
     // If we don't know where this is, discard.
-    if (!locationInfo[feature['properties']['geoid']]) {
+    if (!locationInfo[feature['geoid']]) {
+      // console.log("Cannot locate: ", feature['_id'] + " GeoID: "+ feature['geoid']);
       continue;
     }
     // City, province, country.
-    const locationStr = locationInfo[feature['properties']['geoid']];
+    const locationStr = locationInfo[feature['geoid']];
     let location = locationStr.split('|');
     // The country code is the last element.
     let countryCode = location.slice(-1)[0];
+    // console.log("country code: ", countryCode);
     if (!countryCode || countryCode.length != 2) {
       console.log('Warning: invalid country code: ' + countryCode);
       console.log('From ' + location);
@@ -490,8 +501,10 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
     if (!countryFeatures[countryCode]) {
       countryFeatures[countryCode] = {'total': 0, 'new': 0};
     }
-    countryFeatures[countryCode]['total'] += feature['properties']['total'];
-    countryFeatures[countryCode]['new'] += feature['properties']['new'];
+    countryFeatures[countryCode]['name'] = feature['_id'];
+    countryFeatures[countryCode]['geoid'] = feature['geoid'];
+    countryFeatures[countryCode]['total'] = feature['casecount'];
+    countryFeatures[countryCode]['jhu'] = feature['jhu'];
   }
 
   this.dates_.add(currentDate);
@@ -508,7 +521,7 @@ DataProvider.prototype.fetchAggregateData = function() {
   }
   const timestamp = (new Date()).getTime();
   let self = this;
-  return fetch(this.baseUrl_ + 'aggregate.json?nocache=' + timestamp)
+  return fetch(this.baseUrl_ + 'total/latest.json?nocache=' + timestamp)
     .then(function(response) { return response.json(); })
     .then(function(jsonData) {
       self.aggregateData_ = {};

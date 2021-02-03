@@ -139,11 +139,13 @@ SideBar.prototype.renderSearch = function(container) {
 
 SideBar.prototype.renderLatestCounts = function() {
   let latestEl = document.getElementById('latest-global');
-  latestEl.innerHTML = '<span id="total-cases"></span><span class="reported-cases-label">cases</span><br /><span id="total-deaths"></span><span class="total-deaths-label">deaths</span><br /><div class="last-updated-date">Updated <span id="last-updated-date"></span></div>';
+  latestEl.innerHTML = '<span id="total-cases"></span><span class="reported-cases-label">cases</span><br />'+
+  // <span id="total-deaths"></span><span class="total-deaths-label">deaths</span>
+  '<br /><div class="last-updated-date">Updated: <span id="last-updated-date"></span></div>';
   const latest = this.dataProvider_.getLatestGlobalCounts();
   document.getElementById('total-cases').innerText = latest[0].toLocaleString();
-  document.getElementById('total-deaths').innerText = latest[1].toLocaleString();
-  document.getElementById('last-updated-date').innerText = latest[2];
+  // document.getElementById('total-deaths').innerText = latest[1].toLocaleString();
+  // document.getElementById('last-updated-date').innerText = latest[2];
 };
 
 SideBar.prototype.makeCaseCountProgressBar = function(caseCount, maxCaseCount) {
@@ -158,30 +160,47 @@ SideBar.prototype.makeCaseCountProgressBar = function(caseCount, maxCaseCount) {
 SideBar.prototype.renderCountryList = function() {
   let countryList = document.getElementById('location-list');
   const latestAggregateData = this.dataProvider_.getLatestAggregateData();
-  if (!latestAggregateData || latestAggregateData.length < 1) {
+  // console.log("latest what now? ", latestAggregateData);
+
+  const latestDate = this.dataProvider_.getLatestDate();
+  // This is a map from country code to the corresponding feature.
+  let dehydratedFeatures = this.dataProvider_.getCountryFeaturesForDay(latestDate);
+
+  if (!dehydratedFeatures || dehydratedFeatures.length < 1) {
     console.log('No data for rendering country list');
     return;
   }
 
   // Sort according to decreasing confirmed cases.
-  latestAggregateData.sort(function(a, b) {
-    return b['cum_conf'] - a['cum_conf'];
+  // dehydratedFeatures.sort(function(a, b) {
+  //   return b['total'] - a['total'];
+  // });
+
+  const sortedKeys = Object.keys(dehydratedFeatures).sort( function(keyA, keyB) {
+    return dehydratedFeatures[keyB]['total'] - dehydratedFeatures[keyA]['total'];
   });
-  const maxConfirmedCases = latestAggregateData[0]['cum_conf'];
-  for (let i = 0; i < latestAggregateData.length; ++i) {
-    let location = latestAggregateData[i];
-    if (!location || !location['code']) {
+
+  const maxConfirmedCases = this.dataProvider_.getLatestGlobalCounts();
+  console.log("dehy feat: ", dehydratedFeatures);
+  console.log("sorted dehy feat: ", sortedKeys);
+  // for (var key in sortedList) {
+  for (let i = 0; i < sortedKeys.length; i++) {
+    // console.log("Oh hello, ", dehydratedFeatures[key]['name']);
+  // for (let i = 0; i < latestAggregateData.length; ++i) {
+    let key = sortedKeys[i];
+    if (!key || !dehydratedFeatures[key]['name']) {
       // We can't do much with this location.
       continue;
     }
-    const code = location['code'];
+    const code = key;
+    // console.log("code: ", code);
     const country = this.dataProvider_.getCountry(code);
     if (!country) {
       continue;
     }
     const name = country.getName();
     const geoid = country.getCentroid().join('|');
-    let cumConf = parseInt(location['cum_conf'], 10) || 0;
+    let cumConf = parseInt(dehydratedFeatures[key]['total'], 10) || 0;
     let legendGroup = 'default';
 
     // If the page we are on doesn't have the corresponding UI, we don't need
@@ -196,14 +215,14 @@ SideBar.prototype.renderCountryList = function() {
       button.setAttribute('country', code);
       button.onclick = this.flyToCountry.bind(this);
       button.innerHTML = '<span class="label">' + name + '</span>' +
-          '<span class="num"></span>';
+          '<span class="num">' + cumConf.toLocaleString() + '</span>';
       item.appendChild(button);
-      item.appendChild(this.makeCaseCountProgressBar(cumConf, maxConfirmedCases));
+      item.appendChild(this.makeCaseCountProgressBar(cumConf, maxConfirmedCases[0]));
       countryList.appendChild(item);
     }
   }
   if (!!countryList) {
-    this.updateCountryListCounts();
+    //this.updateCountryListCounts();
   }
 }
 

@@ -73,7 +73,7 @@ CountryDashboard.prototype.showCountryPage = function(data) {
     for (let j = 0; j < aggregateData[dates[i]]; i++) {
       const item = aggregateData[dates[i]][j];
       if (item['code'] == code) {
-        o[centroidGeoid].push(item['cum_conf']);
+        o[centroidGeoid].push(item['caseCount']);
         break;
       }
     }
