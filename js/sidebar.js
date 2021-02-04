@@ -181,8 +181,8 @@ SideBar.prototype.renderCountryList = function() {
   });
 
   const maxConfirmedCases = this.dataProvider_.getLatestGlobalCounts();
-  console.log("dehy feat: ", dehydratedFeatures);
-  console.log("sorted dehy feat: ", sortedKeys);
+  // console.log("dehy feat: ", dehydratedFeatures);
+  // console.log("sorted dehy feat: ", sortedKeys);
   // for (var key in sortedList) {
   for (let i = 0; i < sortedKeys.length; i++) {
     // console.log("Oh hello, ", dehydratedFeatures[key]['name']);

@@ -25,14 +25,15 @@ getPropertyNameForPaint() {
 }
 
 getHeightForFeature(feature) {
-  return 10 * Math.sqrt(100000 * feature['casecount']);
+  return 10 * Math.sqrt(100000 * feature['properties']['total']);
 }
 
 getFeatureSet() {
   const latestDate = this.dataProvider_.getLatestDate();
   let dehydratedFeatures = this.dataProvider_.getAtomicFeaturesForDay(latestDate);
-  return this.formatFeatureSet(dehydratedFeatures.map(
-      f => this.formatFeature(f, true /* 3D */)));
+  console.log("how far nah: ", dehydratedFeatures);
+  // return this.formatFeatureSet(dehydratedFeatures.map(
+  //     f => this.formatFeature(f, true /* 3D */)));
 }
 
 getPopupContentsForFeature(f) {

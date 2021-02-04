@@ -55,9 +55,9 @@ constructor(viz) {
   // Config
   // TODO: Make this work instantly.
   // this.registerToggle('2D Map', '2d', false);
-  this.registerToggle('Auto-drive', 'autodrive', false);
-  this.registerToggle('Dark', 'dark', false);
-  this.registerToggle('Fullscreen', 'fullscreen', false);
+  // this.registerToggle('Auto-drive', 'autodrive', false);
+  // this.registerToggle('Dark', 'dark', false);
+  // this.registerToggle('Fullscreen', 'fullscreen', false);
 
   // Views are registered in main.js
 }
@@ -326,6 +326,6 @@ Nav.prototype.setupTopBar = function() {
       }
     }
   }
-  this.setupSettings();
+  // this.setupSettings();
   this.processHash(window.location.href);
 }

@@ -465,6 +465,80 @@ DataProvider.prototype.fetchDailySlice = function(
   });
 };
 
+DataProvider.prototype.getRegionalData = function(
+  sliceFileName, isNewest, callback) {
+if (!!this.dataSliceFileNames_[sliceFileName]) {
+  console.log('Already have ' + sliceFileName);
+  return Promise.resolve();
+}
+const timestamp = (new Date()).getTime();
+let self = this;
+let url = this.baseUrl_ + 'regional/latest.json?nocache=' + timestamp;
+// Don't cache the most recent daily slice. Cache all others.
+if (isNewest) {
+  url += '?nocache=' + timestamp;
+}
+return new Promise(function(resolve, reject) {
+  fetch(url).then(function(response) {
+    if (response.status != 200) {
+      reject('Bad response status ' + response.status + ' for ' + url);
+    }
+    return response.json();
+  }).then(function(jsonData) {
+    if (!jsonData) {
+      reject('JSON data is empty');
+    }
+    console.log("response to regional data request: ", jsonData);
+    // return jsonData;
+
+    self.processRegionalData(jsonData);
+    callback();
+    resolve();
+  });
+});
+};
+
+DataProvider.prototype.processRegionalData = function(jsonData) {
+  let currentDate = Object.keys(jsonData);
+  let features = jsonData[currentDate];
+  let regionalFeatures = {};
+
+  // "Re-hydrate" the features into objects ingestable by the map.
+  // for (let i = 0; i < features.length; i++) {
+  //   let feature = features[i];
+  //   feature['geoid'] = DataProvider.normalizeGeoId(
+  //       feature['lat'], feature['long']);
+
+  //   // If we don't know where this is, discard.
+  //   if (!locationInfo[feature['geoid']]) {
+  //     // console.log("Cannot locate: ", feature['_id'] + " GeoID: "+ feature['geoid']);
+  //     continue;
+  //   }
+  //   // City, province, country.
+  //   const locationStr = locationInfo[feature['geoid']];
+  //   let location = locationStr.split('|');
+  //   // The country code is the last element.
+  //   let countryCode = location.slice(-1)[0];
+  //   // console.log("country code: ", countryCode);
+  //   if (!countryCode || countryCode.length != 2) {
+  //     console.log('Warning: invalid country code: ' + countryCode);
+  //     console.log('From ' + location);
+  //   }
+  //   if (!countryFeatures[countryCode]) {
+  //     countryFeatures[countryCode] = {'total': 0, 'new': 0};
+  //   }
+  //   regionalFeatures[countryCode]['name'] = feature['_id'];
+  //   regionalFeatures[countryCode]['geoid'] = feature['geoid'];
+  //   regionalFeatures[countryCode]['total'] = feature['casecount'];
+  // }
+  console.log("regionalFeatures: ", features);
+  this.dates_.add(currentDate);
+
+  // this.countryFeaturesByDay_[currentDate] = countryFeatures;
+  this.atomicFeaturesByDay_[currentDate] = features;
+  this.dataSliceFileNames_[currentDate + '.json'] = true;
+}
+
 
 DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
 
@@ -510,7 +584,7 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
   this.dates_.add(currentDate);
 
   this.countryFeaturesByDay_[currentDate] = countryFeatures;
-  this.atomicFeaturesByDay_[currentDate] = features;
+  // this.atomicFeaturesByDay_[currentDate] = features;
   this.dataSliceFileNames_[currentDate + '.json'] = true;
 };
 
