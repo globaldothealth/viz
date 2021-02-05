@@ -102,7 +102,7 @@ SideBar.prototype.renderDiseaseSelector = function() {
 }
 
 SideBar.prototype.render = function() {
-  this.element_.innerHTML = '<div id="sidebar-tab"></div><div id="sidebar-header"><h1 class="sidebar-title">{{TITLE}} ▼</h1><div id="disease-selector"></div></div><div id="latest-global"></div><div id="location-filter-wrapper"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>List</span></div>';
+  this.element_.innerHTML = '<div id="sidebar-tab"></div><div id="sidebar-header"><h1 class="sidebar-title">{{TITLE}}</h1><div id="disease-selector"></div></div><div id="latest-global"></div><div id="location-filter-wrapper"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>List</span></div>';
   const tabEl = document.getElementById('sidebar-tab');
   let icon = document.createElement('span');
   if (this.showPerCapitaOption_) {
@@ -112,7 +112,7 @@ SideBar.prototype.render = function() {
   icon.textContent = '◀';
   tabEl.appendChild(icon);
   tabEl.onclick = this.toggle;
-  this.renderDiseaseSelector();
+  // this.renderDiseaseSelector();
   this.renderLatestCounts();
   this.renderSearch(document.getElementById('location-filter-wrapper'));
   if ('{{TITLE}}' == 'COVID-19') {
@@ -139,13 +139,16 @@ SideBar.prototype.renderSearch = function(container) {
 
 SideBar.prototype.renderLatestCounts = function() {
   let latestEl = document.getElementById('latest-global');
-  latestEl.innerHTML = '<span id="total-cases"></span><span class="reported-cases-label">cases</span><br />'+
+  latestEl.innerHTML = '<span id="total-cases"></span><span class="reported-cases-label">cases</span>'+
   // <span id="total-deaths"></span><span class="total-deaths-label">deaths</span>
   '<br /><div class="last-updated-date">Updated: <span id="last-updated-date"></span></div>';
   const latest = this.dataProvider_.getLatestGlobalCounts();
   document.getElementById('total-cases').innerText = latest[0].toLocaleString();
   // document.getElementById('total-deaths').innerText = latest[1].toLocaleString();
-  // document.getElementById('last-updated-date').innerText = latest[2];
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  document.getElementById('last-updated-date').innerText = yesterday.toDateString();
 };
 
 SideBar.prototype.makeCaseCountProgressBar = function(caseCount, maxCaseCount) {
@@ -159,8 +162,6 @@ SideBar.prototype.makeCaseCountProgressBar = function(caseCount, maxCaseCount) {
 
 SideBar.prototype.renderCountryList = function() {
   let countryList = document.getElementById('location-list');
-  const latestAggregateData = this.dataProvider_.getLatestAggregateData();
-  // console.log("latest what now? ", latestAggregateData);
 
   const latestDate = this.dataProvider_.getLatestDate();
   // This is a map from country code to the corresponding feature.
@@ -181,11 +182,8 @@ SideBar.prototype.renderCountryList = function() {
   });
 
   const maxConfirmedCases = this.dataProvider_.getLatestGlobalCounts();
-  // console.log("dehy feat: ", dehydratedFeatures);
-  // console.log("sorted dehy feat: ", sortedKeys);
   // for (var key in sortedList) {
   for (let i = 0; i < sortedKeys.length; i++) {
-    // console.log("Oh hello, ", dehydratedFeatures[key]['name']);
   // for (let i = 0; i < latestAggregateData.length; ++i) {
     let key = sortedKeys[i];
     if (!key || !dehydratedFeatures[key]['name']) {
@@ -220,9 +218,6 @@ SideBar.prototype.renderCountryList = function() {
       item.appendChild(this.makeCaseCountProgressBar(cumConf, maxConfirmedCases[0]));
       countryList.appendChild(item);
     }
-  }
-  if (!!countryList) {
-    //this.updateCountryListCounts();
   }
 }
 

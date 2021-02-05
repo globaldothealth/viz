@@ -166,7 +166,7 @@ Nav.prototype.processHash = function(newUrl) {
   }
   const newHashes = newUrl.substring(baseUrl.length).split('/');
   let darkTheme = false;
-  let viewToLoad = 'cumulative';
+  let viewToLoad = 'country';
   if (newHashes.length > 0) {
     for (let i = 0; i < newHashes.length; i++) {
       let hashBrown = newHashes[i];
@@ -254,6 +254,18 @@ Nav.getPopupMenuTop = function() {
   return topBarRect.y + topBarRect.height;
 }
 
+Nav.prototype.dataLink = function() {
+  const dataEl = document.createElement('div');
+  dataEl.setAttribute('id', 'data');
+  const linkEl = document.createElement('a');
+  linkEl.setAttribute('href','https://dev-curator.ghdsi.org');
+  linkEl.textContent = 'G.h Data';
+  dataEl.classList.add('navlink');
+  document.getElementById('topbar').appendChild(dataEl);
+  document.getElementById('data').appendChild(linkEl);
+
+}
+
 Nav.prototype.setupSettings = function() {
   const settingsEl = document.createElement('div');
   settingsEl.setAttribute('id', 'settings');
@@ -326,6 +338,6 @@ Nav.prototype.setupTopBar = function() {
       }
     }
   }
-  // this.setupSettings();
+  this.dataLink();
   this.processHash(window.location.href);
 }

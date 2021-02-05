@@ -71,6 +71,11 @@ constructor(baseUrl) {
     * @private {Object}
    */
   this.freshnessData_;
+
+  /**
+    * @private {Object}
+   */
+  this.regionalData_;
 }
 }  // DataProvider
 
@@ -80,7 +85,6 @@ DataProvider.normalizeGeoId = function(lat, long) {
   let output = [];
   output.push(parseFloat(lat).toFixed(DataProvider.LAT_LNG_DECIMAL_LENGTH));
   output.push(parseFloat(long).toFixed(DataProvider.LAT_LNG_DECIMAL_LENGTH));
-  // console.log(output);
   return output.join('|');
 };
 
@@ -151,9 +155,7 @@ DataProvider.prototype.getLatestDateWithAggregateData = function() {
   if (!this.aggregateData_) {
     return "";
   }
-  // console.log("are there dates here? ", this.aggregateData_);
   let dates = Object.keys(this.aggregateData_);
-  // console.log("dates: ", dates);
   return dates.sort()[dates.length - 1];
 }
 
@@ -161,13 +163,11 @@ DataProvider.prototype.getLatestDataPerCountry = function() {
   if (!this.latestDataPerCountry_) {
     this.latestDataPerCountry_ = {};
     const latestAggregateData = this.getLatestAggregateData();
-    // console.log("latest aggdata: ", latestAggregateData);
     if (!latestAggregateData) {
       return null;
     }
     for (let i = 0; i < latestAggregateData.length; i++) {
       const item = latestAggregateData[i];
-      console.log("this country: ", item['_id']);
       this.latestDataPerCountry_[item['_id']] = [item['caseCount']];
     }
   }
@@ -181,7 +181,7 @@ DataProvider.prototype.getCountryFeaturesForDay = function(date) {
 
 
 DataProvider.prototype.getAtomicFeaturesForDay = function(date) {
-  return this.atomicFeaturesByDay_[date];
+  return this.atomicFeaturesByDay_;
 };
 
 
@@ -197,12 +197,15 @@ DataProvider.prototype.getLatestAggregateData = function() {
 }
 
 DataProvider.prototype.getAggregateData = function() {
-  console.log("this agg data: ", this.aggregateData_);
   return this.aggregateData_;
 };
 
 DataProvider.prototype.getFreshnessData = function() {
   return this.freshnessData_;
+};
+
+DataProvider.prototype.getRegionalData = function() {
+  return this.regionalData_;
 };
 
 /** @return {Array.<string>} */
@@ -401,7 +404,6 @@ DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
     .then(function(response) { return response.json(); })
     .then(function(jsonData) {
       const counts = jsonData;
-      console.log("counts: ", counts);
       self.latestGlobalCounts_ = [parseInt(counts['total'], 10),
                                   parseInt(counts['deaths'], 10),
                                   counts['date']];
@@ -465,88 +467,28 @@ DataProvider.prototype.fetchDailySlice = function(
   });
 };
 
-DataProvider.prototype.getRegionalData = function(
-  sliceFileName, isNewest, callback) {
-if (!!this.dataSliceFileNames_[sliceFileName]) {
-  console.log('Already have ' + sliceFileName);
-  return Promise.resolve();
-}
-const timestamp = (new Date()).getTime();
-let self = this;
-let url = this.baseUrl_ + 'regional/latest.json?nocache=' + timestamp;
-// Don't cache the most recent daily slice. Cache all others.
-if (isNewest) {
-  url += '?nocache=' + timestamp;
-}
-return new Promise(function(resolve, reject) {
-  fetch(url).then(function(response) {
-    if (response.status != 200) {
-      reject('Bad response status ' + response.status + ' for ' + url);
-    }
-    return response.json();
-  }).then(function(jsonData) {
-    if (!jsonData) {
-      reject('JSON data is empty');
-    }
-    console.log("response to regional data request: ", jsonData);
-    // return jsonData;
+/** @return {!Promise} */
+DataProvider.prototype.fetchRegionalData = function() {
+  if (!!this.regionalData_ && !!this.regionalData_.length) {
+    console.log('Freshness data already loaded.');
+    return Promise.resolve();
+  }
+  const timestamp = (new Date()).getTime();
+  let self = this;
+  let url = this.baseUrl_ + 'regional/latest.json?nocache=' + timestamp;
+  // Don't cache the most recent daily slice. Cache all others.
+  return fetch(url)
+    .then(function(response) { return response.json(); })
+    .then(function(jsonData) {
+      self.regionalData_ = jsonData;
+    });
 
-    self.processRegionalData(jsonData);
-    callback();
-    resolve();
-  });
-});
 };
-
-DataProvider.prototype.processRegionalData = function(jsonData) {
-  let currentDate = Object.keys(jsonData);
-  let features = jsonData[currentDate];
-  let regionalFeatures = {};
-
-  // "Re-hydrate" the features into objects ingestable by the map.
-  // for (let i = 0; i < features.length; i++) {
-  //   let feature = features[i];
-  //   feature['geoid'] = DataProvider.normalizeGeoId(
-  //       feature['lat'], feature['long']);
-
-  //   // If we don't know where this is, discard.
-  //   if (!locationInfo[feature['geoid']]) {
-  //     // console.log("Cannot locate: ", feature['_id'] + " GeoID: "+ feature['geoid']);
-  //     continue;
-  //   }
-  //   // City, province, country.
-  //   const locationStr = locationInfo[feature['geoid']];
-  //   let location = locationStr.split('|');
-  //   // The country code is the last element.
-  //   let countryCode = location.slice(-1)[0];
-  //   // console.log("country code: ", countryCode);
-  //   if (!countryCode || countryCode.length != 2) {
-  //     console.log('Warning: invalid country code: ' + countryCode);
-  //     console.log('From ' + location);
-  //   }
-  //   if (!countryFeatures[countryCode]) {
-  //     countryFeatures[countryCode] = {'total': 0, 'new': 0};
-  //   }
-  //   regionalFeatures[countryCode]['name'] = feature['_id'];
-  //   regionalFeatures[countryCode]['geoid'] = feature['geoid'];
-  //   regionalFeatures[countryCode]['total'] = feature['casecount'];
-  // }
-  console.log("regionalFeatures: ", features);
-  this.dates_.add(currentDate);
-
-  // this.countryFeaturesByDay_[currentDate] = countryFeatures;
-  this.atomicFeaturesByDay_[currentDate] = features;
-  this.dataSliceFileNames_[currentDate + '.json'] = true;
-}
-
 
 DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
 
-  // console.log("full json data: ", jsonData);
   let currentDate = Object.keys(jsonData);
-  // console.log("recent date: ", currentDate);
   let features = jsonData[currentDate];
-  // console.log("data dump: ", features);
 
   // Cases grouped by country
   let countryFeatures = {};
@@ -559,7 +501,6 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
 
     // If we don't know where this is, discard.
     if (!locationInfo[feature['geoid']]) {
-      // console.log("Cannot locate: ", feature['_id'] + " GeoID: "+ feature['geoid']);
       continue;
     }
     // City, province, country.
@@ -567,7 +508,6 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
     let location = locationStr.split('|');
     // The country code is the last element.
     let countryCode = location.slice(-1)[0];
-    // console.log("country code: ", countryCode);
     if (!countryCode || countryCode.length != 2) {
       console.log('Warning: invalid country code: ' + countryCode);
       console.log('From ' + location);

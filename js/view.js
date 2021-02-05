@@ -40,7 +40,8 @@ class View {
 
   /** Renders the view to the DOM. */
   render() {
-    document.title = this.getTitle() + ' | {{TITLE}}';
+    document.title = 'Global.health | a Data Science Initiative';
+    // document.title = this.getTitle() + ' | {{TITLE}}';
     console.log('Rendering "' + document.title + '"');
     document.body.classList.add(this.getId());
   }
@@ -49,7 +50,7 @@ class View {
     let logoEl = document.createElement('div');
     logoEl.classList.add('logo');
     logoEl.setAttribute('id', 'logo');
-    logoEl.innerHTML = '<img src="/img/gh_logo.svg" /><span>Map</span>';
+    logoEl.innerHTML = '<a href="https://test-globalhealth.pantheonsite.io/"><img src="/img/gh_logo.svg" /><span>Map</span></a>';
     document.getElementById('app').appendChild(logoEl);
   }
 

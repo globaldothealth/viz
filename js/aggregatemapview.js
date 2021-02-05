@@ -9,7 +9,7 @@ constructor(dataProvider, nav) {
 }
 
 getId() {
-  return 'cumulative';
+  return 'country';
 }
 
 getTitle() {
@@ -27,12 +27,9 @@ getFeatureSet() {
   let dehydratedFeatures = this.dataProvider_.getCountryFeaturesForDay(latestDate);
   // const aggregates = this.dataProvider_.getAggregateData()[latestDateForAggregate];
   const aggregates = [];
-  // console.log("dehydrated features: ", dehydratedFeatures);
-  // console.log("aggs: ", aggregates);
   let features = [];
   let codes = Object.keys(dehydratedFeatures);
   for (var key in dehydratedFeatures) {
-    // console.log(dehydratedFeatures[key]['name']);
 
     const code = key;
     const boundaries = this.dataProvider_.getBoundariesForCountry(code);
@@ -56,30 +53,6 @@ getFeatureSet() {
     features.push(feature);
 
   }
-  // for (let i = 0; i < aggregates.length; i++) {
-  //   let aggregate = aggregates[i];
-  //   const code = aggregate['code'];
-  //   const boundaries = this.dataProvider_.getBoundariesForCountry(code);
-  //   if (!boundaries) {
-  //     console.log('No available boundaries for country ' + code);
-  //     continue;
-  //   }
-  //   const aggregateCaseCount = aggregate['casecount'];
-  //   const country = this.dataProvider_.getCountry(code);
-  //   const centroid = country.getCentroid();
-  //   const geoId = [centroid[1], centroid[0]].join('|');
-  //   let feature = {
-  //     'type': 'Feature',
-  //     'properties': {
-  //       'geoid': geoId,
-  //       'countryname': country.getName(),
-  //       'cum_conf': aggregateCaseCount,
-  //     },
-  //     'geometry': boundaries,
-  //   };
-  //   features.push(feature);
-  // }
-  // console.log("features? ", features);
   return this.formatFeatureSet(features.map(
       f => this.formatFeature(f, false /* 3D */)));
 }
