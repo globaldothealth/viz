@@ -445,7 +445,7 @@ DataProvider.prototype.fetchDailySlice = function(
   }
   const timestamp = (new Date()).getTime();
   let self = this;
-  let url = this.baseUrl_ + 'country/latest.json';
+  let url = this.baseUrl_ + 'country/latest-voc.json';
   // Don't cache the most recent daily slice. Cache all others.
   if (isNewest) {
     url += '?nocache=' + timestamp;
@@ -518,12 +518,16 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
     countryFeatures[countryCode]['name'] = feature['_id'];
     countryFeatures[countryCode]['geoid'] = feature['geoid'];
     countryFeatures[countryCode]['total'] = feature['casecount'];
+    countryFeatures[countryCode]['variant1'] = feature['voc1'];
+    countryFeatures[countryCode]['variant2'] = feature['voc2'];
+    countryFeatures[countryCode]['variant3'] = feature['voc3'];
     countryFeatures[countryCode]['jhu'] = feature['jhu'];
   }
 
   this.dates_.add(currentDate);
 
   this.countryFeaturesByDay_[currentDate] = countryFeatures;
+  console.log(countryFeatures);
   // this.atomicFeaturesByDay_[currentDate] = features;
   this.dataSliceFileNames_[currentDate + '.json'] = true;
 };

@@ -30,7 +30,8 @@ getPropertyNameForPaint() {
 }
 
 getHeightForFeature(feature) {
-  return 10 * Math.sqrt(100000 * feature['properties']['total']);
+  return 10 * Math.sqrt(100000 * feature['properties']['total'])
+  // return 10000 * Math.log10(10000000 * feature['properties']['total']);
 }
 
 getFeatureSet() {

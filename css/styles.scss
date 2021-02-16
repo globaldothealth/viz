@@ -71,6 +71,15 @@ h1, h2 {
   margin: 0;
   padding: 0.5ex 2ex;
   background: #edf3f1;
+  &.voc {
+    margin-top: 5px;
+    margin-right: 5px;
+    marginb-bottom: 20px;
+    &.active {
+      background: #0094e2;
+      color: #ffffff;
+    }
+  }
 }
 
 /* Completeness text view */
@@ -90,6 +99,22 @@ body.freshness #app {
   /* For the map, occupy the whole viewport. */
   margin: 0;
   padding: 0;
+}
+
+body.region,
+body.coverage,
+body {
+  h1.voc {
+    display: none;
+    visibility: hidden;
+  }
+}
+
+body.country {
+  h1.voc {
+    display: block;
+    visibility: visible;
+  }
 }
 
 /* Rank view */
@@ -348,7 +373,7 @@ input[type=text] {
 
 #sidebar-header {
   cursor: pointer;
-  height: $sidebar-header-height;
+  height: auto;
   position: relative;
 }
 

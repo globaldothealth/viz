@@ -102,7 +102,7 @@ SideBar.prototype.renderDiseaseSelector = function() {
 }
 
 SideBar.prototype.render = function() {
-  this.element_.innerHTML = '<div id="sidebar-tab"></div><div id="sidebar-header"><h1 class="sidebar-title">{{TITLE}}</h1><div id="disease-selector"></div></div><div id="latest-global"></div><div id="location-filter-wrapper"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>List</span></div>';
+  this.element_.innerHTML = '<div id="sidebar-tab"></div><div id="sidebar-header"><h1 class="sidebar-title">{{TITLE}}</h1><br/><h1 id="voc1" class="sidebar-title voc">Variant 1</h1><h1 id="voc2" class="sidebar-title voc">Variant 2</h1><h1 id="voc3" class="sidebar-title voc">Variant 3</h1><div id="disease-selector"></div></div><div id="latest-global"></div><div id="location-filter-wrapper"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>List</span></div>';
   const tabEl = document.getElementById('sidebar-tab');
   let icon = document.createElement('span');
   if (this.showPerCapitaOption_) {
@@ -115,6 +115,24 @@ SideBar.prototype.render = function() {
   // this.renderDiseaseSelector();
   this.renderLatestCounts();
   this.renderSearch(document.getElementById('location-filter-wrapper'));
+  document.getElementById('voc1').onclick = function(e) {
+    document.getElementById('voc2').classList.remove('active');
+    document.getElementById('voc3').classList.remove('active');
+    this.classList.toggle('active');
+    window.location.hash = '#country/variant1';
+  }
+  document.getElementById('voc2').onclick = function(e) {
+    document.getElementById('voc1').classList.remove('active');
+    document.getElementById('voc3').classList.remove('active');
+    this.classList.toggle('active');
+    window.location.hash = '#country/variant2';
+  }
+  document.getElementById('voc3').onclick = function(e) {
+    document.getElementById('voc2').classList.remove('active');
+    document.getElementById('voc1').classList.remove('active');
+    this.classList.toggle('active');
+    window.location.hash = '#country/variant3';
+  }
   if ('{{TITLE}}' == 'COVID-19') {
     document.getElementById('ghlist').onclick = function(e) {
       window.location.href = 'https://curator.ghdsi.org/cases';
