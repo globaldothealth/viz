@@ -1,24 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-@import 'variables';
-@import 'mixins';
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap");
+@import "variables";
+@import "mixins";
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 @at-root {
-  @-moz-viewport      { width: device-width; }
-  @-ms-viewport       { width: device-width; }
-  @-o-viewport        { width: device-width; }
-  @-webkit-viewport   { width: device-width; }
-  @viewport           { width: device-width; }
+  @-moz-viewport {
+    width: device-width;
+  }
+  @-ms-viewport {
+    width: device-width;
+  }
+  @-o-viewport {
+    width: device-width;
+  }
+  @-webkit-viewport {
+    width: device-width;
+  }
+  @viewport {
+    width: device-width;
+  }
 }
 
 [tabindex="-1"]:focus {
   outline: none !important;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   font-size: 16px;
@@ -26,11 +39,11 @@ html, body {
 }
 
 html {
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 body {
-  font-family: 'Inter', Helvetica, Arial, sans-serif;
+  font-family: "Inter", Helvetica, Arial, sans-serif;
 }
 
 #app {
@@ -43,7 +56,8 @@ body {
 }
 
 /** Add some padding around the app for non-map views. */
-.rank #app, .sync #app {
+.rank #app,
+.sync #app {
   padding: $topbar-height 2ex 0 2ex;
 }
 
@@ -59,7 +73,8 @@ h2 {
   margin: 0.5ex;
 }
 
-h1, h2 {
+h1,
+h2 {
   text-align: center;
 }
 
@@ -145,10 +160,10 @@ body.rank .bar {
 }
 
 body.rank .bar .start {
-      display: inline-block;
-      left: 5px;
-      position: absolute;
-    }
+  display: inline-block;
+  left: 5px;
+  position: absolute;
+}
 
 body.rank .bar .end {
   position: absolute;
@@ -156,8 +171,7 @@ body.rank .bar .end {
 }
 
 body.rank #minimap {
-  background:
-  url('https://raw.githubusercontent.com/globaldothealth/common/master/worldmap.png');
+  background: url("https://raw.githubusercontent.com/globaldothealth/common/master/worldmap.png");
   bottom: 0;
   height: 130px;
   position: absolute;
@@ -176,12 +190,15 @@ body.sync #filters {
   text-align: center;
 }
 
-a, a:visited {
+a,
+a:visited {
   color: #666;
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 
-a:focus, a:hover, a:active {
+a:focus,
+a:hover,
+a:active {
   color: #999;
 }
 
@@ -196,8 +213,10 @@ button {
   cursor: pointer;
   user-select: none;
   background-color: transparent;
-  transition: all .3s ease;
-  &:hover, &:focus, &.focus {
+  transition: all 0.3s ease;
+  &:hover,
+  &:focus,
+  &.focus {
     background-image: none;
     outline: 0;
     text-decoration: none;
@@ -209,10 +228,10 @@ button {
   }
 }
 
-input[type=text] {
+input[type="text"] {
   width: 100%;
-  padding: .5rem 1rem;
-  font-size: .9rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
   border: 1px solid #666;
   border-radius: $box-corner;
   &::-ms-expand {
@@ -283,7 +302,7 @@ input[type=text] {
   position: fixed;
   right: 2ex;
   z-index: 10;
-  backdrop-filter: blur(.5rem);
+  backdrop-filter: blur(0.5rem);
   background-color: $sidebar-bgcolor-dark;
   border-radius: $card-border-radius;
   box-shadow: $card-box-shadow;
@@ -298,7 +317,7 @@ input[type=text] {
 }
 
 #sidebar {
-  backdrop-filter: blur(.5rem);
+  backdrop-filter: blur(0.5rem);
   background-color: $sidebar-bgcolor-dark;
   border-radius: $card-border-radius;
   bottom: 25%;
@@ -391,6 +410,8 @@ input[type=text] {
   position: fixed;
   top: 1ex;
   z-index: 999;
+  display: flex;
+  align-items: center;
 }
 
 #logo img {
@@ -408,20 +429,71 @@ input[type=text] {
   vertical-align: middle;
 }
 
+.navlink-question-mark {
+  margin-left: 15px;
+
+  .help-guide-button {
+    display: flex;
+    min-width: 64px;
+    box-sizing: border-box;
+    font-family: Mabry Pro, sans-serif;
+    font-weight: 500;
+    border-radius: 4px;
+    text-transform: uppercase;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+      box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+      border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    font-size: 6px;
+    border: 1px solid $accent-color;
+    align-items: center;
+    &:hover {
+      background-color: rgba($accent-color, .2);
+    }
+
+    &:active {
+      background-color: lighten($color: $accent-color, $amount: 95);
+      color: #fff;
+    }
+
+    .MuiSvgIcon-root {
+      fill: $accent-color;
+      width: 1em;
+      height: 1em;
+      display: inline-block;
+      font-size: 1.5rem;
+      transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .MuiButton-textPrimary:hover {
+      background-color: rgba(14, 47, 117, 0.04);
+    }
+
+    .map-guide-text {
+      margin-left: 6px;
+    }
+  }
+}
+
 .reported-cases {
   justify-content: center;
-  margin-bottom: .25rem;
-  padding: .25rem 0 .5rem 0;
+  margin-bottom: 0.25rem;
+  padding: 0.25rem 0 0.5rem 0;
   color: #fff;
   border-radius: $box-corner;
-  transition: all .3s ease;
+  transition: all 0.3s ease;
   cursor: pointer;
-  &:focus, &:hover, &:active, &.is-active {
+  &:focus,
+  &:hover,
+  &:active,
+  &.is-active {
     background-color: #454545;
   }
 }
 
-#total-cases, #total-deaths {
+#total-cases,
+#total-deaths {
   color: black;
   font-size: 1.7rem;
   font-weight: 500;
@@ -430,7 +502,7 @@ input[type=text] {
 
 .last-updated-date {
   display: block;
-  font-size: .7rem;
+  font-size: 0.7rem;
   color: #ccc;
   margin-top: 1ex;
 }
@@ -441,7 +513,7 @@ input[type=text] {
 
 #location-filter-wrapper {
   position: relative;
-  padding-bottom: .5rem;
+  padding-bottom: 0.5rem;
 }
 
 #clear-filter {
@@ -451,7 +523,7 @@ input[type=text] {
   font-size: 3ex;
   height: 100%;
   position: absolute;
-  right: .75rem;
+  right: 0.75rem;
   top: 0;
 }
 
@@ -469,17 +541,20 @@ input[type=text] {
   button {
     display: flex;
     justify-content: space-between;
-    padding: .5rem 0 .2rem 0;
+    padding: 0.5rem 0 0.2rem 0;
     width: 100%;
-    font-size: .9rem;
+    font-size: 0.9rem;
     color: #ccc;
     background-color: #333;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: $box-corner;
-    box-shadow: 0px 3px 5px rgba(0,0,0,0.05);
-    transition: all .3s ease;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
     cursor: pointer;
-    &:focus, &:hover, &:active, &.is-active {
+    &:focus,
+    &:hover,
+    &:active,
+    &.is-active {
       background-color: #454545;
     }
   }
@@ -526,8 +601,8 @@ input[type=text] {
   position: absolute;
   top: 10ex;
   right: $page-padding-end;
-  padding: .5rem .25rem;
-  background-color: rgba(70,70,70,.8);
+  padding: 0.5rem 0.25rem;
+  background-color: rgba(70, 70, 70, 0.8);
   z-index: 4;
   ul {
     display: flex;
@@ -537,17 +612,17 @@ input[type=text] {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: .5rem;
+      margin-bottom: 0.5rem;
     }
     .circle {
       display: block;
-      opacity: .85;
-      width: .8rem;
-      height: .8rem;
+      opacity: 0.85;
+      width: 0.8rem;
+      height: 0.8rem;
       border-radius: 50%;
     }
     .label {
-      font-size: .6rem;
+      font-size: 0.6rem;
       line-height: 1;
       margin-top: 3px;
       color: #fff;
@@ -557,8 +632,8 @@ input[type=text] {
 
 #legend-header {
   width: 100%;
-  margin-bottom: .5rem;
-  font-size: .7rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-align: center;
 }
@@ -608,8 +683,8 @@ div.mapboxgl-popup-content {
 
 #credit {
   right: 0;
-  bottom: .7rem;
-  font-size: .8rem;
+  bottom: 0.7rem;
+  font-size: 0.8rem;
   color: #cccc;
   cursor: pointer;
   left: 0;
@@ -618,8 +693,9 @@ div.mapboxgl-popup-content {
   z-index: 8;
   a {
     display: inline-block;
-    padding: 0 .5rem;
-    &:link, &:visited {
+    padding: 0 0.5rem;
+    &:link,
+    &:visited {
       color: #ccc;
     }
   }
@@ -657,7 +733,7 @@ div.mapboxgl-popup-content {
 
 .coverage-bar {
   background: #0094e2;
-  border-radius: 8px;;
+  border-radius: 8px;
 }
 
 h2.popup-title {
@@ -689,13 +765,14 @@ a.popup.coverage {
 }
 
 a.popup:hover {
-  background: #0E7569;
+  background: #0e7569;
   color: #ffffff;
 }
 
 /* Overrides for autodrive mode: remove most interactive elements */
 
-.autodrive #sidebar, .autodrive #credit,
+.autodrive #sidebar,
+.autodrive #credit,
 .autodrive .mapboxgl-ctrl-top-left,
 .autodrive .mapboxgl-ctrl-top-right {
   display: none;
@@ -761,7 +838,7 @@ a.popup:hover {
   width: 50%;
   height: auto;
   transform: translate(-50%, -50%);
-    background-color: #fff;
+  background-color: #fff;
   overflow: hidden;
   z-index: 17;
   user-select: none;
@@ -816,9 +893,9 @@ a.popup:hover {
   align-items: flex-end;
   cursor: pointer;
 
-&:hover {
-  font-weight: bold;
-}
+  &:hover {
+    font-weight: bold;
+  }
 }
 
 .modal-body {
@@ -827,14 +904,14 @@ a.popup:hover {
   width: 100%;
   min-height: 10rem;
   padding: 1.5rem 1rem;
-  font-size: .8rem;
+  font-size: 0.8rem;
   line-height: 1.6;
   color: #454545;
   overflow: auto;
 }
 
 .modal-body h2 {
-  margin: 1.25rem 0 .75rem 0;
+  margin: 1.25rem 0 0.75rem 0;
   font-size: 1.3rem;
   font-weight: 200;
   color: #921694;
@@ -846,7 +923,7 @@ a.popup:hover {
 }
 
 .modal-body li {
-  margin: 0 0 .8rem;
+  margin: 0 0 0.8rem;
   padding: 0;
 }
 
@@ -859,13 +936,13 @@ a.popup:hover {
 #spread {
   display: flex;
   align-items: center;
-  padding: .2rem;
+  padding: 0.2rem;
   color: #fff;
-  font-size: .7rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   background-color: $accent-color;
   border-radius: $box-corner;
-  transition: all .3s ease;
+  transition: all 0.3s ease;
   cursor: pointer;
   &:hover {
     background-color: $accent-color-highlighted;
@@ -877,22 +954,22 @@ a.popup:hover {
   left: $page-padding-end;
   right: $page-padding-end;
   bottom: 2.25rem;
-  padding: .5ex;
+  padding: 0.5ex;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: .8rem;
+  font-size: 0.8rem;
   color: #fff;
   line-height: 1;
   border-radius: $box-corner;
-  background-color: rgba(70,70,70,.8);
+  background-color: rgba(70, 70, 70, 0.8);
   z-index: 3;
 }
 
 #range-slider label {
   display: flex;
   align-items: baseline;
-  font-size: .7rem;
+  font-size: 0.7rem;
   color: #dedede;
   line-height: 1rem;
   text-transform: uppercase;
@@ -902,64 +979,64 @@ a.popup:hover {
 #range-slider label span {
   display: inline-block;
   flex: 1;
-  margin: 0 .3rem;
+  margin: 0 0.3rem;
   font-weight: 600;
   color: #fff;
 }
 
-input[type=range] {
+input[type="range"] {
   flex: 1;
-  margin: 0 .5rem;
+  margin: 0 0.5rem;
   background: transparent;
   -webkit-appearance: none;
   cursor: ew-resize;
 }
 
-input[type=range]:focus {
+input[type="range"]:focus {
   outline: none;
 }
 
 /* webkit */
-input[type=range]::-webkit-slider-runnable-track {
+input[type="range"]::-webkit-slider-runnable-track {
   @include sharedRangeSliderTrack;
 }
-input[type=range]::-webkit-slider-thumb {
+input[type="range"]::-webkit-slider-thumb {
   @include sharedRangeSliderThumb;
-  margin-top: -.5rem;
+  margin-top: -0.5rem;
   -webkit-appearance: none;
 }
-input[type=range]:focus::-webkit-slider-runnable-track {
+input[type="range"]:focus::-webkit-slider-runnable-track {
   background: #fff;
 }
 
 /* moz */
-input[type=range]::-moz-range-track {
+input[type="range"]::-moz-range-track {
   @include sharedRangeSliderTrack;
 }
-input[type=range]::-moz-range-thumb {
+input[type="range"]::-moz-range-thumb {
   @include sharedRangeSliderThumb;
-  margin-top: -.55;
+  margin-top: -0.55;
 }
 
 /* ie */
-input[type=range]::-ms-track {
+input[type="range"]::-ms-track {
   @include sharedRangeSliderTrack;
 }
-input[type=range]::-ms-fill-lower {
+input[type="range"]::-ms-fill-lower {
   background: #fff;
   border-radius: 50%;
 }
-input[type=range]::-ms-fill-upper {
+input[type="range"]::-ms-fill-upper {
   background: #fff;
   border-radius: 50%;
 }
-input[type=range]::-ms-thumb {
+input[type="range"]::-ms-thumb {
   @include sharedRangeSliderThumb;
   margin-top: 0;
 }
-input[type=range]::-ms-tooltip {
-  display:none;
+input[type="range"]::-ms-tooltip {
+  display: none;
 }
 
-@import 'toggle';
-@import 'themed';
+@import "toggle";
+@import "themed";
