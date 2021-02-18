@@ -756,14 +756,16 @@ a.popup:hover {
   display: none;
   flex-direction: column;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 95%;
-  bottom: 0;
-  background-color: #fff;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: auto;
+  transform: translate(-50%, -50%);
+    background-color: #fff;
   overflow: hidden;
   z-index: 17;
   user-select: none;
+  padding: 20px;
 }
 
 #modal.is-flex {
@@ -808,13 +810,15 @@ a.popup:hover {
 
 #modal-cancel {
   position: relative;
-  width: 4rem;
-  height: 4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   cursor: pointer;
+
+&:hover {
+  font-weight: bold;
+}
 }
 
 .modal-body {

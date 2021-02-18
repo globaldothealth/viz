@@ -49,6 +49,8 @@ Viz.prototype.getCurrentViewId = function() {
 };
 
 function handleShowModal(html) {
+  console.log("woooorks");
+
   let modal = document.getElementById('modal');
   let modalWrapper = document.getElementById('modal-wrapper');
   // Switch elements to have 'display' value (block, flex) but keep hidden via
@@ -60,7 +62,7 @@ function handleShowModal(html) {
     modalWrapper.classList.add('is-visible');
     modal.classList.add('is-visible');
   }, 40);
-  modal.innerHTML = html;
+  modal.innerHTML = '<span id="modal-cancel">&#10005;</span>' + html;
   // Attach an event to the close button once this is finished rendering.
   setTimeout(function() {
     document.getElementById('modal-cancel').onclick = handleHideModal;
