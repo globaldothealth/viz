@@ -853,6 +853,11 @@ a.popup:hover {
   z-index: 17;
   user-select: none;
   padding: 20px;
+  background: $accent-color;
+  color: #fff;
+  h1, a {
+    color: #fff;
+  }
 }
 
 #modal.is-flex {
@@ -870,7 +875,7 @@ a.popup:hover {
   left: 0;
   width: 100%;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  // background-color: rgba(0, 0, 0, 0.6);
   z-index: 16;
 }
 
