@@ -431,6 +431,7 @@ input[type="text"] {
 
 .navlink-question-mark {
   margin-left: 15px;
+  margin-top: 7px;
 
   .help-guide-button {
     display: flex;
@@ -473,6 +474,15 @@ input[type="text"] {
     .map-guide-text {
       margin-left: 6px;
     }
+  }
+}
+
+@media (max-width: 750px) {
+  #logo {
+    flex-direction: column;
+  }
+  .navlink-question-mark {
+    margin-left: 0;
   }
 }
 
@@ -886,12 +896,12 @@ a.popup:hover {
 }
 
 #modal-cancel {
-  position: relative;
+  position: absolute;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-end;
   cursor: pointer;
+  right: 30px;
+  width: fit-content;
+
 
   &:hover {
     font-weight: bold;

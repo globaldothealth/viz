@@ -46,10 +46,14 @@ Viz.prototype.getCurrentViewId = function () {
   return this.currentViewId_;
 };
 
+
+
+
 function handleShowModal(html, e) {
   e.preventDefault();
   let modal = document.getElementById("modal");
   let modalWrapper = document.getElementById("modal-wrapper");
+
   // Switch elements to have 'display' value (block, flex) but keep hidden via
   // opacity
   modalWrapper.classList.add("is-block");
@@ -60,10 +64,14 @@ function handleShowModal(html, e) {
     modal.classList.add("is-visible");
   }, 40);
   modal.innerHTML = '<span id="modal-cancel">&#10005;</span>' + html;
+
   // Attach an event to the close button once this is finished rendering.
   setTimeout(function () {
     document.getElementById("modal-cancel").onclick = handleHideModal;
+    document.querySelector(".modal-backdrop").onclick = handleHideModal;
   }, 0);
+
+  makeDivDraggable(modal);
 }
 
 function handleHideModal() {
@@ -77,6 +85,53 @@ function handleHideModal() {
     modal.classList.add("is-flex");
   }, 400);
 }
+
+
+
+function makeDivDraggable(modal) {
+  let x = 0;
+  let y = 0;
+  
+  // Query the element
+  const ele = modal;
+  ele.style.cursor = "move";
+  
+  // Handle the mousedown event
+  // that's triggered when user drags the element
+  const mouseDownHandler = function(e) {
+      // Get the current mouse position
+      x = e.clientX;
+      y = e.clientY;
+      
+      // Attach the listeners to `document`
+      document.addEventListener('mousemove', mouseMoveHandler);
+      document.addEventListener('mouseup', mouseUpHandler);
+  };
+  
+  const mouseMoveHandler = function(e) {
+      // How far the mouse has been moved
+      const dx = e.clientX - x;
+      const dy = e.clientY - y;
+  
+      // Set the position of element
+      ele.style.top = `${ele.offsetTop + dy}px`; 
+      ele.style.left = `${ele.offsetLeft + dx}px`;
+  
+      // Reassign the position of mouse
+      x = e.clientX;
+      y = e.clientY;
+  };
+  
+  const mouseUpHandler = function() {
+      // Remove the handlers of `mousemove` and `mouseup`
+      document.removeEventListener('mousemove', mouseMoveHandler);
+      document.removeEventListener('mouseup', mouseUpHandler);
+  };
+  
+  ele.addEventListener('mousedown', mouseDownHandler);
+};
+
+
 
 Viz.prototype.init = function () {
   this.registerView(new AggregateMapView(this.dataProvider_, this.nav_));
