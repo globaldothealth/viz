@@ -286,6 +286,9 @@ Nav.prototype.setupSettings = function() {
       settingsMenu.appendChild(itemEl);
     }
   }
+
+
+
   document.getElementById('topbar').appendChild(settingsEl);
   document.body.appendChild(settingsMenu);
   settingsEl.onclick = function() {
@@ -304,7 +307,9 @@ Nav.prototype.setupTopBar = function() {
   let moreNavItem;
   let moreMenu;
 
+
   const navIds = Object.keys(this.items_);
+
   // for (let i = 0; i < 2; i++) { // keep only settings cog
   for (let i = 0; i < navIds.length; i++) { // for full topbar nav
     const item = this.items_[navIds[i]];
