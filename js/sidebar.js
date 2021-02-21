@@ -102,7 +102,8 @@ SideBar.prototype.renderDiseaseSelector = function() {
 }
 
 SideBar.prototype.render = function() {
-  this.element_.innerHTML = '<div id="sidebar-tab"></div><div id="sidebar-header"><h1 class="sidebar-title">{{TITLE}} ▼</h1><div id="disease-selector"></div></div><div id="latest-global"></div><div id="location-filter-wrapper"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>List</span></div>';
+  this.element_.innerHTML = '<div id="sidebar-tab"></div><div id="sidebar-header"><h1 id="total" class="sidebar-title total">COVID-19 LINE LIST CASES</h1><br/><h1 id="voc1" class="sidebar-title voc">Variant P.1</h1><h1 id="voc2" class="sidebar-title voc">Variant B.1.351</h1><div id="disease-selector"></div></div><div id="latest-global"></div><div id="location-filter-wrapper"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>Data</span></div>';
+  document.getElementById('sidebar').classList.add(window.location.hash);
   const tabEl = document.getElementById('sidebar-tab');
   let icon = document.createElement('span');
   if (this.showPerCapitaOption_) {
@@ -112,16 +113,29 @@ SideBar.prototype.render = function() {
   icon.textContent = '◀';
   tabEl.appendChild(icon);
   tabEl.onclick = this.toggle;
-  this.renderDiseaseSelector();
+  // this.renderDiseaseSelector();
   this.renderLatestCounts();
+  
   this.renderSearch(document.getElementById('location-filter-wrapper'));
-  if ('{{TITLE}}' == 'COVID-19') {
-    document.getElementById('ghlist').onclick = function(e) {
-      window.location.href = 'https://curator.ghdsi.org/cases';
-    };
-  } else {
-    document.getElementById('ghlist').style.display = 'none';
+  document.getElementById('total').onclick = function(e) {
+    window.location.href = '/#country';
+    window.location.reload();
   }
+
+  document.getElementById('voc1').onclick = function(e) {
+    window.location.href = '/#country-p1';
+    window.location.reload();
+  }
+
+  document.getElementById('voc2').onclick = function(e) {
+    window.location.hash = '/#country-b1351';
+    window.location.reload();
+  }
+
+  document.getElementById('ghlist').onclick = function(e) {
+    window.location.href = 'https://data.covid-19.global.health/  ';
+  };
+
 };
 
 SideBar.prototype.renderSearch = function(container) {
@@ -139,13 +153,18 @@ SideBar.prototype.renderSearch = function(container) {
 
 SideBar.prototype.renderLatestCounts = function() {
   let latestEl = document.getElementById('latest-global');
-  latestEl.innerHTML = '<span id="total-cases"></span><span class="reported-cases-label">cases</span><br />'+
+  latestEl.innerHTML = '<span id="total-cases" class="active"></span><span id="p1-cases"></span><span id="b1351-cases"></span><span class="reported-cases-label"> cases</span><br/>'+
   // <span id="total-deaths"></span><span class="total-deaths-label">deaths</span>
   '<br /><div class="last-updated-date">Updated: <span id="last-updated-date"></span></div>';
   const latest = this.dataProvider_.getLatestGlobalCounts();
   document.getElementById('total-cases').innerText = latest[0].toLocaleString();
+  document.getElementById('p1-cases').innerText = latest[2].toLocaleString();
+  document.getElementById('b1351-cases').innerText = latest[3].toLocaleString();
   // document.getElementById('total-deaths').innerText = latest[1].toLocaleString();
-  // document.getElementById('last-updated-date').innerText = latest[2];
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  document.getElementById('last-updated-date').innerText = yesterday.toDateString();
 };
 
 SideBar.prototype.makeCaseCountProgressBar = function(caseCount, maxCaseCount) {
@@ -159,8 +178,6 @@ SideBar.prototype.makeCaseCountProgressBar = function(caseCount, maxCaseCount) {
 
 SideBar.prototype.renderCountryList = function() {
   let countryList = document.getElementById('location-list');
-  const latestAggregateData = this.dataProvider_.getLatestAggregateData();
-  // console.log("latest what now? ", latestAggregateData);
 
   const latestDate = this.dataProvider_.getLatestDate();
   // This is a map from country code to the corresponding feature.
@@ -181,11 +198,8 @@ SideBar.prototype.renderCountryList = function() {
   });
 
   const maxConfirmedCases = this.dataProvider_.getLatestGlobalCounts();
-  console.log("dehy feat: ", dehydratedFeatures);
-  console.log("sorted dehy feat: ", sortedKeys);
   // for (var key in sortedList) {
   for (let i = 0; i < sortedKeys.length; i++) {
-    // console.log("Oh hello, ", dehydratedFeatures[key]['name']);
   // for (let i = 0; i < latestAggregateData.length; ++i) {
     let key = sortedKeys[i];
     if (!key || !dehydratedFeatures[key]['name']) {
@@ -211,6 +225,7 @@ SideBar.prototype.renderCountryList = function() {
 
       let item = document.createElement('div');
       item.classList.add('location-list-item');
+      item.classList.add('location-list-total');
       let button = document.createElement('button');
       button.setAttribute('country', code);
       button.onclick = this.flyToCountry.bind(this);
@@ -221,8 +236,127 @@ SideBar.prototype.renderCountryList = function() {
       countryList.appendChild(item);
     }
   }
-  if (!!countryList) {
-    //this.updateCountryListCounts();
+}
+
+SideBar.prototype.renderCountryListP1 = function() {
+  let countryList = document.getElementById('location-list');
+
+  const latestDate = this.dataProvider_.getLatestDate();
+  // This is a map from country code to the corresponding feature.
+  let dehydratedFeatures = this.dataProvider_.getCountryFeaturesForDay(latestDate);
+
+  if (!dehydratedFeatures || dehydratedFeatures.length < 1) {
+    console.log('No data for rendering country list');
+    return;
+  }
+
+  // Sort according to decreasing confirmed cases.
+  // dehydratedFeatures.sort(function(a, b) {
+  //   return b['total'] - a['total'];
+  // });
+
+  const sortedKeys = Object.keys(dehydratedFeatures).sort( function(keyA, keyB) {
+    return dehydratedFeatures[keyB]['p1'] - dehydratedFeatures[keyA]['p1'];
+  });
+
+  const maxConfirmedCases = this.dataProvider_.getLatestGlobalCounts();
+  // for (var key in sortedList) {
+  for (let i = 0; i < sortedKeys.length; i++) {
+  // for (let i = 0; i < latestAggregateData.length; ++i) {
+    let key = sortedKeys[i];
+    if (!key || !dehydratedFeatures[key]['name']) {
+      // We can't do much with this location.
+      continue;
+    }
+    const code = key;
+    // console.log("code: ", code);
+    const country = this.dataProvider_.getCountry(code);
+    if (!country) {
+      continue;
+    }
+    const name = country.getName();
+    const geoid = country.getCentroid().join('|');
+    let cumConf = parseInt(dehydratedFeatures[key]['p1'], 10) || 0;
+    let legendGroup = 'default';
+
+    // If the page we are on doesn't have the corresponding UI, we don't need
+    // to do anything else.
+    if (!!countryList) {
+      // No city or province, just the country code.
+      locationInfo[geoid] = '||' + code;
+
+      let item = document.createElement('div');
+      item.classList.add('location-list-item','location-list-p1');
+      let button = document.createElement('button');
+      button.setAttribute('country', code);
+      button.onclick = this.flyToCountry.bind(this);
+      button.innerHTML = '<span class="label">' + name + '</span>' +
+          '<span class="num">' + cumConf.toLocaleString() + '</span>';
+      item.appendChild(button);
+      item.appendChild(this.makeCaseCountProgressBar(cumConf, maxConfirmedCases[2]));
+      countryList.appendChild(item);
+    }
+  }
+}
+
+SideBar.prototype.renderCountryListB1351 = function() {
+  let countryList = document.getElementById('location-list');
+
+  const latestDate = this.dataProvider_.getLatestDate();
+  // This is a map from country code to the corresponding feature.
+  let dehydratedFeatures = this.dataProvider_.getCountryFeaturesForDay(latestDate);
+
+  if (!dehydratedFeatures || dehydratedFeatures.length < 1) {
+    console.log('No data for rendering country list');
+    return;
+  }
+
+  // Sort according to decreasing confirmed cases.
+  // dehydratedFeatures.sort(function(a, b) {
+  //   return b['total'] - a['total'];
+  // });
+
+  const sortedKeys = Object.keys(dehydratedFeatures).sort( function(keyA, keyB) {
+    return dehydratedFeatures[keyB]['b1351'] - dehydratedFeatures[keyA]['b1351'];
+  });
+
+  const maxConfirmedCases = this.dataProvider_.getLatestGlobalCounts();
+  // for (var key in sortedList) {
+  for (let i = 0; i < sortedKeys.length; i++) {
+  // for (let i = 0; i < latestAggregateData.length; ++i) {
+    let key = sortedKeys[i];
+    if (!key || !dehydratedFeatures[key]['name']) {
+      // We can't do much with this location.
+      continue;
+    }
+    const code = key;
+    // console.log("code: ", code);
+    const country = this.dataProvider_.getCountry(code);
+    if (!country) {
+      continue;
+    }
+    const name = country.getName();
+    const geoid = country.getCentroid().join('|');
+    let cumConf = parseInt(dehydratedFeatures[key]['b1351'], 10) || 0;
+    let legendGroup = 'default';
+
+    // If the page we are on doesn't have the corresponding UI, we don't need
+    // to do anything else.
+    if (!!countryList) {
+      // No city or province, just the country code.
+      locationInfo[geoid] = '||' + code;
+
+      let item = document.createElement('div');
+      item.classList.add('location-list-item','location-list-b1351');
+      let button = document.createElement('button');
+      button.setAttribute('country', code);
+      button.onclick = this.flyToCountry.bind(this);
+      button.innerHTML = '<span class="label">' + name + '</span>' +
+          '<span class="num">' + cumConf.toLocaleString() + '</span>';
+      item.appendChild(button);
+      item.appendChild(this.makeCaseCountProgressBar(cumConf, maxConfirmedCases[3]));
+      countryList.appendChild(item);
+    }
   }
 }
 

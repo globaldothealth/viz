@@ -30,7 +30,9 @@ body.dark {
   color: $topbar-nav-active-border-color-light;
 }
 
-.light #topbar div.active {
+.light #topbar div.active,
+.light.country-p1 #topbar #country.navlink,
+.light.country-b1351 #topbar #country.navlink {
   border-bottom: 4px solid $topbar-nav-active-border-color-light;
   color: $topbar-nav-active-border-color-light;
 }

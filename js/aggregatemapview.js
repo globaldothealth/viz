@@ -9,7 +9,7 @@ constructor(dataProvider, nav) {
 }
 
 getId() {
-  return 'cumulative';
+  return 'country';
 }
 
 getTitle() {
@@ -27,12 +27,9 @@ getFeatureSet() {
   let dehydratedFeatures = this.dataProvider_.getCountryFeaturesForDay(latestDate);
   // const aggregates = this.dataProvider_.getAggregateData()[latestDateForAggregate];
   const aggregates = [];
-  // console.log("dehydrated features: ", dehydratedFeatures);
-  // console.log("aggs: ", aggregates);
   let features = [];
   let codes = Object.keys(dehydratedFeatures);
   for (var key in dehydratedFeatures) {
-    // console.log(dehydratedFeatures[key]['name']);
 
     const code = key;
     const boundaries = this.dataProvider_.getBoundariesForCountry(code);
@@ -41,6 +38,8 @@ getFeatureSet() {
       continue;
     }
     const aggregateCaseCount = dehydratedFeatures[key]['total'];
+    const voc1 = dehydratedFeatures[key]['p1'];
+    const voc2 = dehydratedFeatures[key]['b1351'];
     const country = this.dataProvider_.getCountry(code);
     const centroid = country.getCentroid();
     const geoId = [centroid[1], centroid[0]].join('|');
@@ -50,36 +49,14 @@ getFeatureSet() {
         'geoid': geoId,
         'countryname': country.getName(),
         'cum_conf': aggregateCaseCount,
+        'variant1': voc1,
+        'variant2': voc2,
       },
       'geometry': boundaries,
     };
     features.push(feature);
 
   }
-  // for (let i = 0; i < aggregates.length; i++) {
-  //   let aggregate = aggregates[i];
-  //   const code = aggregate['code'];
-  //   const boundaries = this.dataProvider_.getBoundariesForCountry(code);
-  //   if (!boundaries) {
-  //     console.log('No available boundaries for country ' + code);
-  //     continue;
-  //   }
-  //   const aggregateCaseCount = aggregate['casecount'];
-  //   const country = this.dataProvider_.getCountry(code);
-  //   const centroid = country.getCentroid();
-  //   const geoId = [centroid[1], centroid[0]].join('|');
-  //   let feature = {
-  //     'type': 'Feature',
-  //     'properties': {
-  //       'geoid': geoId,
-  //       'countryname': country.getName(),
-  //       'cum_conf': aggregateCaseCount,
-  //     },
-  //     'geometry': boundaries,
-  //   };
-  //   features.push(feature);
-  // }
-  // console.log("features? ", features);
   return this.formatFeatureSet(features.map(
       f => this.formatFeature(f, false /* 3D */)));
 }
@@ -88,12 +65,19 @@ getPopupContentsForFeature(f) {
   const props = f['properties'];
   let contents = document.createElement('div');
   contents.innerHTML = '<h2 class="popup-title">' + props['countryname'] + '</h2>' +
-    '<p class=popup-count>' + props['cum_conf'].toLocaleString() + ' cases</p><a class="popup" target="_blank" href="https://dev-curator.ghdsi.org/cases?country=%22' + props['countryname'] +'%22">Explore Country Data</a>';
+    '<p class=popup-count><strong>' + props['cum_conf'].toLocaleString() + 
+    ' line list cases</strong><hr/>Variant P.1: ' + 
+    props['variant1'].toLocaleString() + 
+    ' <br>Variant B.1.351: ' + 
+    props['variant2'].toLocaleString() + 
+    '</p><a class="popup" target="_blank" href="https://data.covid-19.global.health/cases?country=%22' + 
+    props['countryname'] +
+    '%22">Explore Country Data</a>';
   return contents;
 }
 
 getLegendTitle() {
-  return 'Cases';
+  return 'Line List Cases';
 }
 
 getColorStops() {

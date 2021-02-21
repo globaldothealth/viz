@@ -9,7 +9,7 @@ constructor(dataProvider, nav) {
 }
 
 getId() {
-  return 'cases';
+  return 'region';
 }
 
 getTitle() {
@@ -20,67 +20,65 @@ isThreeDimensional() {
   return true;
 }
 
+fetchData() {
+  const dp = this.dataProvider_;
+  return super.fetchData().then(dp.fetchRegionalData.bind(dp));
+}
+
 getPropertyNameForPaint() {
   return 'total';
 }
 
 getHeightForFeature(feature) {
-  return 10 * Math.sqrt(100000 * feature['casecount']);
+  return 10 * Math.sqrt(100000 * feature['properties']['total'])
+  // return 10000 * Math.log10(10000000 * feature['properties']['total']);
 }
 
 getFeatureSet() {
   const latestDate = this.dataProvider_.getLatestDate();
-  let dehydratedFeatures = this.dataProvider_.getAtomicFeaturesForDay(latestDate);
-  return this.formatFeatureSet(dehydratedFeatures.map(
+  const regiondata = this.dataProvider_.getRegionalData();
+  // console.log("oh word? ", regiondata);
+  let features = [];
+  let current = Object.keys(regiondata);
+  let regions = regiondata[current];
+  for (let i = 0; i < regions.length; i++) {
+    let geoId = [regions[i]['lat'], regions[i]['long']].join('|');
+    let casecount  = regions[i]['casecount'];
+    let feature = {
+      'properties': {
+        'geoid': geoId,
+        'total': casecount,
+        'region': regions[i]['_id'],
+        'country': regions[i]['country']
+      }
+    };
+    features.push(feature);
+  }
+  return this.formatFeatureSet(features.map(
       f => this.formatFeature(f, true /* 3D */)));
 }
 
 getPopupContentsForFeature(f) {
   let props = f['properties'];
   const geo_id = props['geoid'];
+  const regionName = props['region'];
+  const countryName = props['country'];
 
   let totalCaseCount = 0;
 
   // Country, province, city
-  let location = locationInfo[geo_id];
   let locationSpan = [];
-  if (!!location) {
-    location = location.split('|');
-    let countryName = location.slice(-1)[0];
-    // Replace country code with name if necessary
-    if (countryName.length == 2) {
-      countryName = this.dataProvider_.getCountry(countryName).getName();
-    }
-    const country = this.dataProvider_.getCountryByName(countryName);
-
-    // Remove empty strings
-    location = location.filter(function (el) { return el != ''; });
-    for (let i = 0; i < location.length - 1; i++) {
-      // if (i == location.length - 1 && !!country) {
-        // TODO: Restore link to country page.
-        // locationSpan.push('<a target="_blank" href="/c/' +
-        // country.getCode() + '/">' + location[i] + '</a>');
-      // }
-      locationSpan.push(location[i]);
-    }
-    locationSpan.push(countryName);
-  }
-  if (!locationSpan.length) {
-    return;
-  }
-
+  locationSpan.push(regionName, countryName);
   totalCaseCount = props['total'];
 
   let content = document.createElement('div');
   console.log("location: ", locationSpan);
-  content.innerHTML = '<h2 class="popup-title">' + locationSpan.join(', ') + '</h2>' +
+  content.innerHTML = '<h2 class="popup-title">' + regionName + ', ' + countryName + '</h2>' +
     '<p class=popup-count>' + totalCaseCount.toLocaleString() + ' cases</p> ' +
-    '<a class="popup" target="_blank" href="https://dev-curator.ghdsi.org/cases?country=%22' + 
-    locationSpan[2] +
-    '%22&admin1=%22' + 
-    locationSpan[1] + 
-    '%22&admin2=%22' + 
-    locationSpan[0] + 
+    '<a class="popup" target="_blank" href="https://data.covid-19.global.health/cases?country=%22' + 
+    countryName +
+    '%22&admin3=%22' + 
+    regionName + 
     '%22">Explore Regional Data</a>';
   return content;
 }

@@ -55,9 +55,9 @@ constructor(viz) {
   // Config
   // TODO: Make this work instantly.
   // this.registerToggle('2D Map', '2d', false);
-  this.registerToggle('Auto-drive', 'autodrive', false);
-  this.registerToggle('Dark', 'dark', false);
-  this.registerToggle('Fullscreen', 'fullscreen', false);
+  // this.registerToggle('Auto-drive', 'autodrive', false);
+  // this.registerToggle('Dark', 'dark', false);
+  // this.registerToggle('Fullscreen', 'fullscreen', false);
 
   // Views are registered in main.js
 }
@@ -166,7 +166,7 @@ Nav.prototype.processHash = function(newUrl) {
   }
   const newHashes = newUrl.substring(baseUrl.length).split('/');
   let darkTheme = false;
-  let viewToLoad = 'cumulative';
+  let viewToLoad = 'country';
   if (newHashes.length > 0) {
     for (let i = 0; i < newHashes.length; i++) {
       let hashBrown = newHashes[i];
@@ -254,8 +254,17 @@ Nav.getPopupMenuTop = function() {
   return topBarRect.y + topBarRect.height;
 }
 
+Nav.prototype.dataLink = function() {
+  const dataEl = document.createElement('div');
+  dataEl.setAttribute('id', 'data');
+  const linkEl = document.createElement('a');
+  linkEl.setAttribute('href','https://data.covid-19.global.health');
+  linkEl.textContent = 'G.h Data';
+  dataEl.classList.add('navlink');
+  document.getElementById('topbar').appendChild(dataEl);
+  document.getElementById('data').appendChild(linkEl);
 
-
+}
 
 Nav.prototype.setupSettings = function() {
   const settingsEl = document.createElement('div');
@@ -292,6 +301,7 @@ Nav.prototype.setupSettings = function() {
 
 /** Initializes and renders the navigation bar. */
 Nav.prototype.setupTopBar = function() {
+  console.log("topbar!");
   const baseUrl = window.location.origin + '/';
   let topBar = document.getElementById('topbar');
   let moreNavItem;
@@ -334,6 +344,6 @@ Nav.prototype.setupTopBar = function() {
       }
     }
   }
-  this.setupSettings();
+  this.dataLink();
   this.processHash(window.location.href);
 }

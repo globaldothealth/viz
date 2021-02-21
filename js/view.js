@@ -61,7 +61,8 @@ const renderHelpGuide = () =>  {
 
   /** Renders the view to the DOM. */
   render() {
-    document.title = this.getTitle() + ' | {{TITLE}}';
+    document.title = 'Global.health | a Data Science Initiative';
+    // document.title = this.getTitle() + ' | {{TITLE}}';
     console.log('Rendering "' + document.title + '"');
     document.body.classList.add(this.getId());
   }
@@ -72,10 +73,10 @@ const renderHelpGuide = () =>  {
     let logoEl = document.createElement('div');
     logoEl.classList.add('logo');
     logoEl.setAttribute('id', 'logo');
-    logoEl.innerHTML = '<div id="logo-container"> \
+    logoEl.innerHTML = '<a href="https://global.health/"><div id="logo-container"> \
     <img src="/img/gh_logo.svg" /> \
     <span>Map</span> \
-    </div> \
+    </div></a> \
     ';
     document.getElementById('app').appendChild(logoEl);
     renderHelpGuide();

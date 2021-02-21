@@ -71,6 +71,11 @@ constructor(baseUrl) {
     * @private {Object}
    */
   this.freshnessData_;
+
+  /**
+    * @private {Object}
+   */
+  this.regionalData_;
 }
 }  // DataProvider
 
@@ -80,7 +85,6 @@ DataProvider.normalizeGeoId = function(lat, long) {
   let output = [];
   output.push(parseFloat(lat).toFixed(DataProvider.LAT_LNG_DECIMAL_LENGTH));
   output.push(parseFloat(long).toFixed(DataProvider.LAT_LNG_DECIMAL_LENGTH));
-  // console.log(output);
   return output.join('|');
 };
 
@@ -151,9 +155,7 @@ DataProvider.prototype.getLatestDateWithAggregateData = function() {
   if (!this.aggregateData_) {
     return "";
   }
-  // console.log("are there dates here? ", this.aggregateData_);
   let dates = Object.keys(this.aggregateData_);
-  // console.log("dates: ", dates);
   return dates.sort()[dates.length - 1];
 }
 
@@ -161,13 +163,11 @@ DataProvider.prototype.getLatestDataPerCountry = function() {
   if (!this.latestDataPerCountry_) {
     this.latestDataPerCountry_ = {};
     const latestAggregateData = this.getLatestAggregateData();
-    // console.log("latest aggdata: ", latestAggregateData);
     if (!latestAggregateData) {
       return null;
     }
     for (let i = 0; i < latestAggregateData.length; i++) {
       const item = latestAggregateData[i];
-      console.log("this country: ", item['_id']);
       this.latestDataPerCountry_[item['_id']] = [item['caseCount']];
     }
   }
@@ -181,7 +181,7 @@ DataProvider.prototype.getCountryFeaturesForDay = function(date) {
 
 
 DataProvider.prototype.getAtomicFeaturesForDay = function(date) {
-  return this.atomicFeaturesByDay_[date];
+  return this.atomicFeaturesByDay_;
 };
 
 
@@ -197,12 +197,15 @@ DataProvider.prototype.getLatestAggregateData = function() {
 }
 
 DataProvider.prototype.getAggregateData = function() {
-  console.log("this agg data: ", this.aggregateData_);
   return this.aggregateData_;
 };
 
 DataProvider.prototype.getFreshnessData = function() {
   return this.freshnessData_;
+};
+
+DataProvider.prototype.getRegionalData = function() {
+  return this.regionalData_;
 };
 
 /** @return {Array.<string>} */
@@ -401,9 +404,10 @@ DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
     .then(function(response) { return response.json(); })
     .then(function(jsonData) {
       const counts = jsonData;
-      console.log("counts: ", counts);
       self.latestGlobalCounts_ = [parseInt(counts['total'], 10),
                                   parseInt(counts['deaths'], 10),
+                                  parseInt(counts['total_p1'], 10),
+                                  parseInt(counts['total_b1351'], 10),
                                   counts['date']];
     });
 };
@@ -443,7 +447,7 @@ DataProvider.prototype.fetchDailySlice = function(
   }
   const timestamp = (new Date()).getTime();
   let self = this;
-  let url = this.baseUrl_ + 'country/latest.json';
+  let url = this.baseUrl_ + 'country/latest.json?nocache=' + timestamp;
   // Don't cache the most recent daily slice. Cache all others.
   if (isNewest) {
     url += '?nocache=' + timestamp;
@@ -458,6 +462,7 @@ DataProvider.prototype.fetchDailySlice = function(
       if (!jsonData) {
         reject('JSON data is empty');
       }
+      console.log("jsonData: ", jsonData);
       self.processDailySlice(jsonData, isNewest);
       callback();
       resolve();
@@ -465,14 +470,28 @@ DataProvider.prototype.fetchDailySlice = function(
   });
 };
 
+/** @return {!Promise} */
+DataProvider.prototype.fetchRegionalData = function() {
+  if (!!this.regionalData_ && !!this.regionalData_.length) {
+    console.log('Freshness data already loaded.');
+    return Promise.resolve();
+  }
+  const timestamp = (new Date()).getTime();
+  let self = this;
+  let url = this.baseUrl_ + 'regional/latest.json?nocache=' + timestamp;
+  // Don't cache the most recent daily slice. Cache all others.
+  return fetch(url)
+    .then(function(response) { return response.json(); })
+    .then(function(jsonData) {
+      self.regionalData_ = jsonData;
+    });
+
+};
 
 DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
 
-  // console.log("full json data: ", jsonData);
   let currentDate = Object.keys(jsonData);
-  // console.log("recent date: ", currentDate);
   let features = jsonData[currentDate];
-  // console.log("data dump: ", features);
 
   // Cases grouped by country
   let countryFeatures = {};
@@ -485,15 +504,13 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
 
     // If we don't know where this is, discard.
     if (!locationInfo[feature['geoid']]) {
-      // console.log("Cannot locate: ", feature['_id'] + " GeoID: "+ feature['geoid']);
       continue;
     }
     // City, province, country.
     const locationStr = locationInfo[feature['geoid']];
     let location = locationStr.split('|');
     // The country code is the last element.
-    let countryCode = location.slice(-1)[0];
-    // console.log("country code: ", countryCode);
+    let countryCode = feature['code']; //location.slice(-1)[0];
     if (!countryCode || countryCode.length != 2) {
       console.log('Warning: invalid country code: ' + countryCode);
       console.log('From ' + location);
@@ -504,13 +521,16 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
     countryFeatures[countryCode]['name'] = feature['_id'];
     countryFeatures[countryCode]['geoid'] = feature['geoid'];
     countryFeatures[countryCode]['total'] = feature['casecount'];
+    countryFeatures[countryCode]['p1'] = feature['casecount_p1'];
+    countryFeatures[countryCode]['b1351'] = feature['casecount_b1351'];
     countryFeatures[countryCode]['jhu'] = feature['jhu'];
   }
 
   this.dates_.add(currentDate);
 
   this.countryFeaturesByDay_[currentDate] = countryFeatures;
-  this.atomicFeaturesByDay_[currentDate] = features;
+  console.log(countryFeatures);
+  // this.atomicFeaturesByDay_[currentDate] = features;
   this.dataSliceFileNames_[currentDate + '.json'] = true;
 };
 

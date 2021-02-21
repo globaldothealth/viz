@@ -72,6 +72,8 @@ render() {
 
   this.sideBar_.render();
   this.sideBar_.renderCountryList();
+  this.sideBar_.renderCountryListP1();
+  this.sideBar_.renderCountryListB1351();
   this.renderLogo();
 }
 
@@ -90,6 +92,10 @@ flyToCountry(code) {
   this.map_.flyToCountry(code);
 }
 
+// redrawVariant(variant) {
+//   this.map_.redrawVariant(variant);
+// }
+
 unload() {
   super.unload();
   this.map_.onUnload();
@@ -104,6 +110,19 @@ getColorStops() {
 }
 
 getPropertyNameForPaint() {
+  var pageURL = window.location.href;
+  var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+  console.log(lastURLSegment);
+  if (lastURLSegment == "variant1") {
+    return 'variant1';
+  }
+  if (lastURLSegment == "variant2") {
+    return 'variant2';
+  }
+  if (lastURLSegment == "variant3") {
+    return 'variant3';
+  }
+
   return 'cum_conf';
 }
 
@@ -117,7 +136,7 @@ getPaintProperties(colors) {
   } else {
     return {
       'fill-color': colors,
-      'fill-outline-color': '#337abc',
+      'fill-outline-color': '#edf3f1',
       'fill-opacity': 1,
     };
   }
@@ -258,6 +277,26 @@ MapView.makeColorScale = function(topColor, midColor, bottomColor, numericalScal
 
 // Increasingly clear shades of blue.
 MapView.COLORS = [
+  '#c0dbf5',
+  '#a8cef1',
+  '#2b88dc',
+  '#0271d5',
+  '#0f4f88',
+  '#00436b',
+]
+
+MapView.GREENCOLORS = [
+  '#FFFFFF',
+  '#ccece6',
+  '#95d4ca',
+  '#76cabd',
+  '#54c1b1',
+  '#39a896',
+  '#398c7f',
+]
+
+MapView.REDCOLORS = [
+  '#FFFFFF',
   '#c0dbf5',
   '#a8cef1',
   '#2b88dc',
