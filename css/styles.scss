@@ -71,13 +71,22 @@ h1, h2 {
   margin: 0;
   padding: 0.5ex 2ex;
   background: #edf3f1;
+  &.active {
+    background: #0094e2;
+    color: #ffffff;
+  }
   &.voc {
     margin-top: 5px;
     margin-right: 5px;
     marginb-bottom: 20px;
     &.active {
-      background: #0094e2;
+      background:#00C6AF;
       color: #ffffff;
+    }
+  }
+  &#voc2.voc {
+    &.active {
+      background: #FD685B;
     }
   }
 }
@@ -110,7 +119,9 @@ body {
   }
 }
 
-body.country {
+body.country,
+body.country-p1,
+body.country-b1351 {
   h1.voc {
     display: block;
     visibility: visible;
@@ -272,7 +283,7 @@ input[type=text] {
   top: 0ex;
   width: 100%;
   z-index: 9;
-  // background: #edf3f1;
+  background: #edf3f1;
 }
 
 #topbar {
@@ -282,6 +293,10 @@ input[type=text] {
   justify-content: space-between;
   margin: 0 0 0 auto;
   padding: 0 1ex;
+
+  #country-p1, #country-b1351 {
+    display: none;
+  }
 }
 
 .fullscreen #topbar,
@@ -300,7 +315,7 @@ input[type=text] {
   border-top: 4px solid transparent;
   border-bottom: 4px solid transparent;
   margin: 0;
-  padding: 2.5ex 2ex 1.5ex;
+  padding: 3.5ex 2ex 2.5ex;
 }
 
 #topbar #data.navlink a {
@@ -371,11 +386,68 @@ input[type=text] {
   font-size: 80%;
 }
 
-#sidebar-header {
-  cursor: pointer;
-  height: auto;
-  position: relative;
+#sidebar {
+  #sidebar-header {
+    cursor: pointer;
+    height: auto;
+    position: relative;
+  }
+  &.\#country{
+    h1#total{
+      background: #0094e2;
+      color: #ffffff;
+    }
+    .location-list-item {
+      display: none;
+    }
+    .location-list-item.location-list-total {
+      display: block;
+    }
+    #total-cases {
+      display: inline;
+    }
+    #p1-cases, #b1351-cases {
+      display: none;
+    }
+  }
+  &.\#country-p1{
+    h1#voc1{
+      background: #00C6AF;
+      color: #ffffff;
+    }
+    .location-list-item {
+      display: none;
+    }
+    .location-list-item.location-list-p1 {
+      display: block;
+    }
+    #p1-cases {
+      display: inline;
+    }
+    #total-cases, #b1351-cases {
+      display: none;
+    }
+  }
+  &.\#country-b1351{
+    h1#voc2{
+      background: #00C6AF;
+      color: #ffffff;
+    }
+    .location-list-item {
+      display: none;
+    }
+    .location-list-item.location-list-b1351 {
+      display: block;
+    }
+    #b1351-cases {
+      display: inline;
+    }
+    #p1-cases, #total-cases {
+      display: none;
+    }
+  }
 }
+
 
 #disease-selector {
   position: absolute;
@@ -458,11 +530,15 @@ input[type=text] {
   }
 }
 
-#total-cases, #total-deaths {
+#total-cases, #total-deaths, #p1-cases, #b1351-cases {
   color: black;
   font-size: 1.7rem;
   font-weight: 500;
   margin-right: 0.35ex;
+  display: none;
+  &.active {
+    display: inline;
+  }
 }
 
 .last-updated-date {
@@ -545,11 +621,28 @@ input[type=text] {
 
 .location-list-item {
   margin-right: 8px;
+  &.hide {
+    display: none !important;
+  }
 }
 
 .country-cases-bar {
   background-color: $accent-color;
   height: 3px;
+}
+
+.location-list-p1 {
+  .country-cases-bar {
+    background-color: #00C6AF;
+    height: 3px;
+  }
+}
+
+.location-list-b1351 {
+  .country-cases-bar {
+    background-color: #00C6AF;
+    height: 3px;
+  }
 }
 
 .map-wrapper {
@@ -591,6 +684,7 @@ input[type=text] {
       width: .8rem;
       height: .8rem;
       border-radius: 50%;
+      border: 1px solid #aaa;
     }
     .label {
       font-size: .6rem;

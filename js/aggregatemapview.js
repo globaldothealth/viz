@@ -17,19 +17,6 @@ getTitle() {
 }
 
 getPropertyNameForPaint() {
-  var pageURL = window.location.href;
-  var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
-  console.log(lastURLSegment);
-  if (lastURLSegment == "variant1") {
-    return 'variant1';
-  }
-  if (lastURLSegment == "variant2") {
-    return 'variant2';
-  }
-  if (lastURLSegment == "variant3") {
-    return 'variant3';
-  }
-
   return 'cum_conf';
 }
 
@@ -51,9 +38,8 @@ getFeatureSet() {
       continue;
     }
     const aggregateCaseCount = dehydratedFeatures[key]['total'];
-    const voc1 = dehydratedFeatures[key]['variant1'];
-    const voc2 = dehydratedFeatures[key]['variant2'];
-    const voc3 = dehydratedFeatures[key]['variant3'];
+    const voc1 = dehydratedFeatures[key]['p1'];
+    const voc2 = dehydratedFeatures[key]['b1351'];
     const country = this.dataProvider_.getCountry(code);
     const centroid = country.getCentroid();
     const geoId = [centroid[1], centroid[0]].join('|');
@@ -65,7 +51,6 @@ getFeatureSet() {
         'cum_conf': aggregateCaseCount,
         'variant1': voc1,
         'variant2': voc2,
-        'variant3': voc3,
       },
       'geometry': boundaries,
     };
@@ -81,20 +66,18 @@ getPopupContentsForFeature(f) {
   let contents = document.createElement('div');
   contents.innerHTML = '<h2 class="popup-title">' + props['countryname'] + '</h2>' +
     '<p class=popup-count><strong>' + props['cum_conf'].toLocaleString() + 
-    ' total cases</strong><hr/>Variant 1: ' + 
+    ' line list cases</strong><hr/>Variant P.1: ' + 
     props['variant1'].toLocaleString() + 
-    ' <br>Variant 2: ' + 
+    ' <br>Variant B.1.351: ' + 
     props['variant2'].toLocaleString() + 
-    ' <br>Variant 3: ' + 
-    props['variant3'].toLocaleString() + 
-    '</p><a class="popup" target="_blank" href="https://dev-curator.ghdsi.org/cases?country=%22' + 
+    '</p><a class="popup" target="_blank" href="https://data.covid-19.global.health/cases?country=%22' + 
     props['countryname'] +
     '%22">Explore Country Data</a>';
   return contents;
 }
 
 getLegendTitle() {
-  return 'Cases';
+  return 'Line List Cases';
 }
 
 getColorStops() {

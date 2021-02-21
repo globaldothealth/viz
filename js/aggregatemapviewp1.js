@@ -1,5 +1,4 @@
-/** A 2D map showing coverage. */
-class TwoDCoverageMapView extends PerCountryMapView {
+class AggregateMapViewP1 extends PerCountryMapView {
 
 /**
  * @param {DataProvider} dataProvider
@@ -10,25 +9,15 @@ constructor(dataProvider, nav) {
 }
 
 getId() {
-  return 'coverage';
+  return 'country-p1';
 }
 
 getTitle() {
-  return 'Coverage';
+  return 'P1 View';
 }
 
 getPropertyNameForPaint() {
-  return 'coverage';
-}
-
-getColorStops() {
-  return [
-    [MapView.COLORS[0], '< 20%', 20],
-    [MapView.COLORS[1], '20–40%', 40],
-    [MapView.COLORS[2], '40-60%', 60],
-    [MapView.COLORS[3], '60–80%', 80],
-    [MapView.COLORS[4], '> 80%'],
-  ];
+  return 'variant1';
 }
 
 getFeatureSet() {
@@ -37,40 +26,36 @@ getFeatureSet() {
   // This is a map from country code to the corresponding feature.
   let dehydratedFeatures = this.dataProvider_.getCountryFeaturesForDay(latestDate);
   // const aggregates = this.dataProvider_.getAggregateData()[latestDateForAggregate];
-  let features = [];
   const aggregates = [];
+  let features = [];
   let codes = Object.keys(dehydratedFeatures);
   for (var key in dehydratedFeatures) {
-  // for (let i = 0; i < aggregates.length; i++) {
-    // let aggregate = aggregates[i];
+
     const code = key;
     const boundaries = this.dataProvider_.getBoundariesForCountry(code);
     if (!boundaries) {
       console.log('No available boundaries for country ' + code);
       continue;
     }
-    const aggregateCaseCount = dehydratedFeatures[key]['jhu'];
-    let individualCaseCount = dehydratedFeatures[key]['total'];
+    const aggregateCaseCount = dehydratedFeatures[key]['total'];
+    const voc1 = dehydratedFeatures[key]['p1'];
+    const voc2 = dehydratedFeatures[key]['b1351'];
     const country = this.dataProvider_.getCountry(code);
     const centroid = country.getCentroid();
     const geoId = [centroid[1], centroid[0]].join('|');
-    if (!!dehydratedFeatures[code]) {
-      individualCaseCount = dehydratedFeatures[code]['total'];
-    }
-    let percent = Math.floor(
-        Math.min(100, (individualCaseCount / aggregateCaseCount) * 100));
     let feature = {
       'type': 'Feature',
       'properties': {
         'geoid': geoId,
         'countryname': country.getName(),
-        'individualtotal': individualCaseCount,
-        'aggregatetotal': aggregateCaseCount,
-        'coverage': percent,
+        'cum_conf': aggregateCaseCount,
+        'variant1': voc1,
+        'variant2': voc2,
       },
       'geometry': boundaries,
     };
     features.push(feature);
+
   }
   return this.formatFeatureSet(features.map(
       f => this.formatFeature(f, false /* 3D */)));
@@ -79,18 +64,31 @@ getFeatureSet() {
 getPopupContentsForFeature(f) {
   const props = f['properties'];
   let contents = document.createElement('div');
-  contents.innerHTML = '<h2 class="popup-title">' + props['countryname'] + ': ' +
-    props['coverage'] + '%</h2> <p>(' +
-    props['individualtotal'].toLocaleString() + ' out of ' +
-    props['aggregatetotal'].toLocaleString() + ')</p>' + 
-    '<div class="coverage-container"><div class="coverage-bar" style="height:12px;width:' + 
-    props['coverage']+ '%"></div></div>' +
-    '<a class="popup coverage" target="_blank" href="https://data.covid-19.global.health/cases?country=%22' + props['countryname'] +'%22">Explore Country Data</a>';
+  contents.innerHTML = '<h2 class="popup-title">' + props['countryname'] + '</h2>' +
+    '<p class=popup-count><strong>' + props['cum_conf'].toLocaleString() + 
+    ' line list cases</strong><hr/>Variant P.1: ' + 
+    props['variant1'].toLocaleString() + 
+    ' <br>Variant B.1.351: ' + 
+    props['variant2'].toLocaleString() + 
+    '</p><a class="popup" target="_blank" href="https://data.covid-19.global.health/cases?country=%22' + 
+    props['countryname'] +
+    '%22">Explore Country Data</a>';
   return contents;
 }
 
 getLegendTitle() {
-  return 'Coverage';
+  return 'P.1 Cases';
 }
 
+getColorStops() {
+  return [
+    [MapView.GREENCOLORS[0], 'Not Reported', 1],
+    [MapView.GREENCOLORS[1], '1–50', 50],
+    [MapView.GREENCOLORS[2], '50–150', 150],
+    [MapView.GREENCOLORS[3], '150-300', 300],
+    [MapView.GREENCOLORS[4], '300-500', 500],
+    [MapView.GREENCOLORS[5], '> 500']
+  ];
 }
+
+}  // AggregateMapViewP1

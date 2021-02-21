@@ -406,6 +406,8 @@ DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
       const counts = jsonData;
       self.latestGlobalCounts_ = [parseInt(counts['total'], 10),
                                   parseInt(counts['deaths'], 10),
+                                  parseInt(counts['total_p1'], 10),
+                                  parseInt(counts['total_b1351'], 10),
                                   counts['date']];
     });
 };
@@ -445,7 +447,7 @@ DataProvider.prototype.fetchDailySlice = function(
   }
   const timestamp = (new Date()).getTime();
   let self = this;
-  let url = this.baseUrl_ + 'country/latest-voc.json';
+  let url = this.baseUrl_ + 'country/latest.json?nocache=' + timestamp;
   // Don't cache the most recent daily slice. Cache all others.
   if (isNewest) {
     url += '?nocache=' + timestamp;
@@ -460,6 +462,7 @@ DataProvider.prototype.fetchDailySlice = function(
       if (!jsonData) {
         reject('JSON data is empty');
       }
+      console.log("jsonData: ", jsonData);
       self.processDailySlice(jsonData, isNewest);
       callback();
       resolve();
@@ -507,7 +510,7 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
     const locationStr = locationInfo[feature['geoid']];
     let location = locationStr.split('|');
     // The country code is the last element.
-    let countryCode = location.slice(-1)[0];
+    let countryCode = feature['code']; //location.slice(-1)[0];
     if (!countryCode || countryCode.length != 2) {
       console.log('Warning: invalid country code: ' + countryCode);
       console.log('From ' + location);
@@ -518,9 +521,8 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
     countryFeatures[countryCode]['name'] = feature['_id'];
     countryFeatures[countryCode]['geoid'] = feature['geoid'];
     countryFeatures[countryCode]['total'] = feature['casecount'];
-    countryFeatures[countryCode]['variant1'] = feature['voc1'];
-    countryFeatures[countryCode]['variant2'] = feature['voc2'];
-    countryFeatures[countryCode]['variant3'] = feature['voc3'];
+    countryFeatures[countryCode]['p1'] = feature['casecount_p1'];
+    countryFeatures[countryCode]['b1351'] = feature['casecount_b1351'];
     countryFeatures[countryCode]['jhu'] = feature['jhu'];
   }
 

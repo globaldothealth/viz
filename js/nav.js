@@ -258,7 +258,7 @@ Nav.prototype.dataLink = function() {
   const dataEl = document.createElement('div');
   dataEl.setAttribute('id', 'data');
   const linkEl = document.createElement('a');
-  linkEl.setAttribute('href','https://dev-curator.ghdsi.org');
+  linkEl.setAttribute('href','https://data.covid-19.global.health');
   linkEl.textContent = 'G.h Data';
   dataEl.classList.add('navlink');
   document.getElementById('topbar').appendChild(dataEl);
@@ -298,6 +298,7 @@ Nav.prototype.setupSettings = function() {
 
 /** Initializes and renders the navigation bar. */
 Nav.prototype.setupTopBar = function() {
+  console.log("topbar!");
   const baseUrl = window.location.origin + '/';
   let topBar = document.getElementById('topbar');
   let moreNavItem;
