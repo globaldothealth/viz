@@ -71,17 +71,20 @@ constructor(baseUrl) {
     * @private {Object}
    */
   this.freshnessData_;
+
+  /**
+    * @private {Object}
+   */
+  this.regionalData_;
 }
 }  // DataProvider
 
 DataProvider.LAT_LNG_DECIMAL_LENGTH = 4;
 
-DataProvider.normalizeGeoId = function(geoid) {
-  let parts = geoid.split('|');
+DataProvider.normalizeGeoId = function(lat, long) {
   let output = [];
-  for (let i = 0; i < parts.length; i++) {
-    output.push(parseFloat(parts[i]).toFixed(DataProvider.LAT_LNG_DECIMAL_LENGTH));
-  }
+  output.push(parseFloat(lat).toFixed(DataProvider.LAT_LNG_DECIMAL_LENGTH));
+  output.push(parseFloat(long).toFixed(DataProvider.LAT_LNG_DECIMAL_LENGTH));
   return output.join('|');
 };
 
@@ -165,7 +168,7 @@ DataProvider.prototype.getLatestDataPerCountry = function() {
     }
     for (let i = 0; i < latestAggregateData.length; i++) {
       const item = latestAggregateData[i];
-      this.latestDataPerCountry_[item['code']] = [item['cum_conf']];
+      this.latestDataPerCountry_[item['_id']] = [item['caseCount']];
     }
   }
   return this.latestDataPerCountry_;
@@ -178,7 +181,7 @@ DataProvider.prototype.getCountryFeaturesForDay = function(date) {
 
 
 DataProvider.prototype.getAtomicFeaturesForDay = function(date) {
-  return this.atomicFeaturesByDay_[date];
+  return this.atomicFeaturesByDay_;
 };
 
 
@@ -199,6 +202,10 @@ DataProvider.prototype.getAggregateData = function() {
 
 DataProvider.prototype.getFreshnessData = function() {
   return this.freshnessData_;
+};
+
+DataProvider.prototype.getRegionalData = function() {
+  return this.regionalData_;
 };
 
 /** @return {Array.<string>} */
@@ -247,7 +254,7 @@ DataProvider.prototype.fetchInitialData = function() {
     this.fetchCountryNames(),
     this.fetchDataIndex(),
     this.fetchLocationData(),
-    this.fetchJhuData()
+    this.fetchAggregateData()
   ]);
 };
 
@@ -298,7 +305,7 @@ DataProvider.prototype.fetchLocationData = function() {
 DataProvider.prototype.fetchDataIndex = function() {
   let self = this;
   return new Promise(function(resolve, reject) {
-    fetch(self.baseUrl_ + '/d/index.txt').then(function(response) {
+    fetch(self.baseUrl_ + 'regional/index.txt').then(function(response) {
         return response.text();
       }).then(function(responseText) {
         let lines = responseText.split('\n');
@@ -339,7 +346,7 @@ DataProvider.prototype.fetchCountryNames = function() {
     return Promise.resolve();
   }
   let self = this;
-  return fetch('https://raw.githubusercontent.com/ghdsi/common/master/countries.data')
+  return fetch('https://raw.githubusercontent.com/globaldothealth/common/master/countries.data')
     .then(function(response) { return response.text(); })
     .then(function(responseText) {
       let countryLines = responseText.trim().split('\n');
@@ -371,7 +378,7 @@ DataProvider.prototype.fetchCountryBoundaries = function() {
     return Promise.resolve();
   }
   let self = this;
-  return fetch('https://raw.githubusercontent.com/ghdsi/common/master/country_boundaries.json')
+  return fetch('https://raw.githubusercontent.com/globaldothealth/common/master/country_boundaries.json')
     .then(function(response) { return response.json(); })
     .then(function(jsonData) {
       for (let i = 0; i < jsonData.length; i++) {
@@ -393,12 +400,14 @@ DataProvider.prototype.fetchLatestCounts = function(forceRefresh) {
   }
   const timestamp = (new Date()).getTime();
   let self = this;
-  return fetch(this.baseUrl_ + 'globals.json?nocache=' + timestamp)
+  return fetch(this.baseUrl_ + 'total/latest.json?nocache=' + timestamp)
     .then(function(response) { return response.json(); })
     .then(function(jsonData) {
-      const counts = jsonData[0];
-      self.latestGlobalCounts_ = [parseInt(counts['caseCount'], 10),
+      const counts = jsonData;
+      self.latestGlobalCounts_ = [parseInt(counts['total'], 10),
                                   parseInt(counts['deaths'], 10),
+                                  parseInt(counts['total_p1'], 10),
+                                  parseInt(counts['total_b1351'], 10),
                                   counts['date']];
     });
 };
@@ -438,7 +447,7 @@ DataProvider.prototype.fetchDailySlice = function(
   }
   const timestamp = (new Date()).getTime();
   let self = this;
-  let url = this.baseUrl_ + 'd/' + sliceFileName;
+  let url = this.baseUrl_ + 'country/latest.json?nocache=' + timestamp;
   // Don't cache the most recent daily slice. Cache all others.
   if (isNewest) {
     url += '?nocache=' + timestamp;
@@ -453,6 +462,7 @@ DataProvider.prototype.fetchDailySlice = function(
       if (!jsonData) {
         reject('JSON data is empty');
       }
+      console.log("jsonData: ", jsonData);
       self.processDailySlice(jsonData, isNewest);
       callback();
       resolve();
@@ -460,10 +470,28 @@ DataProvider.prototype.fetchDailySlice = function(
   });
 };
 
+/** @return {!Promise} */
+DataProvider.prototype.fetchRegionalData = function() {
+  if (!!this.regionalData_ && !!this.regionalData_.length) {
+    console.log('Freshness data already loaded.');
+    return Promise.resolve();
+  }
+  const timestamp = (new Date()).getTime();
+  let self = this;
+  let url = this.baseUrl_ + 'regional/latest.json?nocache=' + timestamp;
+  // Don't cache the most recent daily slice. Cache all others.
+  return fetch(url)
+    .then(function(response) { return response.json(); })
+    .then(function(jsonData) {
+      self.regionalData_ = jsonData;
+    });
+
+};
 
 DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
-  let currentDate = jsonData['date'];
-  let features = jsonData['features'];
+
+  let currentDate = Object.keys(jsonData);
+  let features = jsonData[currentDate];
 
   // Cases grouped by country
   let countryFeatures = {};
@@ -471,17 +499,18 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
   // "Re-hydrate" the features into objects ingestable by the map.
   for (let i = 0; i < features.length; i++) {
     let feature = features[i];
-    feature['properties']['geoid'] = DataProvider.normalizeGeoId(
-        feature['properties']['geoid']);
+    feature['geoid'] = DataProvider.normalizeGeoId(
+        feature['lat'], feature['long']);
 
     // If we don't know where this is, discard.
-    if (!locationInfo[feature['properties']['geoid']]) {
+    if (!locationInfo[feature['geoid']]) {
       continue;
     }
     // City, province, country.
-    const locationStr = locationInfo[feature['properties']['geoid']];
+    const locationStr = locationInfo[feature['geoid']];
     let location = locationStr.split('|');
-    const countryCode = location[2];
+    // The country code is the last element.
+    let countryCode = feature['code']; //location.slice(-1)[0];
     if (!countryCode || countryCode.length != 2) {
       console.log('Warning: invalid country code: ' + countryCode);
       console.log('From ' + location);
@@ -489,25 +518,30 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
     if (!countryFeatures[countryCode]) {
       countryFeatures[countryCode] = {'total': 0, 'new': 0};
     }
-    countryFeatures[countryCode]['total'] += feature['properties']['total'];
-    countryFeatures[countryCode]['new'] += feature['properties']['new'];
+    countryFeatures[countryCode]['name'] = feature['_id'];
+    countryFeatures[countryCode]['geoid'] = feature['geoid'];
+    countryFeatures[countryCode]['total'] = feature['casecount'];
+    countryFeatures[countryCode]['p1'] = feature['casecount_p1'];
+    countryFeatures[countryCode]['b1351'] = feature['casecount_b1351'];
+    countryFeatures[countryCode]['jhu'] = feature['jhu'];
   }
 
   this.dates_.add(currentDate);
 
   this.countryFeaturesByDay_[currentDate] = countryFeatures;
-  this.atomicFeaturesByDay_[currentDate] = features;
+  console.log(countryFeatures);
+  // this.atomicFeaturesByDay_[currentDate] = features;
   this.dataSliceFileNames_[currentDate + '.json'] = true;
 };
 
 
-DataProvider.prototype.fetchJhuData = function() {
+DataProvider.prototype.fetchAggregateData = function() {
   if (!!this.aggregateData_) {
     return Promise.resolve();
   }
   const timestamp = (new Date()).getTime();
   let self = this;
-  return fetch(this.baseUrl_ + 'aggregate.json?nocache=' + timestamp)
+  return fetch(this.baseUrl_ + 'total/latest.json?nocache=' + timestamp)
     .then(function(response) { return response.json(); })
     .then(function(jsonData) {
       self.aggregateData_ = {};

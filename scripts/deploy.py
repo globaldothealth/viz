@@ -154,7 +154,9 @@ def replace_string_in_dest_file(to_replace, replacement,
     with open(full_path) as f:
         contents = f.read()
         f.close()
-    contents = contents.replace(to_replace, replacement)
+    # TODO: Should probably use a regexp.
+    while to_replace in contents:
+        contents = contents.replace(to_replace, replacement)
     with open(full_path, "w") as f:
         f.write(contents)
         f.close()
@@ -175,16 +177,23 @@ def deploy(disease_id, target_path, quiet=False):
 
     success &= copy_contents(target_path, quiet=quiet)
     success &= restore_pristine_files()
-    success != replace_string_in_dest_file(
+    success &= replace_string_in_dest_file(
         "{{DATA_SRC_URL}}",
         CONFIG[disease_id]["data_src_url"],
         target_path, "js/bundle.js")
-    success != replace_string_in_dest_file(
+    success &= replace_string_in_dest_file(
         "{{TITLE}}", CONFIG[disease_id]["name"],
         target_path, "js/bundle.js")
-    success != replace_string_in_dest_file(
+    success &= replace_string_in_dest_file(
         "{{MAPBOX_API_TOKEN}}",
         MAPBOX_PROD_API_TOKEN, target_path, "js/bundle.js")
+    other_diseases = []
+    for did in CONFIG[disease_id]["linkto"]:
+        other_diseases.append("|".join([
+            did, CONFIG[did]["name"], CONFIG[did]["url"]]))
+    success &= replace_string_in_dest_file(
+        "{{OTHER_DISEASES}}",
+        ",".join(other_diseases), target_path, "js/bundle.js")
 
     if success:
         if not quiet:

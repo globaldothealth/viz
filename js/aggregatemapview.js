@@ -9,11 +9,11 @@ constructor(dataProvider, nav) {
 }
 
 getId() {
-  return 'cumulative';
+  return 'country';
 }
 
 getTitle() {
-  return 'Cumulative cases';
+  return 'Country View';
 }
 
 getPropertyNameForPaint() {
@@ -25,18 +25,21 @@ getFeatureSet() {
   const latestDateForAggregate = this.dataProvider_.getLatestDateWithAggregateData();
   // This is a map from country code to the corresponding feature.
   let dehydratedFeatures = this.dataProvider_.getCountryFeaturesForDay(latestDate);
-  const aggregates = this.dataProvider_.getAggregateData()[latestDateForAggregate];
+  // const aggregates = this.dataProvider_.getAggregateData()[latestDateForAggregate];
+  const aggregates = [];
   let features = [];
   let codes = Object.keys(dehydratedFeatures);
-  for (let i = 0; i < aggregates.length; i++) {
-    let aggregate = aggregates[i];
-    const code = aggregate['code'];
+  for (var key in dehydratedFeatures) {
+
+    const code = key;
     const boundaries = this.dataProvider_.getBoundariesForCountry(code);
     if (!boundaries) {
       console.log('No available boundaries for country ' + code);
       continue;
     }
-    const aggregateCaseCount = aggregate['cum_conf'];
+    const aggregateCaseCount = dehydratedFeatures[key]['total'];
+    const voc1 = dehydratedFeatures[key]['p1'];
+    const voc2 = dehydratedFeatures[key]['b1351'];
     const country = this.dataProvider_.getCountry(code);
     const centroid = country.getCentroid();
     const geoId = [centroid[1], centroid[0]].join('|');
@@ -46,10 +49,13 @@ getFeatureSet() {
         'geoid': geoId,
         'countryname': country.getName(),
         'cum_conf': aggregateCaseCount,
+        'variant1': voc1,
+        'variant2': voc2,
       },
       'geometry': boundaries,
     };
     features.push(feature);
+
   }
   return this.formatFeatureSet(features.map(
       f => this.formatFeature(f, false /* 3D */)));
@@ -58,13 +64,20 @@ getFeatureSet() {
 getPopupContentsForFeature(f) {
   const props = f['properties'];
   let contents = document.createElement('div');
-  contents.innerHTML = '<h2><b>' + props['countryname'] + '</b></h2>' +
-    '<b>' + props['cum_conf'].toLocaleString() + '</b> cases';
+  contents.innerHTML = '<h2 class="popup-title">' + props['countryname'] + '</h2>' +
+    '<p class=popup-count><strong>' + props['cum_conf'].toLocaleString() + 
+    ' line list cases</strong><hr/>Variant P.1: ' + 
+    props['variant1'].toLocaleString() + 
+    ' <br>Variant B.1.351: ' + 
+    props['variant2'].toLocaleString() + 
+    '</p><a class="popup" target="_blank" href="https://data.covid-19.global.health/cases?country=%22' + 
+    props['countryname'] +
+    '%22">Explore Country Data</a>';
   return contents;
 }
 
 getLegendTitle() {
-  return 'Cases';
+  return 'Line List Cases';
 }
 
 getColorStops() {

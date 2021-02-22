@@ -23,20 +23,24 @@ body.dark {
 .light #topbar div.navlink {
   border-left-color: $topbar-nav-border-color-light;
   font-weight: 500;
+  text-shadow: -1px -1px 0 $topbar-text-shadow-color-light, 1px -1px 0 $topbar-text-shadow-color-light, -1px 1px 0 $topbar-text-shadow-color-light, 1px 1px 0 $topbar-text-shadow-color-light;
 }
 
 .light #topbar div.navlink:hover {
   color: $topbar-nav-active-border-color-light;
 }
 
-.light #topbar div.active {
+.light #topbar div.active,
+.light.country-p1 #topbar #country.navlink,
+.light.country-b1351 #topbar #country.navlink {
   border-bottom: 4px solid $topbar-nav-active-border-color-light;
   color: $topbar-nav-active-border-color-light;
 }
 
 #topbar div#settings.navlink {
   font-size: 24px;
-  padding-top: 0;
+  padding-top: 1ex;
+  padding-botttom: 0;
 }
 
 .light #settings-menu {
@@ -51,6 +55,7 @@ body.dark {
 
 .dark #topbar div.navlink {
   border-left-color: $topbar-nav-border-color-dark;
+  text-shadow: -1px -1px 0 $topbar-text-shadow-color-dark, 1px -1px 0 $topbar-text-shadow-color-dark, -1px 1px 0 $topbar-text-shadow-color-dark, 1px 1px 0 $topbar-text-shadow-color-dark;
 }
 
 .dark #topbar div.navlink:hover {
@@ -62,7 +67,7 @@ body.dark {
   border-bottom: 4px solid $topbar-nav-active-border-color-dark;
 }
 
-.dark #settings-menu {
+.dark #settings-menu, .dark #more-menu {
   background-color: $sidebar-bgcolor-dark;
 }
 

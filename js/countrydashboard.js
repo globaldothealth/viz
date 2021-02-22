@@ -11,7 +11,7 @@ CountryDashboard.prototype.init = function() {
   let self = this;
   const dp = self.dataProvider_;
   dp.fetchCountryNames().
-        then(dp.fetchJhuData.bind(dp)).
+        then(dp.fetchAggregateData.bind(dp)).
         then(dp.loadCountryData.bind(dp)).
         then(self.showCountryPage.bind(self));
 }
@@ -73,7 +73,7 @@ CountryDashboard.prototype.showCountryPage = function(data) {
     for (let j = 0; j < aggregateData[dates[i]]; i++) {
       const item = aggregateData[dates[i]][j];
       if (item['code'] == code) {
-        o[centroidGeoid].push(item['cum_conf']);
+        o[centroidGeoid].push(item['caseCount']);
         break;
       }
     }

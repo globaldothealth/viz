@@ -17,6 +17,18 @@ constructor(dataProvider, mapView) {
    */
   this.animationIntervalId_ = 0;
 }
+
+setLoading(flag) {
+  let playEl = document.getElementById('playpause');
+  if (flag) {
+    playEl.setAttribute('src', 'img/spinner.gif');
+    playEl.style.opacity = 0.5;
+  } else {
+    playEl.setAttribute('src', 'img/play.svg');
+    playEl.style.opacity = 1;
+  }
+}
+
 }
 
 /** @const */
@@ -26,7 +38,7 @@ TimeAnimation.prototype.render = function() {
   let mapWrapper = document.getElementById('map-wrapper');
   let rangeSliderEl = document.createElement('div');
   rangeSliderEl.setAttribute('id', 'range-slider');
-  rangeSliderEl.innerHTML = '<div id="spread"><img id="playpause" width="20" height="20" alt="Play" /></div><input id="slider" type="range" value="1000" min="0" max="1000" step="1" /><label><span id="date"></span></label>';
+  rangeSliderEl.innerHTML = '<div id="spread"><img id="playpause" width="40" height="40" alt="Play" /></div><input id="slider" type="range" value="1000" min="0" max="1000" step="1" /><label><span id="date"></span></label>';
   mapWrapper.appendChild(rangeSliderEl);
   this.timeControl_ = document.getElementById('slider');
   let playEl = document.getElementById('playpause');

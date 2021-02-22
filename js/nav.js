@@ -55,9 +55,9 @@ constructor(viz) {
   // Config
   // TODO: Make this work instantly.
   // this.registerToggle('2D Map', '2d', false);
-  this.registerToggle('Auto-drive', 'autodrive', false);
-  this.registerToggle('Dark', 'dark', false);
-  this.registerToggle('Fullscreen', 'fullscreen', false);
+  // this.registerToggle('Auto-drive', 'autodrive', false);
+  // this.registerToggle('Dark', 'dark', false);
+  // this.registerToggle('Fullscreen', 'fullscreen', false);
 
   // Views are registered in main.js
 }
@@ -99,6 +99,10 @@ navigate(id) {
     }
   }
   this.updateHash();
+  let moreMenu = document.getElementById('more-menu');
+  if (!!moreMenu) {
+    moreMenu.style.display = 'none';
+  }
 }
 
 /** Toggles the boolean pref with the given ID. */
@@ -146,6 +150,12 @@ updateToggles() {
 } // Nav
 
 /**
+ * The index of the first item that will be moved into a 'overflow' menu.
+ * @const @private {number}
+ */
+Nav.OVERFLOW_INDEX = 6;
+
+/**
  * Deserializes the state from the URL. This should only be called at the
  * start of a session.
  */
@@ -156,7 +166,7 @@ Nav.prototype.processHash = function(newUrl) {
   }
   const newHashes = newUrl.substring(baseUrl.length).split('/');
   let darkTheme = false;
-  let viewToLoad = 'casemap';
+  let viewToLoad = 'country';
   if (newHashes.length > 0) {
     for (let i = 0; i < newHashes.length; i++) {
       let hashBrown = newHashes[i];
@@ -238,6 +248,24 @@ Nav.prototype.makeToggle = function(toggleId, name, checked) {
   return container;
 }
 
+Nav.getPopupMenuTop = function() {
+  const topBarEl = document.getElementById('topbar');
+  const topBarRect = topBarEl.getClientRects()[0];
+  return topBarRect.y + topBarRect.height;
+}
+
+Nav.prototype.dataLink = function() {
+  const dataEl = document.createElement('div');
+  dataEl.setAttribute('id', 'data');
+  const linkEl = document.createElement('a');
+  linkEl.setAttribute('href','https://data.covid-19.global.health');
+  linkEl.textContent = 'G.h Data';
+  dataEl.classList.add('navlink');
+  document.getElementById('topbar').appendChild(dataEl);
+  document.getElementById('data').appendChild(linkEl);
+
+}
+
 Nav.prototype.setupSettings = function() {
   const settingsEl = document.createElement('div');
   settingsEl.setAttribute('id', 'settings');
@@ -258,25 +286,32 @@ Nav.prototype.setupSettings = function() {
       settingsMenu.appendChild(itemEl);
     }
   }
+
+
+
   document.getElementById('topbar').appendChild(settingsEl);
   document.body.appendChild(settingsMenu);
   settingsEl.onclick = function() {
     const menuEl = document.getElementById('settings-menu');
     const currentlyShown = menuEl.style.display != 'none';
-    menuEl.style.top = document.getElementById('topbar').clientHeight + 'px';
-    console.log(menuEl.style.top);
+    menuEl.style.top = Nav.getPopupMenuTop() + 'px';
     menuEl.style.display = currentlyShown ? 'none' : 'block';
   };
 };
 
 /** Initializes and renders the navigation bar. */
 Nav.prototype.setupTopBar = function() {
+  console.log("topbar!");
   const baseUrl = window.location.origin + '/';
   let topBar = document.getElementById('topbar');
+  let moreNavItem;
+  let moreMenu;
+
 
   const navIds = Object.keys(this.items_);
-  for (let i = 0; i < 2; i++) { // keep only settings cog
-  //for (let i = 0; i < navIds.length; i++) { // for full topbar nav
+
+  // for (let i = 0; i < 2; i++) { // keep only settings cog
+  for (let i = 0; i < navIds.length; i++) { // for full topbar nav
     const item = this.items_[navIds[i]];
     let itemEl;
     if (!item.isToggle()) {
@@ -285,9 +320,30 @@ Nav.prototype.setupTopBar = function() {
       itemEl.classList.add('navlink');
       itemEl.textContent = item.getName();
       itemEl.onclick = this.navigate.bind(this, item.getId());
-      topBar.appendChild(itemEl);
+      if (i < Nav.OVERFLOW_INDEX) {
+        topBar.appendChild(itemEl);
+      } else {
+        if (!moreNavItem) {
+          moreNavItem = document.createElement('div');
+          moreNavItem.setAttribute('id', 'more-item');
+          moreNavItem.classList.add('navlink');
+          moreNavItem.textContent = 'More ▼';
+          moreNavItem.onclick = function() {
+            let menu = document.getElementById('more-menu');
+            const currentlyShown = menu.style.display != 'none';
+            menu.style.top = Nav.getPopupMenuTop() + 'px';
+            menu.style.display = currentlyShown ? 'none' : 'block';
+          }
+          moreMenu = document.createElement('div');
+          moreMenu.setAttribute('id', 'more-menu');
+          moreMenu.style.display = 'none';
+          topBar.appendChild(moreNavItem);
+          topBar.appendChild(moreMenu);
+        }
+        moreMenu.appendChild(itemEl);
+      }
     }
   }
-  this.setupSettings();
+  this.dataLink();
   this.processHash(window.location.href);
 }

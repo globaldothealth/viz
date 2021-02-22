@@ -47,19 +47,29 @@ class VizHandler(SimpleHTTPRequestHandler):
             else:
                 return self.list_directory(path)
 
-        f = open(path)
+        binary = path.endswith(".gif") or path.endswith(".png")
+        f = open(path, "rb" if binary else "r")
         contents = f.read()
         if "diseasemap.js" in self.path:
             if MAPBOX_API_VARNAME in os.environ:
                 contents = contents.replace("{{MAPBOX_API_TOKEN}}",
                                             os.environ[MAPBOX_API_VARNAME])
-        if "sidebar.js" in self.path:
+        if "sidebar.js" in self.path or "view.js" in self.path:
             contents = contents.replace(
                 "{{TITLE}}", CONFIG[DISEASE_ID]["name"])
-        if "main.js" in self.path:
+        if "sidebar.js" in self.path:
+            other_diseases = []
+            for disease_id in CONFIG[DISEASE_ID]["linkto"]:
+                other_diseases.append("|".join([
+                    disease_id, CONFIG[disease_id]["name"], CONFIG[disease_id]["url"]]))
             contents = contents.replace(
-                "{{DATA_SRC_URL}}", CONFIG[DISEASE_ID]["data_src_url"] + "/")
-        encoded_contents = contents.encode()
+                "{{OTHER_DISEASES}}", ",".join(other_diseases))
+        if "main.js" in self.path:
+            destination = CONFIG[DISEASE_ID]["data_src_url"]
+            if not destination.endswith("/"):
+                destination += "/"
+            contents = contents.replace("{{DATA_SRC_URL}}", destination)
+        encoded_contents = contents if binary else contents.encode()
         ctype = self.guess_type(path)
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')

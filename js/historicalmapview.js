@@ -12,11 +12,11 @@ constructor(dataProvider, nav) {
 }
 
 getId() {
-  return 'historicalmap';
+  return 'evolution';
 }
 
 getTitle() {
-  return 'Historical';
+  return 'Time series';
 };
 
 render() {
@@ -28,11 +28,11 @@ render() {
   // For the historical map, we also want to get data from the past, but
   // we do this after we're done rendering the main map.
   window.setTimeout(function() {
-    document.head.title = 'Loading...';
+    self.timeAnimation_.setLoading(true);
     self.dataProvider_.fetchDailySlices(
       // Update the time control UI after each daily slice.
       self.timeAnimation_.updateTimeControl.bind(self.timeAnimation_)).then(function() {
-        document.head.title = self.getTitle();
+        self.timeAnimation_.setLoading(false);
         if (self.nav_.getConfig('autodrive')) {
           self.toggleAnimation();
         }
