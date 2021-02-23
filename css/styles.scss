@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap");
+@import "fonts";
 @import "variables";
 @import "mixins";
 
@@ -1010,6 +1011,8 @@ a.popup:hover {
 }
 
 .modal-backdrop {
+  font-family: Mabry Pro, sans-serif;
+  line-height: 1.5;
   position: fixed;
   top: 0;
   left: 0;
@@ -1085,6 +1088,7 @@ a.popup:hover {
 .modal-body p {
   margin: 1rem 0 1.25rem 0;
 }
+
 
 /* range slider */
 
