@@ -110,19 +110,6 @@ getColorStops() {
 }
 
 getPropertyNameForPaint() {
-  var pageURL = window.location.href;
-  var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
-  console.log(lastURLSegment);
-  if (lastURLSegment == "variant1") {
-    return 'variant1';
-  }
-  if (lastURLSegment == "variant2") {
-    return 'variant2';
-  }
-  if (lastURLSegment == "variant3") {
-    return 'variant3';
-  }
-
   return 'cum_conf';
 }
 

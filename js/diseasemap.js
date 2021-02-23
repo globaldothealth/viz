@@ -75,7 +75,6 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   // the map is finished loading.
   let source = this.mapboxMap_.getSource(this.sourceId_);
   if (!!source) {
-    console.log("dipset!");
     source.setData(this.view_.getFeatureSet());
   }
 };
