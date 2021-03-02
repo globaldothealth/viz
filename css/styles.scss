@@ -545,6 +545,7 @@ input[type="text"] {
   font-size: 5ex;
   vertical-align: middle;
   text-decoration: none;
+  font-family: 'Mabry Pro';
 }
 
 .navlink-question-mark {
@@ -1004,8 +1005,12 @@ a.popup:hover {
   padding: 20px;
   background: $accent-color;
   color: #fff;
+  font-family: 'Mabry Pro';
   h1, a {
     color: #fff;
+  }
+  h1 {
+    font-family: 'Mabry Pro';
   }
 }
 
