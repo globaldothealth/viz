@@ -49,6 +49,7 @@ getFeatureSet() {
         'geoid': geoId,
         'total': casecount,
         'region': regions[i]['_id'],
+        'region_level': regions[i]['search_term'],
         'country': regions[i]['country']
       }
     };
@@ -77,7 +78,7 @@ getPopupContentsForFeature(f) {
     '<p class=popup-count>' + totalCaseCount.toLocaleString() + ' cases</p> ' +
     '<a class="popup" target="_blank" href="https://data.covid-19.global.health/cases?country=%22' + 
     countryName +
-    '%22&admin3=%22' + 
+    '%22&' + props['region_level'] + '=%22' + 
     regionName + 
     '%22">Explore Regional Data</a>';
   return content;
