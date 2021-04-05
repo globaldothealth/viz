@@ -86,9 +86,8 @@ function handleHideModal() {
   }, 400);
 }
 
-
-
-function makeDivDraggable(modal) {
+function makeDivDraggable(modal, e) {
+  e = e || window.event;
   let x = 0;
   let y = 0;
   
@@ -104,8 +103,10 @@ function makeDivDraggable(modal) {
       y = e.clientY;
       
       // Attach the listeners to `document`
+      if (e.target.tagName.toLowerCase() !== 'a') {
       document.addEventListener('mousemove', mouseMoveHandler);
       document.addEventListener('mouseup', mouseUpHandler);
+      }
   };
   
   const mouseMoveHandler = function(e) {
@@ -128,7 +129,8 @@ function makeDivDraggable(modal) {
       document.removeEventListener('mouseup', mouseUpHandler);
   };
   
-  ele.addEventListener('mousedown', mouseDownHandler);
+  e.which === 1 ?  ele.addEventListener('mousedown', mouseDownHandler)  : null;
+
 };
 
 
