@@ -462,7 +462,7 @@ DataProvider.prototype.fetchDailySlice = function(
       if (!jsonData) {
         reject('JSON data is empty');
       }
-      console.log("jsonData: ", jsonData);
+      // console.log("jsonData: ", jsonData);
       self.processDailySlice(jsonData, isNewest);
       callback();
       resolve();

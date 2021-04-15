@@ -75,7 +75,7 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   // the map is finished loading.
   let source = this.mapboxMap_.getSource(this.sourceId_);
   if (!!source) {
-    console.log("dipset!");
+    // console.log("dipset!");
     source.setData(this.view_.getFeatureSet());
   }
 };
@@ -96,7 +96,7 @@ DiseaseMap.prototype.init = function(isDark) {
   this.mapboxMap_.on('load', function () {
     self.loadData();
     if (self.view_.isThreeDimensional()) {
-      self.mapboxMap_.easeTo({pitch: 55});
+      self.mapboxMap_.easeTo({pitch: 0});
     }
     if (!!self.nav_.getConfig('focus')) {
       self.flyToCountry(/** @type {string} */ (self.nav_.getConfig('focus')));
@@ -177,7 +177,7 @@ DiseaseMap.prototype.setStyle = function(isDark) {
       self.mapboxMap_.easeTo({pitch: angle});
     }
     if (self.view_.isThreeDimensional()) {
-      self.mapboxMap_.easeTo({pitch: 55});
+      self.mapboxMap_.easeTo({pitch: 0});
     }
   });
   this.mapboxMap_.setStyle(newStyle);

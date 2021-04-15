@@ -102,7 +102,7 @@ unload() {
 }
 
 getType() {
-  return this.isThreeDimensional() ? 'fill-extrusion' : 'circle';
+  return this.isThreeDimensional() ? 'circle' : 'fill';
 }
 
 getColorStops() {
@@ -129,14 +129,27 @@ getPropertyNameForPaint() {
 getPaintProperties(colors) {
   if (this.isThreeDimensional()) {
     return {
-      'fill-extrusion-height': ['get', 'height'],
-      'fill-extrusion-color': colors,
-      'fill-extrusion-opacity': 0.8,
+        // make circles larger as the user zooms from z12 to z22
+        'circle-radius': {
+          'base': 3.75,
+          'stops': [
+            [12, 8],
+            [22, 280]
+            ]
+          },
+        'circle-opacity': 0.85,
+        'circle-color': colors,
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 0.5,
+        
+      // 'fill-extrusion-height': ['get', 'height'],
+      // 'fill-extrusion-color': colors,
+      // 'fill-extrusion-opacity': 0.8,
     };
   } else {
     return {
       'fill-color': colors,
-      'fill-outline-color': '#edf3f1',
+      'fill-outline-color': '#488be6',
       'fill-opacity': 1,
     };
   }
@@ -229,22 +242,24 @@ formatFeature(inFeature, threeD) {
   const lng = parseFloat(coords[1]);
   // Flip latitude and longitude.
   let featureCoords = [lng, lat];
-  if (threeD) {
-    const half = this.getSizeForFeature(inFeature) / 2;
-    featureCoords = [[
-      [lng + half, lat + half],
-      [lng - half, lat + half],
-      [lng - half, lat - half],
-      [lng + half, lat - half],
-      [lng + half, lat + half],
-    ]];
-  }
+  // if (threeD) {
+  //   //const half = this.getSizeForFeature(inFeature) / 2;
+  //   featureCoords = [[
+  //     [lng, lat],
+  //     [lng, lat],
+  //     [lng, lat],
+  //     [lng, lat],
+  //     [lng, lat],
+  //   ]];
+  // }
   feature['geometry'] = {
-    'type': 'Polygon',
+    'type': 'Point',
+    // 'type': 'Polygon',
     'coordinates': featureCoords,
   };
+  // console.log("feature: ", feature);
   if (threeD) {
-    feature['properties']['height'] = this.getHeightForFeature(inFeature);
+    feature['properties']['height'] = 1;
   }
   return feature;
 }
@@ -277,12 +292,12 @@ MapView.makeColorScale = function(topColor, midColor, bottomColor, numericalScal
 
 // Increasingly clear shades of blue.
 MapView.COLORS = [
-  '#c0dbf5',
-  '#a8cef1',
-  '#2b88dc',
-  '#0271d5',
-  '#0f4f88',
-  '#00436b',
+  '#a6d1fe',
+  '#85b9f6',
+  '#488be6',
+  '#3474d8',
+  '#2756a1',
+  '#1b407a',
 ]
 
 MapView.GREENCOLORS = [
