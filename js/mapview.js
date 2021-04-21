@@ -131,15 +131,14 @@ getPaintProperties(colors) {
     return {
         // make circles larger as the user zooms from z12 to z22
         'circle-radius': {
-          'base': 3.75,
           'stops': [
-            [12, 8],
-            [22, 280]
+            [3, 2],
+            [10, 30]
             ]
           },
-        'circle-opacity': 0.85,
-        'circle-color': colors,
-        'circle-stroke-color': '#ffffff',
+        'circle-opacity': 0.65,
+        'circle-color': colors, 
+        'circle-stroke-color': colors,
         'circle-stroke-width': 0.5,
         
       // 'fill-extrusion-height': ['get', 'height'],
@@ -149,7 +148,7 @@ getPaintProperties(colors) {
   } else {
     return {
       'fill-color': colors,
-      'fill-outline-color': '#488be6',
+      'fill-outline-color': '#0074ab',
       'fill-opacity': 1,
     };
   }
@@ -292,12 +291,12 @@ MapView.makeColorScale = function(topColor, midColor, bottomColor, numericalScal
 
 // Increasingly clear shades of blue.
 MapView.COLORS = [
-  '#a6d1fe',
-  '#85b9f6',
-  '#488be6',
-  '#3474d8',
-  '#2756a1',
-  '#1b407a',
+  '#88d0eb',
+  '#64c6f0',
+  '#51beec',
+  '#29b1ea',
+  '#0093e4',
+  '#0074ab',
 ]
 
 MapView.GREENCOLORS = [
@@ -310,12 +309,11 @@ MapView.GREENCOLORS = [
   '#398c7f',
 ]
 
-MapView.REDCOLORS = [
-  '#FFFFFF',
-  '#c0dbf5',
-  '#a8cef1',
-  '#2b88dc',
-  '#0271d5',
-  '#0f4f88',
-  '#00436b',
+MapView.REGIONCOLORS = [
+  '#feffca',
+  '#bfeab3',
+  '#6ccfbb',
+  '#00b9c4',
+  '#0080ba',
+  '#293395',
 ]

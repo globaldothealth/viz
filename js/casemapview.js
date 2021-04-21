@@ -90,12 +90,12 @@ getLegendTitle() {
 
 getColorStops() {
   return [
-    [MapView.COLORS[0], '< 100', 100],
-    [MapView.COLORS[1], '100–1k', 1000],
-    [MapView.COLORS[2], '1k–5k', 5000],
-    [MapView.COLORS[3], '5k–20k', 20000],
-    [MapView.COLORS[4], '20k-100k', 100000],
-    [MapView.COLORS[5], '> 100k']
+    [MapView.REGIONCOLORS[0], '< 100', 100],
+    [MapView.REGIONCOLORS[1], '100–1k', 1000],
+    [MapView.REGIONCOLORS[2], '1k–5k', 5000],
+    [MapView.REGIONCOLORS[3], '5k–20k', 20000],
+    [MapView.REGIONCOLORS[4], '20k-100k', 100000],
+    [MapView.REGIONCOLORS[5], '> 100k']
   ];
 }
 
