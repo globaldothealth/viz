@@ -518,6 +518,14 @@ input[type="text"] {
   align-items: center;
 }
 
+#logo #helpGuide span {
+  font-size: 4ex !important;
+}
+
+.navlink-question-mark .help-guide-button .MuiSvgIcon-root {
+  font-size: 1rem !important;
+}
+
 #logo img {
   border-right: 1px solid #555;
   margin-right: 0.6ex;

@@ -529,7 +529,7 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
   this.dates_.add(currentDate);
 
   this.countryFeaturesByDay_[currentDate] = countryFeatures;
-  console.log(countryFeatures);
+  // console.log(countryFeatures);
   // this.atomicFeaturesByDay_[currentDate] = features;
   this.dataSliceFileNames_[currentDate + '.json'] = true;
 };
