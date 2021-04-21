@@ -56,8 +56,8 @@ onUnload() {
 // This will be replaced at run time or deploy time.
 DiseaseMap.MAPBOX_TOKEN = '{{MAPBOX_API_TOKEN}}';
 
-DiseaseMap.LIGHT_THEME = 'mapbox://styles/healthmap/ckc1y3lbr1upr1jq6pwfcb96k';
-DiseaseMap.DARK_THEME = 'mapbox://styles/healthmap/ck7o47dgs1tmb1ilh5b1ro1vn';
+DiseaseMap.LIGHT_THEME = 'mapbox://styles/healthmap/cknr3ycvx03i917nw4gk1um66';
+DiseaseMap.DARK_THEME = 'mapbox://styles/healthmap/cknr3ycvx03i917nw4gk1um66';
 
 DiseaseMap.prototype.showDataAtLatestDate = function() {
   if (!this.dataProvider_.getDates().length) {
@@ -75,6 +75,7 @@ DiseaseMap.prototype.showDataAtDate = function(isodate) {
   // the map is finished loading.
   let source = this.mapboxMap_.getSource(this.sourceId_);
   if (!!source) {
+    // console.log("dipset!");
     source.setData(this.view_.getFeatureSet());
   }
 };
@@ -95,7 +96,7 @@ DiseaseMap.prototype.init = function(isDark) {
   this.mapboxMap_.on('load', function () {
     self.loadData();
     if (self.view_.isThreeDimensional()) {
-      self.mapboxMap_.easeTo({pitch: 55});
+      self.mapboxMap_.easeTo({pitch: 0});
     }
     if (!!self.nav_.getConfig('focus')) {
       self.flyToCountry(/** @type {string} */ (self.nav_.getConfig('focus')));
@@ -176,7 +177,7 @@ DiseaseMap.prototype.setStyle = function(isDark) {
       self.mapboxMap_.easeTo({pitch: angle});
     }
     if (self.view_.isThreeDimensional()) {
-      self.mapboxMap_.easeTo({pitch: 55});
+      self.mapboxMap_.easeTo({pitch: 0});
     }
   });
   this.mapboxMap_.setStyle(newStyle);
