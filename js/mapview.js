@@ -115,15 +115,20 @@ getPropertyNameForPaint() {
 
 getPaintProperties(colors) {
   if (this.isThreeDimensional()) {
+    console.log("colors: ", colors);
     return {
         // make circles larger as the user zooms from z12 to z22
         'circle-radius': {
+          'property': 'total',
           'stops': [
-            [3, 2],
-            [10, 30]
+            [100, 3],
+            [1000, 4],
+            [5000, 6],
+            [20000, 8],
+            [100000, 18],
             ]
           },
-        'circle-opacity': 0.65,
+        'circle-opacity': 0.55,
         'circle-color': colors, 
         'circle-stroke-color': colors,
         'circle-stroke-width': 0.5,
@@ -150,7 +155,11 @@ getPaint() {
     if (color.length > 2) {
       colors.push(color[2]);
     }
+    if (color.length > 3) {
+      colors.push(color[3]);
+    }
   }
+  console.log("err: ", this.getPaintProperties(colors));
   return this.getPaintProperties(colors);
 }
 
@@ -243,9 +252,8 @@ formatFeature(inFeature, threeD) {
     // 'type': 'Polygon',
     'coordinates': featureCoords,
   };
-  // console.log("feature: ", feature);
   if (threeD) {
-    feature['properties']['height'] = 1;
+    feature['properties']['height'] = this.getHeightForFeature(inFeature);
   }
   return feature;
 }
