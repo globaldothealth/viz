@@ -22,6 +22,7 @@ INCLUDE_LIST = [
     "js/bundle.js",
     "css/styles.css",
     "img/*",
+    "fonts/*",
 ]
 
 HTML_FILES = [

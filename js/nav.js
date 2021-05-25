@@ -301,7 +301,6 @@ Nav.prototype.setupSettings = function() {
 
 /** Initializes and renders the navigation bar. */
 Nav.prototype.setupTopBar = function() {
-  console.log("topbar!");
   const baseUrl = window.location.origin + '/';
   let topBar = document.getElementById('topbar');
   let moreNavItem;
