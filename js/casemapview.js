@@ -37,7 +37,6 @@ getHeightForFeature(feature) {
 getFeatureSet() {
   const latestDate = this.dataProvider_.getLatestDate();
   const regiondata = this.dataProvider_.getRegionalData();
-  // console.log("oh word? ", regiondata);
   let features = [];
   let current = Object.keys(regiondata);
   let regions = regiondata[current];
@@ -75,7 +74,6 @@ getPopupContentsForFeature(f) {
   totalCaseCount = props['total'];
 
   let content = document.createElement('div');
-  console.log("location: ", locationSpan);
   content.innerHTML = '<h2 class="popup-title">' + regionName + ', ' + countryName + '</h2>' +
     '<p class=popup-count>' + totalCaseCount.toLocaleString() + ' cases</p> ' +
     '<a class="popup" target="_blank" href="https://data.covid-19.global.health/cases?country=%22' + 

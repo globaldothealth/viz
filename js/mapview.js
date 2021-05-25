@@ -115,7 +115,6 @@ getPropertyNameForPaint() {
 
 getPaintProperties(colors) {
   if (this.isThreeDimensional()) {
-    console.log("colors: ", colors);
     return {
         // make circles larger as the user zooms from z12 to z22
         'circle-radius': {
