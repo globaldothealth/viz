@@ -207,7 +207,6 @@ SideBar.prototype.renderCountryList = function() {
       continue;
     }
     const code = key;
-    // console.log("code: ", code);
     const country = this.dataProvider_.getCountry(code);
     if (!country) {
       continue;
@@ -269,7 +268,6 @@ SideBar.prototype.renderCountryListP1 = function() {
       continue;
     }
     const code = key;
-    // console.log("code: ", code);
     const country = this.dataProvider_.getCountry(code);
     if (!country) {
       continue;
@@ -330,7 +328,6 @@ SideBar.prototype.renderCountryListB1351 = function() {
       continue;
     }
     const code = key;
-    // console.log("code: ", code);
     const country = this.dataProvider_.getCountry(code);
     if (!country) {
       continue;

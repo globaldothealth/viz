@@ -37,7 +37,6 @@ getHeightForFeature(feature) {
 getFeatureSet() {
   const latestDate = this.dataProvider_.getLatestDate();
   const regiondata = this.dataProvider_.getRegionalData();
-  // console.log("oh word? ", regiondata);
   let features = [];
   let current = Object.keys(regiondata);
   let regions = regiondata[current];
@@ -48,8 +47,9 @@ getFeatureSet() {
       'properties': {
         'geoid': geoId,
         'total': casecount,
+        'radius': casecount,
         'region': regions[i]['_id'],
-        'region_level': regions[i]['search_term'],
+        'region_level': regions[i]['search'],
         'country': regions[i]['country']
       }
     };
@@ -62,6 +62,7 @@ getFeatureSet() {
 getPopupContentsForFeature(f) {
   let props = f['properties'];
   const geo_id = props['geoid'];
+  const regionLevel = props['region_level']; 
   const regionName = props['region'];
   const countryName = props['country'];
 
@@ -73,12 +74,11 @@ getPopupContentsForFeature(f) {
   totalCaseCount = props['total'];
 
   let content = document.createElement('div');
-  console.log("location: ", locationSpan);
   content.innerHTML = '<h2 class="popup-title">' + regionName + ', ' + countryName + '</h2>' +
     '<p class=popup-count>' + totalCaseCount.toLocaleString() + ' cases</p> ' +
     '<a class="popup" target="_blank" href="https://data.covid-19.global.health/cases?country=%22' + 
     countryName +
-    '%22&' + props['region_level'] + '=%22' + 
+    '%22&' + regionLevel + '=%22' + 
     regionName + 
     '%22">Explore Regional Data</a>';
   return content;
