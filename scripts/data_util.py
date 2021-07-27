@@ -20,9 +20,10 @@ def initialize_country_names_and_codes():
     with open(data_file) as f:
         data = f.read().strip()
         f.close()
-    pairs = data.split('\n')
-    for p in pairs:
-        (continent, code, name, population, _) = p.split(":")
+    records = data.split('\n')
+    for r in records:
+        fields = r.split(":")
+        (continent, code, name) = (fields[0], fields[1], fields[2])
         COUNTRIES_ISO_TO_NAME[code] = name
         COUNTRIES_NAME_TO_ISO[name.lower()] = code
     os.remove(data_file)
