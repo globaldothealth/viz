@@ -102,7 +102,7 @@ unload() {
 }
 
 getType() {
-  return this.isThreeDimensional() ? 'fill-extrusion' : 'circle';
+  return this.isThreeDimensional() ? 'circle' : 'fill';
 }
 
 getColorStops() {
@@ -116,14 +116,30 @@ getPropertyNameForPaint() {
 getPaintProperties(colors) {
   if (this.isThreeDimensional()) {
     return {
-      'fill-extrusion-height': ['get', 'height'],
-      'fill-extrusion-color': colors,
-      'fill-extrusion-opacity': 0.8,
+        // make circles larger as the user zooms from z12 to z22
+        'circle-radius': {
+          'property': 'total',
+          'stops': [
+            [100, 3],
+            [1000, 4],
+            [5000, 6],
+            [20000, 8],
+            [100000, 18],
+            ]
+          },
+        'circle-opacity': 0.55,
+        'circle-color': colors, 
+        'circle-stroke-color': colors,
+        'circle-stroke-width': 0.5,
+        
+      // 'fill-extrusion-height': ['get', 'height'],
+      // 'fill-extrusion-color': colors,
+      // 'fill-extrusion-opacity': 0.8,
     };
   } else {
     return {
       'fill-color': colors,
-      'fill-outline-color': '#edf3f1',
+      'fill-outline-color': '#0074ab',
       'fill-opacity': 1,
     };
   }
@@ -138,7 +154,11 @@ getPaint() {
     if (color.length > 2) {
       colors.push(color[2]);
     }
+    if (color.length > 3) {
+      colors.push(color[3]);
+    }
   }
+  console.log("err: ", this.getPaintProperties(colors));
   return this.getPaintProperties(colors);
 }
 
@@ -216,18 +236,19 @@ formatFeature(inFeature, threeD) {
   const lng = parseFloat(coords[1]);
   // Flip latitude and longitude.
   let featureCoords = [lng, lat];
-  if (threeD) {
-    const half = this.getSizeForFeature(inFeature) / 2;
-    featureCoords = [[
-      [lng + half, lat + half],
-      [lng - half, lat + half],
-      [lng - half, lat - half],
-      [lng + half, lat - half],
-      [lng + half, lat + half],
-    ]];
-  }
+  // if (threeD) {
+  //   //const half = this.getSizeForFeature(inFeature) / 2;
+  //   featureCoords = [[
+  //     [lng, lat],
+  //     [lng, lat],
+  //     [lng, lat],
+  //     [lng, lat],
+  //     [lng, lat],
+  //   ]];
+  // }
   feature['geometry'] = {
-    'type': 'Polygon',
+    'type': 'Point',
+    // 'type': 'Polygon',
     'coordinates': featureCoords,
   };
   if (threeD) {
@@ -264,12 +285,12 @@ MapView.makeColorScale = function(topColor, midColor, bottomColor, numericalScal
 
 // Increasingly clear shades of blue.
 MapView.COLORS = [
-  '#c0dbf5',
-  '#a8cef1',
-  '#2b88dc',
-  '#0271d5',
-  '#0f4f88',
-  '#00436b',
+  '#88d0eb',
+  '#64c6f0',
+  '#51beec',
+  '#29b1ea',
+  '#0093e4',
+  '#0074ab',
 ]
 
 MapView.GREENCOLORS = [
@@ -282,12 +303,11 @@ MapView.GREENCOLORS = [
   '#398c7f',
 ]
 
-MapView.REDCOLORS = [
-  '#FFFFFF',
-  '#c0dbf5',
-  '#a8cef1',
-  '#2b88dc',
-  '#0271d5',
-  '#0f4f88',
-  '#00436b',
+MapView.REGIONCOLORS = [
+  '#feffca',
+  '#bfeab3',
+  '#6ccfbb',
+  '#00b9c4',
+  '#0080ba',
+  '#293395',
 ]
