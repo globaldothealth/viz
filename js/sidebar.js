@@ -102,7 +102,9 @@ SideBar.prototype.renderDiseaseSelector = function() {
 }
 
 SideBar.prototype.render = function() {
-  this.element_.innerHTML = '<div id="sidebar-tab"></div><div id="sidebar-header"><h1 id="total" class="sidebar-title total">COVID-19 LINE LIST CASES</h1><br/><h1 id="voc1" class="sidebar-title voc">Variant P.1</h1><h1 id="voc2" class="sidebar-title voc">Variant B.1.351</h1><div id="disease-selector"></div></div><div id="latest-global"></div><div id="location-filter-wrapper"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>Data</span></div>';
+  this.element_.innerHTML = '<div id="sidebar-tab"></div><div id="sidebar-header"><h1 id="total" class="sidebar-title total">COVID-19 LINE LIST CASES</h1><br/>'
+                            //  +'<h1 id="voc1" class="sidebar-title voc">Variant P.1</h1><h1 id="voc2" class="sidebar-title voc">Variant B.1.351</h1>'
+                              + '<div id="disease-selector"></div></div><div id="latest-global"></div><div id="location-filter-wrapper"></div><div id="location-list"></div><div id="ghlist">See all cases <img src="/img/gh_list_logo.svg"><span>Data</span></div>';
   document.getElementById('sidebar').classList.add(window.location.hash);
   const tabEl = document.getElementById('sidebar-tab');
   let icon = document.createElement('span');
@@ -122,15 +124,15 @@ SideBar.prototype.render = function() {
     window.location.reload();
   }
 
-  document.getElementById('voc1').onclick = function(e) {
-    window.location.href = '/#country-p1';
-    window.location.reload();
-  }
+  // document.getElementById('voc1').onclick = function(e) {
+  //   window.location.href = '/#country-p1';
+  //   window.location.reload();
+  // }
 
-  document.getElementById('voc2').onclick = function(e) {
-    window.location.hash = '/#country-b1351';
-    window.location.reload();
-  }
+  // document.getElementById('voc2').onclick = function(e) {
+  //   window.location.hash = '/#country-b1351';
+  //   window.location.reload();
+  // }
 
   document.getElementById('ghlist').onclick = function(e) {
     window.location.href = 'https://data.covid-19.global.health/  ';
