@@ -1,7 +1,7 @@
 /** Represents a country and its characteristics. */
 class Country {
 
-constructor(code, name, continent, population, boundingBoxes) {
+constructor(code, name, continent, population, boundingBoxes, centroid) {
 
   /**
    * This country's two-letter iso code.
@@ -43,6 +43,14 @@ constructor(code, name, continent, population, boundingBoxes) {
    * @private
    */
   this.boundingBoxes_ = boundingBoxes;
+
+  /**
+   * This country's centroid (i.e. the geographical middle), used to decide where
+   * to zoom the map to when we focus on this country.
+   * @const
+   * @private
+   */
+  this.centroid_ = centroid;
 }
 
 }  // Country
@@ -68,12 +76,27 @@ Country.prototype.getPopulation = function() {
 };
 
 Country.prototype.getMainBoundingBox = function() {
+  if (this.centroid_ && this.centroid_.length === 2) {
+    // find the first (probably only) bb that contains the country centroid.
+    const lat = this.centroid_[0];
+    const lon = this.centroid_[1];
+    const enclosingBBs = this.boundingBoxes_.filter((box) => {
+      const bb = box.map(x => parseFloat(x));
+      return lat > bb[1] && lat < bb[3] && lon > bb[0] && lon < bb[2];
+    });
+    if (enclosingBBs.length > 0) {
+      return enclosingBBs[0];
+    }
+  }
   // Assume the 'main' geographical region is listed first.
   return this.boundingBoxes_[0];
 };
 
 /** Returns an array of [lat, long] for this country's center. */
 Country.prototype.getCentroid = function() {
+  if (this.centroid_ && this.centroid_.length === 2) {
+    return this.centroid_;
+  }
   const bb = this.getMainBoundingBox().map(x => parseFloat(x));
   return [((bb[0] + bb[2]) / 2).toFixed(4), ((bb[1] + bb[3]) / 2).toFixed(4)];
 }

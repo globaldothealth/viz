@@ -362,10 +362,11 @@ DataProvider.prototype.fetchCountryNames = function() {
             let bbox = bboxParts[j].split(',');
             bboxes.push(bbox);
         }
-        let c = new Country(code, name, continent, population, bboxes);
+        let centroid = parts.length >= 6 ? JSON.parse(parts[5]).map(x => parseFloat(x)) : undefined;
+        let c = new Country(code, name, continent, population, bboxes, centroid);
         self.countries_[code] = c;
         self.countriesByName_[name] = c;
-        const centroid = c.getCentroid();
+        centroid = c.getCentroid();
         locationInfo['' + centroid[1] + '|' + centroid[0]] = '||' + code;
       }
     });
@@ -528,8 +529,6 @@ DataProvider.prototype.processDailySlice = function(jsonData, isNewest) {
   this.dates_.add(currentDate);
 
   this.countryFeaturesByDay_[currentDate] = countryFeatures;
-  // console.log(countryFeatures);
-  // this.atomicFeaturesByDay_[currentDate] = features;
   this.dataSliceFileNames_[currentDate + '.json'] = true;
 };
 
