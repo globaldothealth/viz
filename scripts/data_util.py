@@ -16,13 +16,13 @@ def initialize_country_names_and_codes():
         return
     COUNTRIES_ISO_TO_NAME = {}
     data_file = "countries.data"
-    os.system("curl -s 'https://raw.githubusercontent.com/globaldothealth/common/master/countries.data' > " + data_file)
+    os.system("curl -s 'https://raw.githubusercontent.com/globaldothealth/common/198382aa97195c30d646707b8676a46e8a4a0ee4/countries.data' > " + data_file)
     with open(data_file) as f:
         data = f.read().strip()
         f.close()
     pairs = data.split('\n')
     for p in pairs:
-        (continent, code, name, population, _) = p.split(":")
+        (continent, code, name, population, longlat) = p.split(":")
         COUNTRIES_ISO_TO_NAME[code] = name
         COUNTRIES_NAME_TO_ISO[name.lower()] = code
     os.remove(data_file)

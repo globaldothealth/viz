@@ -72,8 +72,8 @@ render() {
 
   this.sideBar_.render();
   this.sideBar_.renderCountryList();
-  this.sideBar_.renderCountryListP1();
-  this.sideBar_.renderCountryListB1351();
+  // this.sideBar_.renderCountryListP1();
+  // this.sideBar_.renderCountryListB1351();
   this.renderLogo();
 }
 

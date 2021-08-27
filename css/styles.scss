@@ -467,6 +467,15 @@ input[type="text"] {
   }
 }
 
+#modalcontent {
+  h1 {
+    font-family: Mabry Pro, sans-serif;
+  }
+  p {
+    font-family: Inter, Helvetica, Arial, sans-serif;
+  }
+}
+
 
 #disease-selector {
   position: absolute;
@@ -900,6 +909,7 @@ h2.popup-title {
   font-weight: 400;
   padding: 0;
   margin: 0 0 12px;
+  font-family: Mabry Pro, Inter, Helvetica, Arial, sans-serif;
 }
 
 p.popup-count {
