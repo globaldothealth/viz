@@ -205,8 +205,8 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   let props = f['properties'];
   const geo_id = props['geoid'];
   let coordinatesString = geo_id.split('|');
-  const lat = parseFloat(coordinatesString[0]);
-  const lng = parseFloat(coordinatesString[1]);
+  const lat = parseFloat(coordinatesString[1]);
+  const lng = parseFloat(coordinatesString[0]);
 
   const contents = this.view_.getPopupContentsForFeature(f);
 
@@ -217,7 +217,7 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   // while (Math.abs(e['lngLat']['lng'] - lng) > 180) {
     // lng += e['lngLat']['lng'] > lng ? 360 : -360;
   // }
-  this.popup_.setLngLat(e.lngLat).setDOMContent(contents);
+  this.popup_.setLngLat([lng, lat]).setDOMContent(contents);
   this.popup_.addTo(this.mapboxMap_);
   let self = this;
   this.popup_.getElement().onmouseleave = function() {
