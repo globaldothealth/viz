@@ -203,7 +203,6 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
 
   let f = e['features'][0];
   let props = f['properties'];
-  console.log("the feature i clicked on:", props);
   const geo_id = props['geoid'];
   let coordinatesString = geo_id.split('|');
   const lat = parseFloat(coordinatesString[0]);
