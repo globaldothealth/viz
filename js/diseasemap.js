@@ -205,8 +205,8 @@ DiseaseMap.prototype.showPopupForEvent = function(e) {
   let props = f['properties'];
   const geo_id = props['geoid'];
   let coordinatesString = geo_id.split('|');
-  const lat = parseFloat(coordinatesString[0]);
-  const lng = parseFloat(coordinatesString[1]);
+  const lat = parseFloat(coordinatesString[1]);
+  const lng = parseFloat(coordinatesString[0]);
 
   const contents = this.view_.getPopupContentsForFeature(f);
 
