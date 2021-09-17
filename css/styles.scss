@@ -96,13 +96,13 @@ h2 {
     margin-right: 5px;
     marginb-bottom: 20px;
     &.active {
-      background:#00C6AF;
+      background: #00c6af;
       color: #ffffff;
     }
   }
   &#voc2.voc {
     &.active {
-      background: #FD685B;
+      background: #fd685b;
     }
   }
 }
@@ -314,7 +314,8 @@ input[type="text"] {
   margin: 0 0 0 auto;
   padding: 0 1ex;
 
-  #country-p1, #country-b1351 {
+  #country-p1,
+  #country-b1351 {
     display: none;
   }
 }
@@ -412,8 +413,8 @@ input[type="text"] {
     height: auto;
     position: relative;
   }
-  &.\#country{
-    h1#total{
+  &.\#country {
+    h1#total {
       background: #0094e2;
       color: #ffffff;
     }
@@ -426,13 +427,14 @@ input[type="text"] {
     #total-cases {
       display: inline;
     }
-    #p1-cases, #b1351-cases {
+    #p1-cases,
+    #b1351-cases {
       display: none;
     }
   }
-  &.\#country-p1{
-    h1#voc1{
-      background: #00C6AF;
+  &.\#country-p1 {
+    h1#voc1 {
+      background: #00c6af;
       color: #ffffff;
     }
     .location-list-item {
@@ -444,13 +446,14 @@ input[type="text"] {
     #p1-cases {
       display: inline;
     }
-    #total-cases, #b1351-cases {
+    #total-cases,
+    #b1351-cases {
       display: none;
     }
   }
-  &.\#country-b1351{
-    h1#voc2{
-      background: #00C6AF;
+  &.\#country-b1351 {
+    h1#voc2 {
+      background: #00c6af;
       color: #ffffff;
     }
     .location-list-item {
@@ -462,7 +465,8 @@ input[type="text"] {
     #b1351-cases {
       display: inline;
     }
-    #p1-cases, #total-cases {
+    #p1-cases,
+    #total-cases {
       display: none;
     }
   }
@@ -476,7 +480,6 @@ input[type="text"] {
     font-family: Inter, Helvetica, Arial, sans-serif;
   }
 }
-
 
 #disease-selector {
   position: absolute;
@@ -554,7 +557,7 @@ input[type="text"] {
   font-size: 5ex;
   vertical-align: middle;
   text-decoration: none;
-  font-family: 'Mabry Pro';
+  font-family: "Mabry Pro";
 }
 
 .navlink-question-mark {
@@ -577,7 +580,7 @@ input[type="text"] {
     border: 1px solid $accent-color;
     align-items: center;
     &:hover {
-      background-color: rgba($accent-color, .2);
+      background-color: rgba($accent-color, 0.2);
     }
 
     &:active {
@@ -631,7 +634,10 @@ input[type="text"] {
   }
 }
 
-#total-cases, #total-deaths, #p1-cases, #b1351-cases {
+#total-cases,
+#total-deaths,
+#p1-cases,
+#b1351-cases {
   color: black;
   font-size: 1.7rem;
   font-weight: 500;
@@ -737,14 +743,14 @@ input[type="text"] {
 
 .location-list-p1 {
   .country-cases-bar {
-    background-color: #00C6AF;
+    background-color: #00c6af;
     height: 3px;
   }
 }
 
 .location-list-b1351 {
   .country-cases-bar {
-    background-color: #00C6AF;
+    background-color: #00c6af;
     height: 3px;
   }
 }
@@ -1015,12 +1021,13 @@ a.popup:hover {
   padding: 20px;
   background: $accent-color;
   color: #fff;
-  font-family: 'Mabry Pro';
-  h1, a {
+  font-family: "Mabry Pro";
+  h1,
+  a {
     color: #fff;
   }
   h1 {
-    font-family: 'Mabry Pro';
+    font-family: "Mabry Pro";
   }
 }
 
@@ -1073,7 +1080,6 @@ a.popup:hover {
   right: 30px;
   width: fit-content;
 
-
   &:hover {
     font-weight: bold;
   }
@@ -1111,7 +1117,6 @@ a.popup:hover {
 .modal-body p {
   margin: 1rem 0 1.25rem 0;
 }
-
 
 /* range slider */
 
@@ -1218,6 +1223,11 @@ input[type="range"]::-ms-thumb {
 }
 input[type="range"]::-ms-tooltip {
   display: none;
+}
+
+// React VOC map
+.hidden {
+  visibility: hidden;
 }
 
 @import "toggle";

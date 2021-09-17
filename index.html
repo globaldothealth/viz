@@ -28,7 +28,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
   <link rel="icon" href="img/gh_logo.svg">
-  <link rel="stylesheet" type="text/css" href="css/styles.css?c" />
+  <link rel="stylesheet" type="text/css" href="css/styles.css" />
+
+  <!-- React VOC map -->
+  <link rel="stylesheet" type="text/css" href="voc-react-map/css/2.c2cad7ad.chunk.css" />
 </head>
 <body onload="bootstrap()">
   <div id="modal-wrapper">
@@ -37,6 +40,7 @@
   </div>
   <div id="topbar-container"><div id="topbar"></div></div>
   <div id="app"></div>
+  <div id="voc-map-container" class="hidden"></div>
 
   <!-- js -->
   <script src="js/util.js"></script>
@@ -60,10 +64,16 @@
   <script src="js/aggregatemapviewb1351.js"></script>
   <script src="js/twodcoveragemapview.js"></script>
   <script src="js/completenessmapview.js"></script>
+  <script src="js/vocmapview.js"></script>
   <script src="js/main.js"></script>
-  <!-- /js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.min.js"></script>
 
+  <!-- React VOC map -->
+  <script src="voc-react-map/js/runtime-main.8a49d5fc.js"></script>
+  <script src="voc-react-map/js/2.630da9fd.chunk.js"></script>
+  <script src="voc-react-map/js/main.5850c3c0.chunk.js"></script>
+
+  <!-- /js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.min.js"></script>  
 </body>
 
 </html>
