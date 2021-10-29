@@ -13,7 +13,7 @@ class VocMapView extends View {
     }
     
     getTitle() {
-      return 'Variant reporting';
+      return 'Variant Reporting';
     }    
 
     render() {
