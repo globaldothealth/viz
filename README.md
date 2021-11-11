@@ -1,10 +1,11 @@
+Before doing any of the below, make sure dependencies in [`prerequisites.md`](prerequisites.md) are met.
+On Mac, I installed `node-sass` from homebrew and `colorama` from pip.
 
 # Local development
 
 ## With "official" data
 
-Make sure dependencies in `prerequisites.md` are met. You also need to get a
-mapbox API key and set it to an environment variable:
+You need to get a mapbox API key and set it to an environment variable:
 
 `export MAPBOX_API_TOKEN="[your-mapbox-api-key-here]"`
 
