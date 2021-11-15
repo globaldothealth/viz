@@ -21,13 +21,15 @@
     "data_src_url": "http://localhost:8001",
     "prod_line_list_url": "http://localhost:3002",
     "dev_line_list_url": "http://localhost:3002",
-    "name": "Local"
+    "name": "Local",
+    "linkto": []
   },
   "test-disease": {
     "url": "http://test.global.health",
     "data_src_url": "https://idontexist.thatsokay",
     "prod_line_list_url": "https://data.test.global.health",
     "dev_line_list_url": "https://dev-data.test.global.health",
-    "name": "Test Disease"
+    "name": "Test Disease",
+    "linkto": []
   }
 }
