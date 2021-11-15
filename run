@@ -18,8 +18,10 @@ with open("config.json") as f:
     CONFIG = json.loads(f.read())
     f.close()
 
-if len(sys.argv) < 2:
-    print("Please give me the disease ID as an argument, for instance 'covid-19'")
+if len(sys.argv) < 3:
+    my_name = os.path.basename(__file__)
+    print(f"Usage: {my_name} disease environment")
+    print(f"E.g. {my_name} covid-19 prod")
     sys.exit(1)
 
 DISEASE_ID = sys.argv[1]
@@ -121,7 +123,7 @@ def run():
         http.join()
 
     except KeyboardInterrupt:
-        print("Hit Crtl-C a second time to shut down.")
+        print("Hit Ctrl-C a second time to shut down.")
         sys.exit(0)
 
 if __name__ == '__main__':
