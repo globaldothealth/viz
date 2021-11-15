@@ -26,7 +26,7 @@ class DeployTest(base_test.BaseTest):
             os.system("rm -rf " + TEST_TARGET)
         os.mkdir(TEST_TARGET)
         # Note: set 'quiet' to True for debugging failures.
-        deploy('test-disease', os.path.join(os.getcwd(), TEST_TARGET), quiet=True)
+        deploy('test-disease', 'dev', os.path.join(os.getcwd(), TEST_TARGET), quiet=True)
 
         self.check(
             self.target_file_contains("index.html", "google-analytics"),
