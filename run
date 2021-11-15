@@ -25,10 +25,16 @@ if len(sys.argv) < 3:
     sys.exit(1)
 
 DISEASE_ID = sys.argv[1]
+DEPLOY_ENV = sys.argv[2]
+
+if DEPLOY_ENV not in ['dev', 'prod']:
+    print(f"Deployment environment must be dev or prod, not {DEPLOY_ENV}")
+    sys.exit(1)
 
 class VizHandler(SimpleHTTPRequestHandler):
 
     def send_head(self):
+        line_list_url = CONFIG[DISEASE_ID]["prod_line_list_url"] if DEPLOY_ENV == 'prod' else CONFIG[DISEASE_ID]["dev_line_list_url"]
         path = self.translate_path(self.path)
         if "favicon.ico" in path:
             self.send_response(404)
@@ -52,6 +58,10 @@ class VizHandler(SimpleHTTPRequestHandler):
         binary = path.endswith(".gif") or path.endswith(".png")
         f = open(path, "rb" if binary else "r")
         contents = f.read()
+        # there are many JS files that use the line list url, so always do this substitution
+        if ".js" in self.path:
+            contents = contents.replace("{{LINE_LIST_URL}}",
+                                        line_list_url)
         if "diseasemap.js" in self.path:
             if MAPBOX_API_VARNAME in os.environ:
                 contents = contents.replace("{{MAPBOX_API_TOKEN}}",

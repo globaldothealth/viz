@@ -27,4 +27,4 @@ if os.path.exists(TARGET_PATH):
 os.mkdir(TARGET_PATH)
 
 if __name__ == '__main__':
-    deploy(DISEASE_ID, TARGET_PATH)
+    deploy(DISEASE_ID, DEPLOY_ENV, TARGET_PATH)
