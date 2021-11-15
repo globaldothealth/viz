@@ -85,7 +85,7 @@ getPopupContentsForFeature(f) {
     props['aggregatetotal'].toLocaleString() + ')</p>' + 
     '<div class="coverage-container"><div class="coverage-bar" style="height:12px;width:' + 
     props['coverage']+ '%"></div></div>' +
-    '<a class="popup coverage" target="_blank" href="https://data.covid-19.global.health/cases?country=%22' + props['countryname'] +'%22">Explore Country Data</a>';
+    '<a class="popup coverage" target="_blank" href="{{LINE_LIST_URL}}/cases?country=%22' + props['countryname'] +'%22">Explore Country Data</a>';
   return contents;
 }
 

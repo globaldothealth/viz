@@ -258,7 +258,7 @@ Nav.prototype.dataLink = function() {
   const dataEl = document.createElement('div');
   dataEl.setAttribute('id', 'data');
   const linkEl = document.createElement('a');
-  linkEl.setAttribute('href','https://data.covid-19.global.health');
+  linkEl.setAttribute('href','{{LINE_LIST_URL}}');
   linkEl.textContent = 'G.h Data';
   dataEl.classList.add('navlink');
   document.getElementById('topbar').appendChild(dataEl);
