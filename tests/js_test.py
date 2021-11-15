@@ -56,7 +56,7 @@ class JsTest(base_test.BaseTest):
         with open(TEMP_TEST_CONCATENATION, "w") as f:
             f.write(full_contents)
             f.close()
-        return_code = os.system("nodejs " + TEMP_TEST_CONCATENATION)
+        return_code = os.system("node --trace-uncaught " + TEMP_TEST_CONCATENATION)
         if return_code == 0:
             os.system("rm -f " + TEMP_TEST_CONCATENATION)
         self.check(return_code == 0, "JS tests failed")
