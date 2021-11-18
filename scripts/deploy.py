@@ -163,10 +163,13 @@ def replace_string_in_dest_file(to_replace, replacement,
         f.close()
     return True
 
-def deploy(disease_id, target_path, quiet=False):
+def deploy(disease_id, deploy_env, target_path, quiet=False):
     if not check_dependencies():
         sys.exit(1)
-
+    if not deploy_env in ['dev', 'prod']:
+        print(f"Deployment environment must be dev or prod, not {deploy_env}")
+        sys.exit(1)
+    line_list_url = CONFIG[disease_id]["prod_line_list_url"] if deploy_env == "prod" else CONFIG[disease_id]["dev_line_list_url"]
     success = True
     success &= backup_pristine_files()
     success &= (os.system("sass css/styles.scss css/styles.css") == 0)
@@ -188,6 +191,11 @@ def deploy(disease_id, target_path, quiet=False):
     success &= replace_string_in_dest_file(
         "{{MAPBOX_API_TOKEN}}",
         MAPBOX_PROD_API_TOKEN, target_path, "js/bundle.js")
+    success &= replace_string_in_dest_file(
+        "{{LINE_LIST_URL}}",
+        line_list_url,
+        target_path,
+        "js/bundle.js")
     other_diseases = []
     for did in CONFIG[disease_id]["linkto"]:
         other_diseases.append("|".join([

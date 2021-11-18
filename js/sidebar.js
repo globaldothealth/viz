@@ -135,7 +135,7 @@ SideBar.prototype.render = function() {
   // }
 
   document.getElementById('ghlist').onclick = function(e) {
-    window.location.href = 'https://data.covid-19.global.health/  ';
+    window.location.href = '{{LINE_LIST_URL}}';
   };
 
 };

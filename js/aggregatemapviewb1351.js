@@ -70,7 +70,7 @@ getPopupContentsForFeature(f) {
     props['variant1'].toLocaleString() + 
     ' <br>Variant B.1.351: ' + 
     props['variant2'].toLocaleString() + 
-    '</p><a class="popup" target="_blank" href="https://data.covid-19.global.health/cases?country=%22' + 
+    '</p><a class="popup" target="_blank" href="{{LINE_LIST_URL}}/cases?country=%22' + 
     props['countryname'] +
     '%22">Explore Country Data</a>';
   return contents;

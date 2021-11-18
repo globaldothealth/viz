@@ -12,8 +12,9 @@ You need to get a mapbox API key and set it to an environment variable:
 Then, to run the application locally, pick a disease, for instance 'covid-19'
 and:
 
-`./run covid-19`
+`./run covid-19 dev`
 
+Use either 'dev' or 'prod' as the second argument; it currently just picks the URL to point to the data portal.
 Then, in your browser, load http://localhost:8000
 
 ## With local data
@@ -36,6 +37,6 @@ Before deploying, commit your changes or sending a pull request, please run the 
 
 Run this:
 
-`./deploy covid-19 path/to/target`
+`./deploy covid-19 dev path/to/target`
 
-for the `covid-19` disease (replace as needed) and then copy the contents of the target directory as appropriate (e.g. to AWS).
+for the `covid-19` disease (replace as needed) and dev portal link (or prod) and then copy the contents of the target directory as appropriate (e.g. to AWS).

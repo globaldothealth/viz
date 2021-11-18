@@ -8,15 +8,17 @@ import os
 import shlex
 import subprocess
 
-if len(sys.argv) < 3:
-    print("Usage: " + sys.argv[0] + " disease_id target_path")
+if len(sys.argv) != 4:
+    print("Usage: " + sys.argv[0] + " disease_id  environment target_path")
+    print("Where environment is either dev or prod")
     sys.exit(1)
 
 src_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(src_path)
 
 DISEASE_ID = sys.argv[1]
-TARGET_PATH = sys.argv[2]
+DEPLOY_ENV = sys.argv[2]
+TARGET_PATH = sys.argv[3]
 
 if os.path.exists(TARGET_PATH):
     print("Target '" + TARGET_PATH + "' already exists. "
@@ -25,4 +27,4 @@ if os.path.exists(TARGET_PATH):
 os.mkdir(TARGET_PATH)
 
 if __name__ == '__main__':
-    deploy(DISEASE_ID, TARGET_PATH)
+    deploy(DISEASE_ID, DEPLOY_ENV, TARGET_PATH)
