@@ -41,7 +41,7 @@ getFeatureSet() {
   let current = Object.keys(regiondata);
   let regions = regiondata[current];
   for (let i = 0; i < regions.length; i++) {
-    let geoId = [regions[i]['lat'], regions[i]['long']].join('|');
+    let geoId = [regions[i]['long'], regions[i]['lat']].join('|');
     let casecount  = regions[i]['casecount'];
     let feature = {
       'properties': {
