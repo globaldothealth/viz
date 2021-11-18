@@ -32,6 +32,7 @@ def compile_js(quiet=False):
         "--js js/aggregatemapviewp1.js "
         "--js js/aggregatemapviewb1351.js "
         "--js js/casemapview.js "
+        "--js js/vocmapview.js "
         "--js js/completenessmapview.js "
         "--js js/historicalmapview.js "
         "--js js/rankview.js "

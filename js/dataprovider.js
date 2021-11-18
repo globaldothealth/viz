@@ -457,12 +457,12 @@ DataProvider.prototype.fetchDailySlice = function(
     fetch(url).then(function(response) {
       if (response.status != 200) {
         reject('Bad response status ' + response.status + ' for ' + url);
-      }
+      }      
       return response.json();
     }).then(function(jsonData) {
       if (!jsonData) {
         reject('JSON data is empty');
-      }
+      }      
       self.processDailySlice(jsonData, isNewest);
       callback();
       resolve();
@@ -482,7 +482,7 @@ DataProvider.prototype.fetchRegionalData = function() {
   // Don't cache the most recent daily slice. Cache all others.
   return fetch(url)
     .then(function(response) { return response.json(); })
-    .then(function(jsonData) {
+    .then(function(jsonData) {      
       self.regionalData_ = jsonData;
     });
 
