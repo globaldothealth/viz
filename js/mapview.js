@@ -232,8 +232,8 @@ formatFeature(inFeature, threeD) {
     feature['properties']['new'] = 0;
   }
   let coords = feature['properties']['geoid'].split('|');
-  const lat = parseFloat(coords[0]);
-  const lng = parseFloat(coords[1]);
+  const lat = parseFloat(coords[1]);
+  const lng = parseFloat(coords[0]);
   // Flip latitude and longitude.
   let featureCoords = [lng, lat];
   // if (threeD) {
