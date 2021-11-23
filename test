@@ -29,5 +29,6 @@ for test_class in TESTS:
         print(Fore.GREEN + "PASS", end="", flush=True)
     else:
         print(Fore.RED + "FAIL", end="", flush=True)
+    print(Style.RESET_ALL)
 
 print("\n")
