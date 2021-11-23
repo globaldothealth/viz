@@ -1,7 +1,7 @@
 {
   "covid-19": {
     "url": "http://covid-19.global.health",
-    "dev_data_src_url": "https://covid-19-aggregates-dev.s3.amazonaws.com",
+    "dev_data_src_url": "https://covid-19-aggregates-dev.s3.amazonaws.com/",
     "prod_data_src_url": "https://covid-19-aggregates.s3.amazonaws.com/",
     "prod_line_list_url": "https://data.covid-19.global.health",
     "dev_line_list_url": "https://dev-data.covid-19.global.health",
