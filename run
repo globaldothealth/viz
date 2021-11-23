@@ -35,6 +35,7 @@ class VizHandler(SimpleHTTPRequestHandler):
 
     def send_head(self):
         line_list_url = CONFIG[DISEASE_ID]["prod_line_list_url"] if DEPLOY_ENV == 'prod' else CONFIG[DISEASE_ID]["dev_line_list_url"]
+        data_src_url = CONFIG[DISEASE_ID]["prod_data_src_url"] if DEPLOY_ENV == 'prod' else CONFIG[DISEASE_ID]["dev_data_src_url"]
         path = self.translate_path(self.path)
         if "favicon.ico" in path:
             self.send_response(404)
@@ -77,10 +78,9 @@ class VizHandler(SimpleHTTPRequestHandler):
             contents = contents.replace(
                 "{{OTHER_DISEASES}}", ",".join(other_diseases))
         if "main.js" in self.path:
-            destination = CONFIG[DISEASE_ID]["data_src_url"]
-            if not destination.endswith("/"):
-                destination += "/"
-            contents = contents.replace("{{DATA_SRC_URL}}", destination)
+            if not data_src_url.endswith("/"):
+                data_src_url += "/"
+            contents = contents.replace("{{DATA_SRC_URL}}", data_src_url)
         encoded_contents = contents if binary else contents.encode()
         ctype = self.guess_type(path)
         self.send_response(200)

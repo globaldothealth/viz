@@ -170,6 +170,7 @@ def deploy(disease_id, deploy_env, target_path, quiet=False):
         print(f"Deployment environment must be dev or prod, not {deploy_env}")
         sys.exit(1)
     line_list_url = CONFIG[disease_id]["prod_line_list_url"] if deploy_env == "prod" else CONFIG[disease_id]["dev_line_list_url"]
+    data_src_url = CONFIG[disease_id]["prod_data_src_url"] if deploy_env == "prod" else CONFIG[disease_id]["dev_data_src_url"]
     success = True
     success &= backup_pristine_files()
     success &= (os.system("sass css/styles.scss css/styles.css") == 0)
@@ -183,7 +184,7 @@ def deploy(disease_id, deploy_env, target_path, quiet=False):
     success &= restore_pristine_files()
     success &= replace_string_in_dest_file(
         "{{DATA_SRC_URL}}",
-        CONFIG[disease_id]["data_src_url"],
+        data_src_url,
         target_path, "js/bundle.js")
     success &= replace_string_in_dest_file(
         "{{TITLE}}", CONFIG[disease_id]["name"],

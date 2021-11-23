@@ -1,7 +1,8 @@
 {
   "covid-19": {
     "url": "http://covid-19.global.health",
-    "data_src_url": "https://covid-19-aggregates.s3.amazonaws.com/",
+    "dev_data_src_url": "https://covid-19-aggregates-dev.s3.amazonaws.com",
+    "prod_data_src_url": "https://covid-19-aggregates.s3.amazonaws.com/",
     "prod_line_list_url": "https://data.covid-19.global.health",
     "dev_line_list_url": "https://dev-data.covid-19.global.health",
     "name": "COVID-19",
@@ -9,7 +10,8 @@
   },
   "h1n1": {
     "url": "http://h1n1.global.health",
-    "data_src_url": "https://h1n1-aggregates.s3.amazonaws.com/",
+    "dev_data_src_url": "https://h1n1-aggregates.s3.amazonaws.com/",
+    "prod_data_src_url": "https://h1n1-aggregates.s3.amazonaws.com/",
     "comment": "The line lists for h1n1 don't exist, but this shows how you would set it up",
     "prod_line_list_url": "https://data.h1n1.global.health",
     "dev_line_list_url": "https://dev-data.h1n1.global.health",
@@ -18,7 +20,8 @@
   },
   "local": {
     "url": "http://localhost:8000",
-    "data_src_url": "http://localhost:8001",
+    "dev_data_src_url": "http://localhost:8001",
+    "prod_data_src_url": "http://localhost:8001",
     "prod_line_list_url": "http://localhost:3002",
     "dev_line_list_url": "http://localhost:3002",
     "name": "Local",
@@ -26,7 +29,8 @@
   },
   "test-disease": {
     "url": "http://test.global.health",
-    "data_src_url": "https://idontexist.thatsokay",
+    "dev_data_src_url": "https://idontexist.thatsokay.imadeveloper",
+    "prod_data_src_url": "https://idontexist.thatsokay",
     "prod_line_list_url": "https://data.test.global.health",
     "dev_line_list_url": "https://dev-data.test.global.health",
     "name": "Test Disease",
