@@ -9,7 +9,7 @@ class VocMapView extends View {
     }
     
     getId() {
-      return 'voc';
+      return 'variant-reporting';
     }
     
     getTitle() {
