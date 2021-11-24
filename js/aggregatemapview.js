@@ -63,13 +63,11 @@ getFeatureSet() {
 
 getPopupContentsForFeature(f) {
   const props = f['properties'];
+  console.log(props);
   let contents = document.createElement('div');
   contents.innerHTML = '<h2 class="popup-title">' + props['countryname'] + '</h2>' +
     '<p class=popup-count><strong>' + props['cum_conf'].toLocaleString() + 
-    ' line list cases</strong><hr/>Variant P.1: ' + 
-    props['variant1'].toLocaleString() + 
-    ' <br>Variant B.1.351: ' + 
-    props['variant2'].toLocaleString() + 
+    ' line list case' + `${props['cum_conf'] > 1 ? 's' : ''}` + 
     '</p><a class="popup" target="_blank" href="{{LINE_LIST_URL}}/cases?country=%22' + 
     props['countryname'] +
     '%22">Explore Country Data</a>';
