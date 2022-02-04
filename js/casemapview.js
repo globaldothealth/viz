@@ -65,7 +65,7 @@ getPopupContentsForFeature(f) {
   const regionLevel = props['region_level']; 
   const regionName = props['region'];
   const countryName = props['country'];
-
+  const countryCode = this.dataProvider_.getCountryByName(countryName).getCode();
   let totalCaseCount = 0;
 
   // Country, province, city
@@ -77,7 +77,7 @@ getPopupContentsForFeature(f) {
   content.innerHTML = '<h2 class="popup-title">' + regionName + ', ' + countryName + '</h2>' +
     '<p class=popup-count>' + totalCaseCount.toLocaleString() + ' cases</p> ' +
     '<a class="popup" target="_blank" href="{{LINE_LIST_URL}}/cases?country=%22' + 
-    countryName +
+    countryCode +
     '%22&' + regionLevel + '=%22' + 
     regionName + 
     '%22">Explore Regional Data</a>';
