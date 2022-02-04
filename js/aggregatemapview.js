@@ -48,6 +48,7 @@ getFeatureSet() {
       'properties': {
         'geoid': geoId,
         'countryname': country.getName(),
+        'iso3166': country.getCode(),
         'cum_conf': aggregateCaseCount,
         'variant1': voc1,
         'variant2': voc2,
@@ -68,7 +69,7 @@ getPopupContentsForFeature(f) {
     '<p class=popup-count><strong>' + props['cum_conf'].toLocaleString() + 
     ' line list case' + `${props['cum_conf'] > 1 ? 's' : ''}` + 
     '</p><a class="popup" target="_blank" href="{{LINE_LIST_URL}}/cases?country=%22' + 
-    props['countryname'] +
+    props['iso3166'] +
     '%22">Explore Country Data</a>';
   return contents;
 }
